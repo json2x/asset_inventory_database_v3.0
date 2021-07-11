@@ -1,0 +1,125 @@
+{% extends 'api/datatable_nav.html'%}
+{% load static %}
+{% block content %}
+<div class="my-15">
+    <h5>Smart NE</h5>
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 52628,
+    "next": "http://localhost:8000/api/SmartNe/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 66,
+            "siteid": "101",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:59Z",
+            "smartsite": 525
+        },
+        {
+            "id": 67,
+            "siteid": "101",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 525
+        },
+        {
+            "id": 68,
+            "siteid": "102",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 526
+        },
+        {
+            "id": 69,
+            "siteid": "102",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 526
+        },
+        {
+            "id": 70,
+            "siteid": "103",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 527
+        },
+        {
+            "id": 71,
+            "siteid": "103",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 527
+        },
+        ...
+    ]
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/{cell id}/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Filter to specific NE by its record id<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 70,
+    "siteid": "103",
+    "band": "900",
+    "tech": "2G",
+    "record_status": 1,
+    "update_at": "2020-05-20T23:31:00Z",
+    "smartsite": 527
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+        <span class="font-weight-bold">Permission: </span>Admin User<br>
+        <span class="font-weight-bold">Input: </span>JSON object of NE. Notice <i class="text-danger">smartsite</i> record id highlighted in the sample below.<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "siteid": "103",
+    "band": "2300",
+    "tech": "5G",
+    <i class="text-danger">"smartsite": 527</i>
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/{record id}</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+        <span class="font-weight-bold">Permission: </span>Admin User<br>
+        <span class="font-weight-bold">Input: </span>JSON object of smart ne, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+    </p>
+    <div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    <span class="text-primary">"siteid": "103",</span>
+    <span class="text-primary">"band": "2300",</span>
+    <span class="text-primary">"tech": "5G",</span>
+    <span class="text-primary">"smartsite": 527</span>
+}
+    </pre></div>
+</div>
+{% endblock content %}

@@ -1,0 +1,44 @@
+{% extends 'api/datatable_nav.html'%}
+{% load static %}
+{% block content %}
+<div class="my-15">
+    <h5>TOC AOR</h5>
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/TocAor/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 74,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "cluster": "NFS_MM_NMM_WFS1",
+            "area": "MM",
+            "supervisor": "Warren S. Sedigo",
+            "manager": "Sherwin Kenneth A. Cañete"
+        },
+        {
+            "id": 2,
+            "cluster": "NFS_MM_NMM_WFS2",
+            "area": "MM",
+            "supervisor": "Patrick John F. Reus",
+            "manager": "Sherwin Kenneth A. Cañete"
+        },
+        {
+            "id": 3,
+            "cluster": "NFS_MM_NMM_WFS3",
+            "area": "MM",
+            "supervisor": "Joel T. Ignacio",
+            "manager": "Sherwin Kenneth A. Cañete"
+        },
+        ...
+    ]
+}
+</pre></div>
+</div>
+{% endblock content %}

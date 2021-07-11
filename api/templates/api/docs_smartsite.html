@@ -1,0 +1,272 @@
+{% extends 'api/datatable_nav.html'%}
+{% load static %}
+{% block content %}
+<div class="my-15">
+    <h5>Smart Site</h5>
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 9692,
+    "next": "http://localhost:8000/api/SmartSite/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 525,
+            "siteid": "101",
+            "sitename": "BAGUMBONG",
+            "address": "Blk 15 Lot 6 Carolina St., Mcb-2 Subd., Bagumbong, Caloocan City",
+            "location": {
+                "id": 1618,
+                "city": "CALOOCAN CITY",
+                "province": "METRO MANILA",
+                "region": "NCR",
+                "area": "MM"
+            },
+            "toc_aor": {
+                "id": 4,
+                "cluster": "NFS_MM_WMM_WFS4",
+                "area": "MM"
+            },
+            "lat": "14.747710000000000",
+            "lng": "121.021980000000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:03Z"
+        },
+        {
+            "id": 526,
+            "siteid": "102",
+            "sitename": "BRIXTON",
+            "address": "Samano Street, Area A, Libis, Camarin, Caloocan City",
+            "location": {
+                "id": 1618,
+                "city": "CALOOCAN CITY",
+                "province": "METRO MANILA",
+                "region": "NCR",
+                "area": "MM"
+            },
+            "toc_aor": {
+                "id": 4,
+                "cluster": "NFS_MM_WMM_WFS4",
+                "area": "MM"
+            },
+            "lat": "14.767210000000000",
+            "lng": "121.044460000000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:03Z"
+        },
+        ...
+    ]
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL 1:</span> <i>http://{{ request.get_host }}/api/SmartSite/{smartsite id}/</i><br>
+        <span class="font-weight-bold">URL 2:</span> <i>http://{{ request.get_host }}/api/SmartSite/{smartsite id}/nes/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Filter to specific device by its record id and adding <i class="text-warning">nes/</i> show its children NEs <span class="text-muted">(Applicaple to RAN domian)</span><br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 525,
+    "siteid": "101",
+    "sitename": "BAGUMBONG",
+    "address": "Blk 15 Lot 6 Carolina St., Mcb-2 Subd., Bagumbong, Caloocan City",
+    "location": 1618,
+    "toc_aor": 4,
+    "lat": "14.747710000000000",
+    "lng": "121.021980000000000",
+    "record_status": 1,
+    "update_at": "2020-05-20T23:30:03Z",
+    "smartne": [
+        {
+            "id": 66,
+            "siteid": "101",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:59Z"
+        },
+        {
+            "id": 67,
+            "siteid": "101",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z"
+        },
+        {
+            "id": 12411,
+            "siteid": "101",
+            "band": "900",
+            "tech": "3G",
+            "record_status": 1,
+            "update_at": "2020-05-21T00:16:08Z"
+        },
+        {
+            "id": 12412,
+            "siteid": "101",
+            "band": "2100",
+            "tech": "3G",
+            "record_status": 1,
+            "update_at": "2020-05-21T00:16:08Z"
+        },
+        {
+            "id": 29029,
+            "siteid": "101",
+            "band": "850",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 29229,
+            "siteid": "101",
+            "band": "2100",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 29298,
+            "siteid": "101",
+            "band": "700",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 30372,
+            "siteid": "101",
+            "band": "1800",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 48935,
+            "siteid": "101",
+            "band": "3500",
+            "tech": "TD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        }
+    ]
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/filter/?site_id={site id}&province={province name}&city={city name}&toc_aor={cluster name}&l_area={loc area}&t_area={aor area}</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Paginated output based on filtered field. Max of 100 result items per page.<br>
+        <span class="font-weight-bold">Filter fields: </span> Shown in table below. At least one parameter is required.<br>
+            <table class="table table-sm small-text">
+                <thead><tr><th>Field</th><th>Sample values</th><th>Remarks</th></tr></thead>
+                <tbody>
+                    <tr><td>site_id</td><td>101,102,G1234</td><td>one site_id per filter</td></tr>
+                    <tr><td>province</td><td>METRO MANILA,CEBU,DAVAO DEL SUR</td><td>one province name per filter</td></tr>
+                    <tr><td>city</td><td>Makati City, Cebu City, Davao City</td><td>One city name per filter</td></tr>
+                    <tr><td>l_area</td><td>MM,NL,SL,VIS,MIN</td><td>Area based on location. One l_area per filter</td></tr>
+                    <tr><td>toc_aor</td><td>NFS_MM_NMM_WFS1</td><td>One cluster name per filter</td></tr>
+                    <tr><td>t_area</td><td>MM,NL,SL,VIS,MIN</td><td>Area based on site AOR. One t_area per filter</td></tr>
+                </tbody>
+            </table>
+    </p>
+<div class="overflow-auto bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 182,
+    "next": "http://localhost:8000/api/SmartSite/filter/?city=davao+city&l_area=min&page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 1601,
+            "siteid": "4433",
+            "sitename": "DAVAO - SALUMAY",
+            "address": "Brgy. Baganihan, Marilog District, Davao City",
+            "location": {
+                "id": 1471,
+                "city": "DAVAO CITY",
+                "province": "DAVAO DEL SUR",
+                "region": "XI",
+                "area": "MIN"
+            },
+            "toc_aor": {
+                "id": 67,
+                "cluster": "NFS_MIN_A2_WFS5_SDVO",
+                "area": "MIN"
+            },
+            "lat": "6.990260000000000",
+            "lng": "125.478584290000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:08Z"
+        },
+        {
+            "id": 1602,
+            "siteid": "4434",
+            "sitename": "SIRAWAN - TORIL",
+            "address": "Purok 3, Sirawan Toril / Davao City",
+            "location": {
+                "id": 1471,
+                "city": "DAVAO CITY",
+                "province": "DAVAO DEL SUR",
+                "region": "XI",
+                "area": "MIN"
+            },
+            "toc_aor": {
+                "id": 67,
+                "cluster": "NFS_MIN_A2_WFS5_SDVO",
+                "area": "MIN"
+            },
+            "lat": "6.990260000000000",
+            "lng": "125.478584290000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:08Z"
+        },
+        ...
+    ]
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+        <span class="font-weight-bold">Permission: </span>Admin User<br>
+        <span class="font-weight-bold">Input: </span>JSON object of smart site. Sample below.<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "siteid": "X0999",
+    "sitename": "TEST",
+    "address": "Blk 15 Lot 6 Test St., Test Subd., Test, Test City",
+    "location": 1618,
+    "toc_aor": 4,
+    "lat": "14.747710000000000",
+    "lng": "121.021980000000000"
+}
+</pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/{record id}</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+        <span class="font-weight-bold">Permission: </span>Admin User<br>
+        <span class="font-weight-bold">Input: </span>JSON object of smart site, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    <span class="text-primary">"siteid": "X0992",</span>
+    <span class="text-primary">"sitename": "TEST SITE",</span>
+    "address": "Blk 15 Lot 6 Test St., Test Subd., Test, Test City",
+    "location": 1618,
+    <span class="text-warning">"toc_aor": 4,</span>
+    "lat": "14.747710000000000",
+    "lng": "121.021980000000000"
+}
+</pre></div>
+</div>
+{% endblock content %}

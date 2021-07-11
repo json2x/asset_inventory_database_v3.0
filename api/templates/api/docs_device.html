@@ -1,0 +1,388 @@
+{% extends 'api/datatable_nav.html'%}
+{% load static %}
+{% block content %}
+<div class="my-15">
+    <h5>Device</h5>
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+    </p>
+    <div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 9839,
+    "next": "http://localhost:8000/api/Devices/page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 240994,
+            "dn": "ZAM05927HULT002",
+            "device_id": "ZAM05927HULT002",
+            "ems_device_id": "ZAM05927HULT002",
+            "device_alias": "",
+            "device_ip": "",
+            "ems_id": "U2000_MIN",
+            "vendor_id": "HU",
+            "ne_type": "LT",
+            "model": "",
+            "hardware_description": "",
+            "functional_description": "",
+            "parent_device_id": "",
+            "parentdn": "",
+            "site_id": "5927",
+            "device_state": "",
+            "software_version": "",
+            "integration_date": "",
+            "end_of_support": "",
+            "tsa_scope": "",
+            "product_id": "",
+            "serial_number": "",
+            "freq_tx_rx_field": "",
+            "hardware_capacity": "",
+            "domain": "RAN",
+            "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+            "tx_clusterimg": "",
+            "tx_type": "",
+            "natspcode": "",
+            "admin_state": "",
+            "subdomain": "FD-LTE",
+            "function": "ENODEB",
+            "iubce_dl_lic": "",
+            "iubce_ul_lic": "",
+            "s1cu_lic": "",
+            "cluster_region": "Mindanao",
+            "cluster_sub_region": "Mindanao",
+            "cluster_province": "MIN_Huawei",
+            "cluster_city": "SMART",
+            "mw_hub": "",
+            "record_status": 0,
+            "has_invalid_chars_in_device_name": false
+        },
+        ...
+    ]
+}
+    </pre></div>
+    <p>
+        <span class="font-weight-bold">URL 1:</span> <i>http://{{ request.get_host }}/api/Devices/{record id}/</i><br>
+        <span class="font-weight-bold">URL 2:</span> <i>http://{{ request.get_host }}/api/Devices/{record id}/cells/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Filter to specific device by its record id and adding <i class="text-warning">cells/</i> show its children cells <span class="text-muted">(Applicaple to RAN domian)</span><br>
+    </p>
+    <div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 240993,
+    "dn": "ZAM05927HUNB001",
+    "device_id": "ZAM05927HUNB001",
+    "ems_device_id": "ZAM05927HUNB001",
+    "device_alias": "",
+    "device_ip": "",
+    "ems_id": "U2000_MIN",
+    "vendor_id": "HU",
+    "ne_type": "NB",
+    "model": "UMTS",
+    "hardware_description": "",
+    "functional_description": "",
+    "parent_device_id": "HR2807PIPIL",
+    "parentdn": "HR2807PIPIL",
+    "site_id": "5927",
+    "device_state": "",
+    "software_version": "Micro BTS3900 V100R015C10SPC190",
+    "integration_date": "",
+    "end_of_support": "",
+    "tsa_scope": "",
+    "product_id": "",
+    "serial_number": "",
+    "freq_tx_rx_field": "",
+    "hardware_capacity": "",
+    "domain": "RAN",
+    "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+    "tx_clusterimg": "",
+    "tx_type": "",
+    "natspcode": "",
+    "admin_state": "",
+    "subdomain": "3G",
+    "function": "NB",
+    "iubce_dl_lic": "",
+    "iubce_ul_lic": "",
+    "s1cu_lic": "\n",
+    "cluster_region": "Mindanao",
+    "cluster_sub_region": "Mindanao",
+    "cluster_province": "MIN_Huawei",
+    "cluster_city": "SMART",
+    "mw_hub": "",
+    "record_status": 0,
+    "has_invalid_chars_in_device_name": false,
+    "cells": [
+        {
+            "id": 556666,
+            "domain": "RAN",
+            "ems_cell_id": "PCLAUU1",
+            "ems_id": "U2000_MIN",
+            "cell_name": "PCLAUU1",
+            "dn": "PCLAUU1",
+            "site": "5927",
+            "parent_id": "ZAM05927HUNB001",
+            "parent_dn": "ZAM05927HUNB001",
+            "tech": "3G",
+            "band": "2100",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "55052",
+            "sac_ci_eutra": "30654",
+            "rnc_cid": "15111",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "511",
+            "sector_id": "0",
+            "carrier": "1",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1
+        },
+        {
+            "id": 556667,
+            "domain": "RAN",
+            "ems_cell_id": "PCLAUU4",
+            "ems_id": "U2000_MIN",
+            "cell_name": "PCLAUU4",
+            "dn": "PCLAUU4",
+            "site": "5927",
+            "parent_id": "ZAM05927HUNB001",
+            "parent_dn": "ZAM05927HUNB001",
+            "tech": "3G",
+            "band": "2100",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "55052",
+            "sac_ci_eutra": "30654",
+            "rnc_cid": "25114",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "511",
+            "sector_id": "0",
+            "carrier": "2",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1
+        },
+        {
+            "id": 556668,
+            "domain": "RAN",
+            "ems_cell_id": "PCLAUU7",
+            "ems_id": "U2000_MIN",
+            "cell_name": "PCLAUU7",
+            "dn": "PCLAUU7",
+            "site": "5927",
+            "parent_id": "ZAM05927HUNB001",
+            "parent_dn": "ZAM05927HUNB001",
+            "tech": "3G",
+            "band": "2100",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "55052",
+            "sac_ci_eutra": "30654",
+            "rnc_cid": "35111",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "511",
+            "sector_id": "0",
+            "carrier": "3",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1
+        }
+    ]
+}
+    </pre></div>
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/filter/?domain={Domain}&ne_type={Ne Type}&device_id={device id}&site_id={siteid}</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+        <span class="font-weight-bold">Output: </span>Paginated output based on filtered field. Max of 100 result items per page.<br>
+        <span class="font-weight-bold">Filter fields: </span> Shown in table below. At least one parameter is required.<br>
+            <table class="table table-sm small-text">
+                <thead><tr><th>Field</th><th>Sample values</th><th>Remarks</th></tr></thead>
+                <tbody>
+                    <tr><td>domain</td><td>RAN,OSS,OVIM,SDP,etc..</td><td>One domain per filter</td></tr>
+                    <tr><td>ne_type</td><td>BT,NB,LT,NFV_VM,SDN_App,OS,OM,etc..</td><td>Can be multiple values, separated by comma</td></tr>
+                    <tr><td>device_id</td><td>SNJG8248HULT001</td><td>one device name per filter</td></tr>
+                    <tr><td>site_id</td><td>101,102,G1234</td><td>one site_id per filter</td></tr>
+                </tbody>
+            </table>
+    </p>
+    <div class="overflow-auto bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 12399,
+    "next": "http://localhost:8000/api/Devices/filter/?domain=RAN&ne_type=BT&page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 240995,
+            "dn": "ZAM05924HUBT001",
+            "device_id": "ZAM05924HUBT001",
+            "ems_device_id": "ZAM05924HUBT001",
+            "device_alias": "",
+            "device_ip": "",
+            "ems_id": "U2000_MIN",
+            "vendor_id": "HU",
+            "ne_type": "BT",
+            "model": "BTS3900E GSM",
+            "hardware_description": "",
+            "functional_description": "",
+            "parent_device_id": "BSC2711",
+            "parentdn": "BSC2711",
+            "site_id": "5924",
+            "device_state": "",
+            "software_version": "V900R021ENGC10SPC600",
+            "integration_date": "",
+            "end_of_support": "",
+            "tsa_scope": "",
+            "product_id": "",
+            "serial_number": "",
+            "freq_tx_rx_field": "",
+            "hardware_capacity": "",
+            "domain": "RAN",
+            "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+            "tx_clusterimg": "",
+            "tx_type": "",
+            "natspcode": "",
+            "admin_state": "",
+            "subdomain": "2G",
+            "function": "BT",
+            "iubce_dl_lic": "",
+            "iubce_ul_lic": "",
+            "s1cu_lic": "\n",
+            "cluster_region": "Mindanao",
+            "cluster_sub_region": "Mindanao",
+            "cluster_province": "MIN_Huawei",
+            "cluster_city": "SMART",
+            "mw_hub": "",
+            "record_status": 0,
+            "has_invalid_chars_in_device_name": false
+        },
+        ...
+    ]
+}
+    </pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+        <span class="font-weight-bold">Permission: </span>Admin User<br>
+        <span class="font-weight-bold">Input: </span>JSON object of device. Sample below.<br>
+    </p>
+    <div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "dn": "ABCX0999HULT003",
+    "device_id": "ABCX0999HULT003",
+    "ems_device_id": "ABCX0999HULT003",
+    "device_alias": "",
+    "device_ip": "",
+    "ems_id": "TEST",
+    "vendor_id": "HU",
+    "ne_type": "LT",
+    "model": "",
+    "hardware_description": "",
+    "functional_description": "",
+    "parent_device_id": "",
+    "parentdn": "",
+    "site_id": "X0999",
+    "device_state": "",
+    "software_version": "",
+    "integration_date": "",
+    "end_of_support": "",
+    "tsa_scope": "",
+    "product_id": "",
+    "serial_number": "",
+    "freq_tx_rx_field": "",
+    "hardware_capacity": "",
+    "domain": "RAN",
+    "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+    "tx_clusterimg": "",
+    "tx_type": "",
+    "natspcode": "",
+    "admin_state": "",
+    "subdomain": "FD-LTE",
+    "function": "ENODEB",
+    "iubce_dl_lic": "",
+    "iubce_ul_lic": "",
+    "s1cu_lic": "",
+    "cluster_region": "Mindanao",
+    "cluster_sub_region": "Mindanao",
+    "cluster_province": "MIN_Huawei",
+    "cluster_city": "SMART",
+    "mw_hub": ""
+}
+    </pre></div>
+
+    <p>
+        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/{record id}</i><br>
+        <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+        <span class="font-weight-bold">Permission: </span>Admin User<br>
+        <span class="font-weight-bold">Input: </span>JSON object of device, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+    </p>
+    <div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    <span class="text-primary">"dn": "ABCX0999HULT003",</span>
+    <span class="text-primary">"device_id": "ABCX0999HULT003",</span>
+    "ems_device_id": "ABCX0999HULT003",
+    "device_alias": "",
+    "device_ip": "",
+    <span class="text-warning">"ems_id": "TEST CHANGED VALUE",</span>
+    "vendor_id": "HU",
+    <span class="text-primary">"ne_type": "LT",</span>
+    "model": "",
+    "hardware_description": "",
+    "functional_description": "",
+    "parent_device_id": "",
+    "parentdn": "",
+    "site_id": "X0999",
+    "device_state": "",
+    "software_version": "",
+    "integration_date": "",
+    "end_of_support": "",
+    "tsa_scope": "",
+    "product_id": "",
+    "serial_number": "",
+    "freq_tx_rx_field": "",
+    "hardware_capacity": "",
+    "domain": "RAN",
+    "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+    "tx_clusterimg": "",
+    "tx_type": "",
+    "natspcode": "",
+    "admin_state": "",
+    "subdomain": "FD-LTE",
+    "function": "ENODEB",
+    "iubce_dl_lic": "",
+    "iubce_ul_lic": "",
+    "s1cu_lic": "",
+    "cluster_region": "Mindanao",
+    "cluster_sub_region": "Mindanao",
+    "cluster_province": "MIN_Huawei",
+    "cluster_city": "SMART",
+    "mw_hub": ""
+}
+    </pre></div>
+</div>
+{% endblock content %}

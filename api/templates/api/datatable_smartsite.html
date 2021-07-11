@@ -1,0 +1,51 @@
+{% extends 'api/datatable_nav.html'%}
+{% block content %}
+<h5>Smart Site</h5>
+<div class="small-text">
+    <table id="device" class="table table-striped table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Site Id</th>
+                <th>Site Name</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Province</th>
+                <th>Area</th>
+                <th>AOR</th>
+                <th>Lat</th>
+                <th>Lng</th>
+                <th>Record Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Row 1 Data 1</td>
+                <td>Row 1 Data 2</td>
+                <td>Row 1 Data 3</td>
+                <td>Row 1 Data 4</td>
+                <td>Row 1 Data 5</td>
+                <td>Row 1 Data 6</td>
+                <td>Row 1 Data 7</td>
+                <td>Row 1 Data 8</td>
+                <td>Row 1 Data 9</td>
+                <td>Row 1 Data 10</td>
+                <td>Row 1 Data 11</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="clearfix"></div>
+</div>
+{% endblock content %}
+{% block js %}
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        var oTable = $('#device').dataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'datatable-data-smartsite' %}"
+        });
+    });
+</script>
+{% endblock js %}

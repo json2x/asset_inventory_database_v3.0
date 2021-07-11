@@ -1,0 +1,1202 @@
+{% extends 'api/base_template.html'%}
+{% block content %}
+{% load static %}
+    <div class="content-section text-left">
+        <div class="text-left my-4">
+            <h4 class="my-2">API Documentaion</h4>
+            <p>
+                This API implementation uses JWT (Json Web Token) for request authentication.<br>
+                Below is an image of the flow on how this requests are being handled.
+            </p>
+            <p><img src="{% static 'api/images/client-credentials-grant.png' %}" alt="API Flow"></p>
+            <p>In order to get the the desired response to any <a href="#end-points">end-points</a> of this API, you'll need the ff:
+                <ol>
+                    <li>An active user account</li>
+                    <li>Valid JWT token</li>
+                </ol>
+            </p>
+            
+            <h5>User account</h5>
+            <p>To get an account, just <a href="{% url 'register' %}">register</a> to this page and contact the site administrator to activate your account.</p>
+            <h5>JWT Token</h5>
+            <p>In order to get a JWT token, you must have an active user account and access the <a href="{% url 'obtainToken' %}">/api/token/</a> end-point to obtain the JWT token.</p>
+            <div class="overflow-auto bg-light">
+                <pre>
+curl \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"username": "testuser", "password": "secret123"}' \
+    http://{{ request.get_host }}/api/token/
+
+...
+{
+    "access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU",
+    "refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"
+}
+                </pre>
+            </div>
+            <p>
+                You can use the returned access token to prove authentication for a protected view:
+            </p>
+            <div class="overflow-auto bg-light">
+                <pre>
+curl \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU" \
+    http://{{ request.get_host }}/api/available-end-points/
+                </pre>
+            </div>
+            <p>
+                When this short-lived access token expires, you can use the longer-lived refresh token to obtain another access token:
+            </p>
+            <div class="overflow-auto bg-light">
+                <pre>
+curl \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"}' \
+    http://localhost:8000/api/token/refresh/
+
+    ...
+    {"access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNTY3LCJqdGkiOiJjNzE4ZTVkNjgzZWQ0NTQyYTU0NWJkM2VmMGI0ZGQ0ZSJ9.ekxRxgb9OKmHkfy-zs1Ro_xs1eMLXiR17dIDBVxeT-w"}
+                </pre>
+            </div>
+            <h5 id="end-points">End-points</h5>
+            <div id="quick-links">
+                <p>Quick links:</p>
+                <p><a href="#devices">Devices</a> | <a href="#cells">Cells</a> | <a href="#smartsite">Smart Site</a> | <a href="#smartne">Smart NE</a> | <a href="#aor">AOR</a> | <a href="#location">Location</a></p>
+            </div>
+            <div id="end-points-box">
+                <ul>
+                    <!--- Next list item -->
+                    <li id="devices" class="font-weight-bold">Devices</li>
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 9839,
+    "next": "http://localhost:8000/api/Devices/page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 240994,
+            "dn": "ZAM05927HULT002",
+            "device_id": "ZAM05927HULT002",
+            "ems_device_id": "ZAM05927HULT002",
+            "device_alias": "",
+            "device_ip": "",
+            "ems_id": "U2000_MIN",
+            "vendor_id": "HU",
+            "ne_type": "LT",
+            "model": "",
+            "hardware_description": "",
+            "functional_description": "",
+            "parent_device_id": "",
+            "parentdn": "",
+            "site_id": "5927",
+            "device_state": "",
+            "software_version": "",
+            "integration_date": "",
+            "end_of_support": "",
+            "tsa_scope": "",
+            "product_id": "",
+            "serial_number": "",
+            "freq_tx_rx_field": "",
+            "hardware_capacity": "",
+            "domain": "RAN",
+            "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+            "tx_clusterimg": "",
+            "tx_type": "",
+            "natspcode": "",
+            "admin_state": "",
+            "subdomain": "FD-LTE",
+            "function": "ENODEB",
+            "iubce_dl_lic": "",
+            "iubce_ul_lic": "",
+            "s1cu_lic": "",
+            "cluster_region": "Mindanao",
+            "cluster_sub_region": "Mindanao",
+            "cluster_province": "MIN_Huawei",
+            "cluster_city": "SMART",
+            "mw_hub": "",
+            "record_status": 0,
+            "has_invalid_chars_in_device_name": false
+        },
+        ...
+    ]
+}
+</pre></div>
+                    <p>
+                        <span class="font-weight-bold">URL 1:</span> <i>http://{{ request.get_host }}/api/Devices/{record id}/</i><br>
+                        <span class="font-weight-bold">URL 2:</span> <i>http://{{ request.get_host }}/api/Devices/{record id}/cells/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Filter to specific device by its record id and adding <i class="text-warning">cells/</i> show its children cells <span class="text-muted">(Applicaple to RAN domian)</span><br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 240993,
+    "dn": "ZAM05927HUNB001",
+    "device_id": "ZAM05927HUNB001",
+    "ems_device_id": "ZAM05927HUNB001",
+    "device_alias": "",
+    "device_ip": "",
+    "ems_id": "U2000_MIN",
+    "vendor_id": "HU",
+    "ne_type": "NB",
+    "model": "UMTS",
+    "hardware_description": "",
+    "functional_description": "",
+    "parent_device_id": "HR2807PIPIL",
+    "parentdn": "HR2807PIPIL",
+    "site_id": "5927",
+    "device_state": "",
+    "software_version": "Micro BTS3900 V100R015C10SPC190",
+    "integration_date": "",
+    "end_of_support": "",
+    "tsa_scope": "",
+    "product_id": "",
+    "serial_number": "",
+    "freq_tx_rx_field": "",
+    "hardware_capacity": "",
+    "domain": "RAN",
+    "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+    "tx_clusterimg": "",
+    "tx_type": "",
+    "natspcode": "",
+    "admin_state": "",
+    "subdomain": "3G",
+    "function": "NB",
+    "iubce_dl_lic": "",
+    "iubce_ul_lic": "",
+    "s1cu_lic": "\n",
+    "cluster_region": "Mindanao",
+    "cluster_sub_region": "Mindanao",
+    "cluster_province": "MIN_Huawei",
+    "cluster_city": "SMART",
+    "mw_hub": "",
+    "record_status": 0,
+    "has_invalid_chars_in_device_name": false,
+    "cells": [
+        {
+            "id": 556666,
+            "domain": "RAN",
+            "ems_cell_id": "PCLAUU1",
+            "ems_id": "U2000_MIN",
+            "cell_name": "PCLAUU1",
+            "dn": "PCLAUU1",
+            "site": "5927",
+            "parent_id": "ZAM05927HUNB001",
+            "parent_dn": "ZAM05927HUNB001",
+            "tech": "3G",
+            "band": "2100",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "55052",
+            "sac_ci_eutra": "30654",
+            "rnc_cid": "15111",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "511",
+            "sector_id": "0",
+            "carrier": "1",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1
+        },
+        {
+            "id": 556667,
+            "domain": "RAN",
+            "ems_cell_id": "PCLAUU4",
+            "ems_id": "U2000_MIN",
+            "cell_name": "PCLAUU4",
+            "dn": "PCLAUU4",
+            "site": "5927",
+            "parent_id": "ZAM05927HUNB001",
+            "parent_dn": "ZAM05927HUNB001",
+            "tech": "3G",
+            "band": "2100",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "55052",
+            "sac_ci_eutra": "30654",
+            "rnc_cid": "25114",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "511",
+            "sector_id": "0",
+            "carrier": "2",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1
+        },
+        {
+            "id": 556668,
+            "domain": "RAN",
+            "ems_cell_id": "PCLAUU7",
+            "ems_id": "U2000_MIN",
+            "cell_name": "PCLAUU7",
+            "dn": "PCLAUU7",
+            "site": "5927",
+            "parent_id": "ZAM05927HUNB001",
+            "parent_dn": "ZAM05927HUNB001",
+            "tech": "3G",
+            "band": "2100",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "55052",
+            "sac_ci_eutra": "30654",
+            "rnc_cid": "35111",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "511",
+            "sector_id": "0",
+            "carrier": "3",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1
+        }
+    ]
+}
+</pre></div>
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/filter/?domain={Domain}&ne_type={Ne Type}&device_id={device id}&site_id={siteid}</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output based on filtered field. Max of 100 result items per page.<br>
+                        <span class="font-weight-bold">Filter fields: </span> Shown in table below. At least one parameter is required.<br>
+                            <table class="table table-sm small-text">
+                                <thead><tr><th>Field</th><th>Sample values</th><th>Remarks</th></tr></thead>
+                                <tbody>
+                                    <tr><td>domain</td><td>RAN,OSS,OVIM,SDP,etc..</td><td>One domain per filter</td></tr>
+                                    <tr><td>ne_type</td><td>BT,NB,LT,NFV_VM,SDN_App,OS,OM,etc..</td><td>Can be multiple values, separated by comma</td></tr>
+                                    <tr><td>device_id</td><td>SNJG8248HULT001</td><td>one device name per filter</td></tr>
+                                    <tr><td>site_id</td><td>101,102,G1234</td><td>one site_id per filter</td></tr>
+                                </tbody>
+                            </table>
+                    </p>
+<div class="overflow-auto bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 12399,
+    "next": "http://localhost:8000/api/Devices/filter/?domain=RAN&ne_type=BT&page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 240995,
+            "dn": "ZAM05924HUBT001",
+            "device_id": "ZAM05924HUBT001",
+            "ems_device_id": "ZAM05924HUBT001",
+            "device_alias": "",
+            "device_ip": "",
+            "ems_id": "U2000_MIN",
+            "vendor_id": "HU",
+            "ne_type": "BT",
+            "model": "BTS3900E GSM",
+            "hardware_description": "",
+            "functional_description": "",
+            "parent_device_id": "BSC2711",
+            "parentdn": "BSC2711",
+            "site_id": "5924",
+            "device_state": "",
+            "software_version": "V900R021ENGC10SPC600",
+            "integration_date": "",
+            "end_of_support": "",
+            "tsa_scope": "",
+            "product_id": "",
+            "serial_number": "",
+            "freq_tx_rx_field": "",
+            "hardware_capacity": "",
+            "domain": "RAN",
+            "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+            "tx_clusterimg": "",
+            "tx_type": "",
+            "natspcode": "",
+            "admin_state": "",
+            "subdomain": "2G",
+            "function": "BT",
+            "iubce_dl_lic": "",
+            "iubce_ul_lic": "",
+            "s1cu_lic": "\n",
+            "cluster_region": "Mindanao",
+            "cluster_sub_region": "Mindanao",
+            "cluster_province": "MIN_Huawei",
+            "cluster_city": "SMART",
+            "mw_hub": "",
+            "record_status": 0,
+            "has_invalid_chars_in_device_name": false
+        },
+        ...
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+                        <span class="font-weight-bold">Permission: </span>Admin User<br>
+                        <span class="font-weight-bold">Input: </span>JSON object of device. Sample below.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "dn": "ABCX0999HULT003",
+    "device_id": "ABCX0999HULT003",
+    "ems_device_id": "ABCX0999HULT003",
+    "device_alias": "",
+    "device_ip": "",
+    "ems_id": "TEST",
+    "vendor_id": "HU",
+    "ne_type": "LT",
+    "model": "",
+    "hardware_description": "",
+    "functional_description": "",
+    "parent_device_id": "",
+    "parentdn": "",
+    "site_id": "X0999",
+    "device_state": "",
+    "software_version": "",
+    "integration_date": "",
+    "end_of_support": "",
+    "tsa_scope": "",
+    "product_id": "",
+    "serial_number": "",
+    "freq_tx_rx_field": "",
+    "hardware_capacity": "",
+    "domain": "RAN",
+    "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+    "tx_clusterimg": "",
+    "tx_type": "",
+    "natspcode": "",
+    "admin_state": "",
+    "subdomain": "FD-LTE",
+    "function": "ENODEB",
+    "iubce_dl_lic": "",
+    "iubce_ul_lic": "",
+    "s1cu_lic": "",
+    "cluster_region": "Mindanao",
+    "cluster_sub_region": "Mindanao",
+    "cluster_province": "MIN_Huawei",
+    "cluster_city": "SMART",
+    "mw_hub": ""
+}
+</pre></div>
+
+<p>
+    <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Devices/{record id}</i><br>
+    <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+    <span class="font-weight-bold">Permission: </span>Admin User<br>
+    <span class="font-weight-bold">Input: </span>JSON object of device, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+</p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    <span class="text-primary">"dn": "ABCX0999HULT003",</span>
+    <span class="text-primary">"device_id": "ABCX0999HULT003",</span>
+    "ems_device_id": "ABCX0999HULT003",
+    "device_alias": "",
+    "device_ip": "",
+    <span class="text-warning">"ems_id": "TEST CHANGED VALUE",</span>
+    "vendor_id": "HU",
+    <span class="text-primary">"ne_type": "LT",</span>
+    "model": "",
+    "hardware_description": "",
+    "functional_description": "",
+    "parent_device_id": "",
+    "parentdn": "",
+    "site_id": "X0999",
+    "device_state": "",
+    "software_version": "",
+    "integration_date": "",
+    "end_of_support": "",
+    "tsa_scope": "",
+    "product_id": "",
+    "serial_number": "",
+    "freq_tx_rx_field": "",
+    "hardware_capacity": "",
+    "domain": "RAN",
+    "ne_owner": "NFS_MIN_A3_WFS11_ZAM",
+    "tx_clusterimg": "",
+    "tx_type": "",
+    "natspcode": "",
+    "admin_state": "",
+    "subdomain": "FD-LTE",
+    "function": "ENODEB",
+    "iubce_dl_lic": "",
+    "iubce_ul_lic": "",
+    "s1cu_lic": "",
+    "cluster_region": "Mindanao",
+    "cluster_sub_region": "Mindanao",
+    "cluster_province": "MIN_Huawei",
+    "cluster_city": "SMART",
+    "mw_hub": ""
+}
+</pre></div>
+                    <p class="text-right"><a href="#quick-links">Back to top</a></p>
+                    <!--- Next list item -->
+                    <li id="cells">Cells</li>
+                        <p>
+                            <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Cells/</i><br>
+                            <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                            <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                            <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+                        </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 234300,
+    "next": "http://localhost:8000/api/Cells/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 387808,
+            "domain": "FWB",
+            "ems_cell_id": "1BAC7T1",
+            "ems_id": "U31_TDLTE",
+            "cell_name": "1BAC7T1",
+            "dn": "1BAC7T1",
+            "site": "N1283",
+            "parent_id": "N12831BAC7TZB1(520146)",
+            "parent_dn": "N12831BAC7TZB1(520146)",
+            "tech": "CELL_TDD",
+            "band": "3500",
+            "admin_state": "In use",
+            "alias": "",
+            "lac_tac": "29570.0",
+            "sac_ci_eutra": "133157497.0",
+            "rnc_cid": "",
+            "phy_cid": "36.0",
+            "lcr_cid": "121.0",
+            "mcc": "515.0",
+            "mnc": "3.0",
+            "nodeid": "520146",
+            "sector_id": "",
+            "carrier": "",
+            "ne_type": "TD",
+            "subdomain": "TD-LTE",
+            "function": "ENODEB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "10",
+            "record_status": 0
+        },
+        ...
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Cells/{record id}/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Filter to specific cell by its record id<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 633981,
+    "domain": "RAN",
+    "ems_cell_id": "CGTEAA1",
+    "ems_id": "ENM_NORTH",
+    "cell_name": "CGTEAA1",
+    "dn": "SubNetwork=ONRM_ROOT_MO_R/SubNetwork=NL_LTE_RADIONODE/MeContext=APL05338ERLT001/ManagedElement=APL05338ERLT001/ENodeBFunction=1/EUtranCellTDD=CGTEAA1",
+    "site": "5338",
+    "parent_id": "APL05338ERLT001",
+    "parent_dn": "SubNetwork=ONRM_ROOT_MO_R/SubNetwork=NL_LTE_RADIONODE/MeContext=APL05338ERLT001/ManagedElement=APL05338ERLT001",
+    "tech": "TDD",
+    "band": "2300",
+    "admin_state": "UNLOCKED",
+    "alias": "",
+    "lac_tac": "29070",
+    "sac_ci_eutra": "30780281",
+    "rnc_cid": "",
+    "phy_cid": "",
+    "lcr_cid": "",
+    "mcc": "515",
+    "mnc": "3",
+    "nodeid": "120235",
+    "sector_id": "",
+    "carrier": "",
+    "ne_type": "LT",
+    "subdomain": "TD-LTE",
+    "function": "ENODEB",
+    "sdcch_cap": "",
+    "tch_cap": "",
+    "azimuth": "",
+    "record_status": 0
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Cells/filter/?parent_id={parent id}&cell_name={cell name}&site_id={site id}&subdomain={subdomain}</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output based on filtered field. Max of 100 result items per page.<br>
+                        <span class="font-weight-bold">Filter fields: </span> Shown in table below. At least one parameter is required.<br>
+                            <table class="table table-sm small-text">
+                                <thead><tr><th>Field</th><th>Sample values</th><th>Remarks</th></tr></thead>
+                                <tbody>
+                                    <tr><td>parent_id</td><td>SNJG8248HULT001</td><td>one parent_id per filter</td></tr>
+                                    <tr><td>site_id</td><td>101,102,G1234</td><td>one site_id per filter</td></tr>
+                                    <tr><td>cell_name</td><td>RAN,OSS,OVIM,SDP,etc..</td><td>One cell name per filter</td></tr>
+                                    <tr><td>subdomain</td><td>2G,3G,FD-LTE,TD-LTE</td><td>Can be multiple values, separated by comma</td></tr>
+                                </tbody>
+                            </table>
+                    </p>
+<div class="overflow-auto bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 21,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 406853,
+            "domain": "RAN",
+            "ems_cell_id": "BAGMBN1",
+            "ems_id": "U2000_PAWS",
+            "cell_name": "BAGMBN1",
+            "dn": "BAGMBN1",
+            "site": "101",
+            "parent_id": "CLS00101HUNB001",
+            "parent_dn": "CLS00101HUNB001",
+            "tech": "3G",
+            "band": "900",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "15045",
+            "sac_ci_eutra": "15103",
+            "rnc_cid": "60011",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "1",
+            "sector_id": "0",
+            "carrier": "6",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1,
+            "device": 273015
+        },
+        {
+            "id": 406855,
+            "domain": "RAN",
+            "ems_cell_id": "BAGMBN3",
+            "ems_id": "U2000_PAWS",
+            "cell_name": "BAGMBN3",
+            "dn": "BAGMBN3",
+            "site": "101",
+            "parent_id": "CLS00101HUNB001",
+            "parent_dn": "CLS00101HUNB001",
+            "tech": "3G",
+            "band": "900",
+            "admin_state": "ACTIVATED",
+            "alias": "",
+            "lac_tac": "15045",
+            "sac_ci_eutra": "15105",
+            "rnc_cid": "60013",
+            "phy_cid": "",
+            "lcr_cid": "",
+            "mcc": "515",
+            "mnc": "03",
+            "nodeid": "1",
+            "sector_id": "2",
+            "carrier": "6",
+            "ne_type": "NB",
+            "subdomain": "3G",
+            "function": "NB",
+            "sdcch_cap": "",
+            "tch_cap": "",
+            "azimuth": "",
+            "record_status": 1,
+            "device": 273015
+        },
+        ...
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Cells/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+                        <span class="font-weight-bold">Permission: </span>Admin User<br>
+                        <span class="font-weight-bold">Input: </span>JSON object of cell. Notice <i class="text-danger">device</i> record id highlighted in the sample below.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "domain": "RAN",
+    "ems_cell_id": "XABCDE1",
+    "ems_id": "ENM_NORTH",
+    "cell_name": "XABCDE1",
+    "dn": "XABCDE1",
+    "site": "X0999",
+    "parent_id": "ABCX0999HULT003",
+    "parent_dn": "ABCX0999HULT003",
+    "tech": "TDD",
+    "band": "2300",
+    "admin_state": "UNLOCKED",
+    "alias": "",
+    "lac_tac": "29070",
+    "sac_ci_eutra": "30780281",
+    "rnc_cid": "",
+    "phy_cid": "",
+    "lcr_cid": "",
+    "mcc": "515",
+    "mnc": "3",
+    "nodeid": "120235",
+    "sector_id": "",
+    "carrier": "",
+    "ne_type": "LT",
+    "subdomain": "TD-LTE",
+    "function": "ENODEB",
+    "sdcch_cap": "",
+    "tch_cap": "",
+    "azimuth": "",
+    <i class="text-danger">"device": 275126</i>
+}
+</pre></div>
+
+<p>
+    <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Cells/{record id}</i><br>
+    <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+    <span class="font-weight-bold">Permission: </span>Admin User<br>
+    <span class="font-weight-bold">Input: </span>JSON object of cell, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+</p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "domain": "RAN",
+    "ems_cell_id": "XABCDE1",
+    <span class="text-primary">"ems_id": "ENM_NORTH",</span>
+    <span class="text-primary">"cell_name": "XABCDE1",</span>
+    <span class="text-primary">"dn": "XABCDE1",</span>
+    <span class="text-primary">"site": "X0999",</span>
+    <span class="text-primary">"parent_id": "ABCX0999HULT003",</span>
+    <span class="text-warning">"parent_dn": "ABCX0999HULT003/TEST_CHANGED/VALUE",</span>
+    "tech": "TDD",
+    <span class="text-primary">"band": "2300",</span>
+    "admin_state": "UNLOCKED",
+    "alias": "",
+    "lac_tac": "29070",
+    "sac_ci_eutra": "30780281",
+    "rnc_cid": "",
+    "phy_cid": "",
+    "lcr_cid": "",
+    "mcc": "515",
+    "mnc": "3",
+    "nodeid": "120235",
+    "sector_id": "",
+    "carrier": "",
+    "ne_type": "LT",
+    <span class="text-primary">"subdomain": "FD-LTE",</span>
+    "function": "ENODEB",
+    "sdcch_cap": "",
+    "tch_cap": "",
+    "azimuth": "",
+    "record_status": 1,
+    <span class="text-primary">"device": 275126</span>
+}
+</pre></div>
+                    
+                    <p class="text-right"><a href="#quick-links">Back to top</a></p>
+                    <!--- Next list item -->
+                    <li id="smartsite">SmartSite</li>
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 9692,
+    "next": "http://localhost:8000/api/SmartSite/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 525,
+            "siteid": "101",
+            "sitename": "BAGUMBONG",
+            "address": "Blk 15 Lot 6 Carolina St., Mcb-2 Subd., Bagumbong, Caloocan City",
+            "location": {
+                "id": 1618,
+                "city": "CALOOCAN CITY",
+                "province": "METRO MANILA",
+                "region": "NCR",
+                "area": "MM"
+            },
+            "toc_aor": {
+                "id": 4,
+                "cluster": "NFS_MM_WMM_WFS4",
+                "area": "MM"
+            },
+            "lat": "14.747710000000000",
+            "lng": "121.021980000000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:03Z"
+        },
+        {
+            "id": 526,
+            "siteid": "102",
+            "sitename": "BRIXTON",
+            "address": "Samano Street, Area A, Libis, Camarin, Caloocan City",
+            "location": {
+                "id": 1618,
+                "city": "CALOOCAN CITY",
+                "province": "METRO MANILA",
+                "region": "NCR",
+                "area": "MM"
+            },
+            "toc_aor": {
+                "id": 4,
+                "cluster": "NFS_MM_WMM_WFS4",
+                "area": "MM"
+            },
+            "lat": "14.767210000000000",
+            "lng": "121.044460000000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:03Z"
+        },
+        ...
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL 1:</span> <i>http://{{ request.get_host }}/api/SmartSite/{smartsite id}/</i><br>
+                        <span class="font-weight-bold">URL 2:</span> <i>http://{{ request.get_host }}/api/SmartSite/{smartsite id}/nes/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Filter to specific device by its record id and adding <i class="text-warning">nes/</i> show its children NEs <span class="text-muted">(Applicaple to RAN domian)</span><br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 525,
+    "siteid": "101",
+    "sitename": "BAGUMBONG",
+    "address": "Blk 15 Lot 6 Carolina St., Mcb-2 Subd., Bagumbong, Caloocan City",
+    "location": 1618,
+    "toc_aor": 4,
+    "lat": "14.747710000000000",
+    "lng": "121.021980000000000",
+    "record_status": 1,
+    "update_at": "2020-05-20T23:30:03Z",
+    "smartne": [
+        {
+            "id": 66,
+            "siteid": "101",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:59Z"
+        },
+        {
+            "id": 67,
+            "siteid": "101",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z"
+        },
+        {
+            "id": 12411,
+            "siteid": "101",
+            "band": "900",
+            "tech": "3G",
+            "record_status": 1,
+            "update_at": "2020-05-21T00:16:08Z"
+        },
+        {
+            "id": 12412,
+            "siteid": "101",
+            "band": "2100",
+            "tech": "3G",
+            "record_status": 1,
+            "update_at": "2020-05-21T00:16:08Z"
+        },
+        {
+            "id": 29029,
+            "siteid": "101",
+            "band": "850",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 29229,
+            "siteid": "101",
+            "band": "2100",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 29298,
+            "siteid": "101",
+            "band": "700",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 30372,
+            "siteid": "101",
+            "band": "1800",
+            "tech": "FD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        },
+        {
+            "id": 48935,
+            "siteid": "101",
+            "band": "3500",
+            "tech": "TD-LTE",
+            "record_status": 0,
+            "update_at": "2020-05-20T23:30:43Z"
+        }
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/filter/?site_id={site id}&province={province name}&city={city name}&toc_aor={cluster name}&l_area={loc area}&t_area={aor area}</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output based on filtered field. Max of 100 result items per page.<br>
+                        <span class="font-weight-bold">Filter fields: </span> Shown in table below. At least one parameter is required.<br>
+                            <table class="table table-sm small-text">
+                                <thead><tr><th>Field</th><th>Sample values</th><th>Remarks</th></tr></thead>
+                                <tbody>
+                                    <tr><td>site_id</td><td>101,102,G1234</td><td>one site_id per filter</td></tr>
+                                    <tr><td>province</td><td>METRO MANILA,CEBU,DAVAO DEL SUR</td><td>one province name per filter</td></tr>
+                                    <tr><td>city</td><td>Makati City, Cebu City, Davao City</td><td>One city name per filter</td></tr>
+                                    <tr><td>l_area</td><td>MM,NL,SL,VIS,MIN</td><td>Area based on location. One l_area per filter</td></tr>
+                                    <tr><td>toc_aor</td><td>NFS_MM_NMM_WFS1</td><td>One cluster name per filter</td></tr>
+                                    <tr><td>t_area</td><td>MM,NL,SL,VIS,MIN</td><td>Area based on site AOR. One t_area per filter</td></tr>
+                                </tbody>
+                            </table>
+                    </p>
+<div class="overflow-auto bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 182,
+    "next": "http://localhost:8000/api/SmartSite/filter/?city=davao+city&l_area=min&page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 1601,
+            "siteid": "4433",
+            "sitename": "DAVAO - SALUMAY",
+            "address": "Brgy. Baganihan, Marilog District, Davao City",
+            "location": {
+                "id": 1471,
+                "city": "DAVAO CITY",
+                "province": "DAVAO DEL SUR",
+                "region": "XI",
+                "area": "MIN"
+            },
+            "toc_aor": {
+                "id": 67,
+                "cluster": "NFS_MIN_A2_WFS5_SDVO",
+                "area": "MIN"
+            },
+            "lat": "6.990260000000000",
+            "lng": "125.478584290000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:08Z"
+        },
+        {
+            "id": 1602,
+            "siteid": "4434",
+            "sitename": "SIRAWAN - TORIL",
+            "address": "Purok 3, Sirawan Toril / Davao City",
+            "location": {
+                "id": 1471,
+                "city": "DAVAO CITY",
+                "province": "DAVAO DEL SUR",
+                "region": "XI",
+                "area": "MIN"
+            },
+            "toc_aor": {
+                "id": 67,
+                "cluster": "NFS_MIN_A2_WFS5_SDVO",
+                "area": "MIN"
+            },
+            "lat": "6.990260000000000",
+            "lng": "125.478584290000000",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:08Z"
+        },
+        ...
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+                        <span class="font-weight-bold">Permission: </span>Admin User<br>
+                        <span class="font-weight-bold">Input: </span>JSON object of smart site. Sample below.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "siteid": "X0999",
+    "sitename": "TEST",
+    "address": "Blk 15 Lot 6 Test St., Test Subd., Test, Test City",
+    "location": 1618,
+    "toc_aor": 4,
+    "lat": "14.747710000000000",
+    "lng": "121.021980000000000"
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartSite/{record id}</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+                        <span class="font-weight-bold">Permission: </span>Admin User<br>
+                        <span class="font-weight-bold">Input: </span>JSON object of smart site, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    <span class="text-primary">"siteid": "X0992",</span>
+    <span class="text-primary">"sitename": "TEST SITE",</span>
+    "address": "Blk 15 Lot 6 Test St., Test Subd., Test, Test City",
+    "location": 1618,
+    <span class="text-warning">"toc_aor": 4,</span>
+    "lat": "14.747710000000000",
+    "lng": "121.021980000000000"
+}
+</pre></div>
+
+                    <p class="text-right"><a href="#quick-links">Back to top</a></p>
+                    <!--- Next list item -->
+                    <li id="smartne">SmartNe</li>
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 52628,
+    "next": "http://localhost:8000/api/SmartNe/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 66,
+            "siteid": "101",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:30:59Z",
+            "smartsite": 525
+        },
+        {
+            "id": 67,
+            "siteid": "101",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 525
+        },
+        {
+            "id": 68,
+            "siteid": "102",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 526
+        },
+        {
+            "id": 69,
+            "siteid": "102",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 526
+        },
+        {
+            "id": 70,
+            "siteid": "103",
+            "band": "900",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 527
+        },
+        {
+            "id": 71,
+            "siteid": "103",
+            "band": "1800",
+            "tech": "2G",
+            "record_status": 1,
+            "update_at": "2020-05-20T23:31:00Z",
+            "smartsite": 527
+        },
+        ...
+    ]
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/{cell id}/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Filter to specific NE by its record id<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "id": 70,
+    "siteid": "103",
+    "band": "900",
+    "tech": "2G",
+    "record_status": 1,
+    "update_at": "2020-05-20T23:31:00Z",
+    "smartsite": 527
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-warning">POST</i><br>
+                        <span class="font-weight-bold">Permission: </span>Admin User<br>
+                        <span class="font-weight-bold">Input: </span>JSON object of NE. Notice <i class="text-danger">smartsite</i> record id highlighted in the sample below.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "siteid": "103",
+    "band": "2300",
+    "tech": "5G",
+    <i class="text-danger">"smartsite": 527</i>
+}
+</pre></div>
+
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/SmartNe/{record id}</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-primary">PUT/PATCH</i><br>
+                        <span class="font-weight-bold">Permission: </span>Admin User<br>
+                        <span class="font-weight-bold">Input: </span>JSON object of smart ne, can be all or partial. Highlighted text in the sample below are required for <i class="text-primary">PUT</i> method.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+    {
+        <span class="text-primary">"siteid": "103",</span>
+        <span class="text-primary">"band": "2300",</span>
+        <span class="text-primary">"tech": "5G",</span>
+        <span class="text-primary">"smartsite": 527</span>
+    }
+</pre></div>
+
+                    <p class="text-right"><a href="#quick-links">Back to top</a></p>
+                    <!-- <li>SiteNeAsset: "http://{{ request.get_host }}/api/SiteNeAsset/"</li> -->
+                    <li id="aor">TocAor</li>
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/TocAor/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 74,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "cluster": "NFS_MM_NMM_WFS1",
+            "area": "MM",
+            "supervisor": "Warren S. Sedigo",
+            "manager": "Sherwin Kenneth A. Cañete"
+        },
+        {
+            "id": 2,
+            "cluster": "NFS_MM_NMM_WFS2",
+            "area": "MM",
+            "supervisor": "Patrick John F. Reus",
+            "manager": "Sherwin Kenneth A. Cañete"
+        },
+        {
+            "id": 3,
+            "cluster": "NFS_MM_NMM_WFS3",
+            "area": "MM",
+            "supervisor": "Joel T. Ignacio",
+            "manager": "Sherwin Kenneth A. Cañete"
+        },
+        ...
+    ]
+}
+</pre></div>
+                    
+                    <p class="text-right"><a href="#quick-links">Back to top</a></p>
+                    <!--- Next list item -->
+                    <li id="location">Location</li>
+                    <p>
+                        <span class="font-weight-bold">URL:</span> <i>http://{{ request.get_host }}/api/Location/</i><br>
+                        <span class="font-weight-bold">Method: </span><i class="text-success">GET</i><br>
+                        <span class="font-weight-bold">Permission: </span>Authenticated User<br>
+                        <span class="font-weight-bold">Output: </span>Paginated output with max of 100 result items per page.<br>
+                    </p>
+<div class="bg-light json-response"><pre style="font-size: 11px;">
+{
+    "count": 1634,
+    "next": "http://localhost:8000/api/Location/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "code": 150708000,
+            "city": "AKBAR",
+            "province": "BASILAN",
+            "region": "ARMM",
+            "regionname": "Autonomous Region in Muslim Mindanao",
+            "area": "MIN"
+        },
+        {
+            "id": 2,
+            "code": 150709000,
+            "city": "AL-BARKA",
+            "province": "BASILAN",
+            "region": "ARMM",
+            "regionname": "Autonomous Region in Muslim Mindanao",
+            "area": "MIN"
+        },
+        {
+            "id": 3,
+            "code": 99701000,
+            "city": "CITY OF ISABELA (Capital)",
+            "province": "BASILAN",
+            "region": "ARMM",
+            "regionname": "Autonomous Region in Muslim Mindanao",
+            "area": "MIN"
+        },
+        ...
+    ]
+}
+</pre></div>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

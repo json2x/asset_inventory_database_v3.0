@@ -81,9 +81,11 @@ WSGI_APPLICATION = 'AssetInventory.wsgi.application'
 DATABASES = {
 	'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ovim_assetinventory',
+        #'NAME': 'ovim_assetinventory',
+        'NAME': 'AssetInventory',
 		'USER': 'root',
-		'PASSWORD': 'P@ssw0rd123',
+		#'PASSWORD': 'P@ssw0rd123',
+        'PASSWORD': 'root',
 		'HOST': 'localhost',
 		'PORT': '3306',
     }

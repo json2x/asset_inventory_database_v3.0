@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'edrar.apps.EdrarConfig',
     'users.apps.UsersConfig',
     'rest_framework',
     'crispy_forms',

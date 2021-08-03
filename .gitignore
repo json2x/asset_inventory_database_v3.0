@@ -1,4 +1,8 @@
 ovim_asset_inventory.sql
 *.pyc
 api/migrations/*
+<<<<<<< HEAD
 edrar/static/edrar/dumps/*
+=======
+edrar/static/edrar/dumps/*
+>>>>>>> jcm-edrar-app

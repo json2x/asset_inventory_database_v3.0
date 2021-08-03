@@ -6,5 +6,5 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('edrar/', views.home, name='edrar_home'),
-    
+    path('edrar/activity/add', views.activity_add, name='edrar_add'),
 ]

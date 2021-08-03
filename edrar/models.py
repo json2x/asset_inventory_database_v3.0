@@ -29,7 +29,7 @@ class DailyActivityModified(models.Model):
     field = models.CharField(max_length=250, blank=True, null=True)
     old_value = models.CharField(max_length=250, blank=True, null=True)
     new_value = models.CharField(max_length=250, blank=True, null=True)
-    
+
 class DailyActivity(models.Model):
     date_logged = models.DateTimeField()
     tech = models.CharField(max_length=250)
@@ -84,7 +84,3 @@ class DailyActivity_Cell(models.Model):
     cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
     create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
     update_flag = models.BooleanField()
-    
-
-    
-    

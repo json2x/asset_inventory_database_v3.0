@@ -15,45 +15,45 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Device(models.Model):
-    dn = models.CharField(db_column='DN', max_length=250, blank=True, null=True)  # Field name made lowercase.
-    device_id = models.CharField(db_column='Device ID', max_length=250)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    ems_device_id = models.CharField(db_column='EMS Device ID', max_length=250, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    device_alias = models.CharField(db_column='Device Alias', max_length=250, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    device_ip = models.CharField(db_column='Device IP', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    ems_id = models.CharField(db_column='EMS ID', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    vendor_id = models.CharField(db_column='Vendor ID', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    ne_type = models.CharField(db_column='NE Type', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    model = models.CharField(db_column='Model', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    hardware_description = models.CharField(db_column='Hardware Description', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    functional_description = models.CharField(db_column='Functional Description', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    parent_device_id = models.CharField(db_column='Parent Device ID', max_length=250, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    parentdn = models.CharField(db_column='ParentDN', max_length=250, blank=True, null=True)  # Field name made lowercase.
-    site_id = models.CharField(db_column='Site ID', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    device_state = models.CharField(db_column='Device State', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    software_version = models.CharField(db_column='Software Version', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    integration_date = models.CharField(db_column='Integration Date', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    end_of_support = models.CharField(db_column='End of Support', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    tsa_scope = models.CharField(db_column='TSA Scope', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    product_id = models.CharField(db_column='Product ID', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    serial_number = models.CharField(db_column='Serial Number', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    freq_tx_rx_field = models.CharField(db_column='FREQ (TX_RX)', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'.
-    hardware_capacity = models.CharField(db_column='Hardware Capacity', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    domain = models.CharField(db_column='Domain', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    ne_owner = models.CharField(db_column='NE Owner', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    tx_clusterimg = models.CharField(db_column='TX Clusterimg', max_length=100, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    tx_type = models.CharField(db_column='TX Type', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    natspcode = models.CharField(db_column='NATSPCODE', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    admin_state = models.CharField(db_column='Admin State', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    subdomain = models.CharField(db_column='SUBDOMAIN', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    function = models.CharField(db_column='FUNCTION', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    iubce_dl_lic = models.CharField(db_column='IUBCE DL LIC', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    iubce_ul_lic = models.CharField(db_column='IUBCE UL LIC', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    s1cu_lic = models.CharField(db_column='S1CU LIC', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    cluster_region = models.CharField(db_column='Cluster Region', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    cluster_sub_region = models.CharField(db_column='Cluster Sub Region', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    cluster_province = models.CharField(db_column='Cluster Province', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    cluster_city = models.CharField(db_column='Cluster City', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    mw_hub = models.CharField(db_column='MW HUB', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    dn = models.CharField(max_length=250, blank=True, null=True)  # db_column='DN'
+    device_id = models.CharField(max_length=250)  # db_column='Device ID'
+    ems_device_id = models.CharField(max_length=250, blank=True, null=True)  # db_column='EMS Device ID'
+    device_alias = models.CharField(max_length=250, blank=True, null=True)  # db_column='Device Alias'
+    device_ip = models.CharField(max_length=50, blank=True, null=True)  # db_column='Device IP'
+    ems_id = models.CharField(max_length=50, blank=True, null=True)  # db_column='EMS ID'
+    vendor_id = models.CharField(max_length=10, blank=True, null=True)  # db_column='Vendor ID'
+    ne_type = models.CharField(max_length=10, blank=True, null=True)  # db_column='NE Type'
+    model = models.CharField(max_length=50, blank=True, null=True)  # Field name made lowercase.
+    hardware_description = models.CharField(max_length=50, blank=True, null=True)  # db_column='Hardware Description'
+    functional_description = models.CharField(max_length=50, blank=True, null=True)  # db_column='Functional Description'
+    parent_device_id = models.CharField(max_length=250, blank=True, null=True)  # db_column='Parent Device ID'
+    parentdn = models.CharField(max_length=250, blank=True, null=True)  # db_column='ParentDN'
+    site_id = models.CharField(max_length=10, blank=True, null=True)  # db_column='Site ID'
+    device_state = models.CharField(max_length=50, blank=True, null=True)  # db_column='Device State'
+    software_version = models.CharField(max_length=100, blank=True, null=True)  # db_column='Software Version'
+    integration_date = models.CharField( max_length=100, blank=True, null=True)  # db_column='Integration Date
+    end_of_support = models.CharField(max_length=100, blank=True, null=True)  # db_column='End of Support'
+    tsa_scope = models.CharField(max_length=100, blank=True, null=True)  # db_column='TSA Scope'
+    product_id = models.CharField(max_length=100, blank=True, null=True)  # db_column='Product ID'
+    serial_number = models.CharField(max_length=100, blank=True, null=True)  # db_column='Serial Number'
+    freq_tx_rx_field = models.CharField(max_length=50, blank=True, null=True)  # db_column='FREQ (TX_RX)'
+    hardware_capacity = models.CharField(max_length=50, blank=True, null=True)  # db_column='Hardware Capacity'
+    domain = models.CharField(max_length=30, blank=True, null=True)  # db_column='Domain'
+    ne_owner = models.CharField(max_length=50, blank=True, null=True)  # db_column='NE Owner'
+    tx_clusterimg = models.CharField(max_length=100, blank=True, null=True)  # db_column='TX Clusterimg'
+    tx_type = models.CharField(max_length=10, blank=True, null=True)  # db_column='TX Type'
+    natspcode = models.CharField(max_length=50, blank=True, null=True)  # db_column='NATSPCODE'
+    admin_state = models.CharField( max_length=50, blank=True, null=True)  # db_column='Admin State
+    subdomain = models.CharField(max_length=50, blank=True, null=True)  # db_column='SUBDOMAIN'
+    function = models.CharField(max_length=50, blank=True, null=True)  # db_column='FUNCTION'
+    iubce_dl_lic = models.CharField(max_length=10, blank=True, null=True)  # db_column='IUBCE DL LIC'
+    iubce_ul_lic = models.CharField(max_length=10, blank=True, null=True)  # db_column='IUBCE UL LIC'
+    s1cu_lic = models.CharField(max_length=10, blank=True, null=True)  # db_column='S1CU LIC'
+    cluster_region = models.CharField(max_length=50, blank=True, null=True)  # db_column='Cluster Region'
+    cluster_sub_region = models.CharField(max_length=50, blank=True, null=True)  # db_column='Cluster Sub Region'
+    cluster_province = models.CharField(max_length=50, blank=True, null=True)  # db_column='Cluster Province'
+    cluster_city = models.CharField(max_length=50, blank=True, null=True)  # db_column='Cluster City'
+    mw_hub = models.CharField(max_length=10, blank=True, null=True)  # db_column='MW HUB'
     record_status = models.IntegerField(default=1)
 
     def __str__(self):
@@ -76,34 +76,34 @@ class Device(models.Model):
 
 
 class Cell(models.Model):
-    domain = models.CharField(db_column='Domain', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    ems_cell_id = models.CharField(db_column='EMS Cell ID', max_length=250, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    ems_id = models.CharField(db_column='EMS ID', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    cell_name = models.CharField(db_column='Cell Name', max_length=50)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    dn = models.CharField(db_column='DN', max_length=250, blank=True, null=True)  # Field name made lowercase.
-    site = models.CharField(db_column='Site', max_length=10)  # Field name made lowercase.
-    parent_id = models.CharField(db_column='Parent ID', max_length=250)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    parent_dn = models.CharField(db_column='Parent DN', max_length=250, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    tech = models.CharField(db_column='Tech', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    band = models.CharField(db_column='Band', max_length=5)  # Field name made lowercase.
-    admin_state = models.CharField(db_column='Admin State', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    alias = models.CharField(db_column='Alias', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    lac_tac = models.CharField(db_column='LAC TAC', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    sac_ci_eutra = models.CharField(db_column='SAC CI EUTRA', max_length=50, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    rnc_cid = models.CharField(db_column='RNC CID', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    phy_cid = models.CharField(db_column='PHY CID', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    lcr_cid = models.CharField(db_column='LCR CID', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    mcc = models.CharField(db_column='MCC', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    mnc = models.CharField(db_column='MNC', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    nodeid = models.CharField(db_column='NODEID', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    sector_id = models.CharField(db_column='SECTOR ID', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    carrier = models.CharField(db_column='CARRIER', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    ne_type = models.CharField(db_column='NE TYPE', max_length=5, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    subdomain = models.CharField(db_column='SUBDOMAIN', max_length=10)  # Field name made lowercase.
-    function = models.CharField(db_column='FUNCTION', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    sdcch_cap = models.CharField(db_column='SDCCH CAP', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    tch_cap = models.CharField(db_column='TCH CAP', max_length=10, blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    azimuth = models.CharField(db_column='Azimuth', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    domain = models.CharField(max_length=10, blank=True, null=True)  # db_column='Domain'
+    ems_cell_id = models.CharField(max_length=250, blank=True, null=True)  # db_column='EMS Cell ID'
+    ems_id = models.CharField(max_length=50, blank=True, null=True)  # db_column='EMS ID'
+    cell_name = models.CharField(max_length=50)  # db_column='Cell Name'
+    dn = models.CharField(max_length=250, blank=True, null=True)  # db_column='DN'
+    site = models.CharField(max_length=10)  # db_column='Site'
+    parent_id = models.CharField( max_length=250)  # db_column='Parent ID
+    parent_dn = models.CharField(max_length=250, blank=True, null=True)  # db_column='Parent DN'
+    tech = models.CharField(max_length=50, blank=True, null=True)  # db_column='Tech'
+    band = models.CharField(max_length=5)  # db_column='Band'
+    admin_state = models.CharField(max_length=50, blank=True, null=True)  # db_column='Admin State'
+    alias = models.CharField(max_length=50, blank=True, null=True)  # db_column='Alias'
+    lac_tac = models.CharField(max_length=10, blank=True, null=True)  # db_column='LAC TAC'
+    sac_ci_eutra = models.CharField(max_length=50, blank=True, null=True)  # db_column='SAC CI EUTRA'
+    rnc_cid = models.CharField(max_length=10, blank=True, null=True)  # db_column='RNC CID'
+    phy_cid = models.CharField(max_length=10, blank=True, null=True)  # db_column='PHY CID'
+    lcr_cid = models.CharField(max_length=10, blank=True, null=True)  # db_column='LCR CID
+    mcc = models.CharField(max_length=5, blank=True, null=True)  # db_column='MCC'
+    mnc = models.CharField(max_length=5, blank=True, null=True)  # db_column='MNC'
+    nodeid = models.CharField(max_length=10, blank=True, null=True)  # db_column='NODEID'
+    sector_id = models.CharField(max_length=10, blank=True, null=True)  # db_column='SECTOR ID
+    carrier = models.CharField(max_length=10, blank=True, null=True)  # db_column='CARRIER
+    ne_type = models.CharField(max_length=5, blank=True, null=True)  # db_column='NE TYPE'
+    subdomain = models.CharField(max_length=10)  # db_column='SUBDOMAIN
+    function = models.CharField(max_length=10, blank=True, null=True)  # db_column='FUNCTION'
+    sdcch_cap = models.CharField(max_length=10, blank=True, null=True)  # db_column='SDCCH CAP'
+    tch_cap = models.CharField(max_length=10, blank=True, null=True)  # db_column='TCH CAP'
+    azimuth = models.CharField(max_length=50, blank=True, null=True)  # db_column='Azimut
     record_status = models.IntegerField(default=1)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
 
@@ -219,434 +219,435 @@ class DeviceSyncStatus(models.Model):
         db_table = 'device_sync_status'
 
 class AccessConstraint(models.Model):
-    area = models.CharField(db_column='DN', max_length=5, blank=True, null=True)
-    site_id = models.CharField(db_column='Site ID', max_length=5, blank=True, null=True)
-    exact_date = models.CharField(db_column='Exact Date', max_length=5, blank=True, null=True)
-    day_of_month = models.CharField(db_column='Day of Month', max_length=10, blank=True, null=True)
-    day_of_week = models.CharField(db_column='Day of Week', max_length=10, blank=True, null=True)
-    start_time = models.CharField(db_column='Start Time', max_length=5, blank=True, null=True)
-    end_time = models.CharField(db_column='End Time', max_length=5, blank=True, null=True)
-    restricted_time = models.CharField(db_column='Restricted Time', max_length=10, blank=True, null=True)
-    site_name = models.CharField(db_column='Site Name', max_length=80, blank=True, null=True)
+    area = models.CharField(max_length=5, blank=True, null=True) # db_column='DN',
+    site_id = models.CharField(max_length=5, blank=True, null=True) # db_column='Site ID',
+    exact_date = models.CharField(max_length=5, blank=True, null=True) # db_column='Exact Date',
+    day_of_month = models.CharField(max_length=10, blank=True, null=True) # db_column='Day of Month',
+    day_of_week = models.CharField(max_length=10, blank=True, null=True) # db_column='Day of Week',
+    start_time = models.CharField(max_length=5, blank=True, null=True) # db_column='Start Time',
+    end_time = models.CharField(max_length=5, blank=True, null=True) # db_column='End Time',
+    restricted_time = models.CharField(max_length=10, blank=True, null=True) # db_column='Restricted Time',
+    site_name = models.CharField(max_length=80, blank=True, null=True) # db_column='Site Name',
 
     class Meta:
         db_table = 'accessconstraint'
 
 class LR_3G_IMA_GRP(models.Model):
-    ems_id = models.CharField(db_column='EMS_ID', max_length=10, blank=True, null=True)
-    idnum = models.CharField(db_column='IDNUM', max_length=130, blank=True, null=True)
-    dn = models.CharField(db_column='DN', max_length=130, blank=True, null=True)
-    parent_id = models.CharField(db_column='Parent ID', max_length=20, blank=True, null=True)
-    parent_dn = models.CharField(db_column='Parent DN', max_length=130, blank=True, null=True)
+    ems_id = models.CharField(max_length=10, blank=True, null=True) # db_column='EMS_ID'
+    idnum = models.CharField(max_length=130, blank=True, null=True) # db_column='IDNUM
+    dn = models.CharField(max_length=130, blank=True, null=True) # db_column='DN'
+    parent_id = models.CharField(max_length=20, blank=True, null=True) # db_column='Parent ID'
+    parent_dn = models.CharField(max_length=130, blank=True, null=True) # db_column='Parent DN'
 
     class Meta:
         db_table = 'lr_3g_ima_grp'
 
 class LR_3G_IMA_LNK(models.Model):
-    ems_id = models.CharField(db_column='EMS_ID', max_length=10, blank=True, null=True)
-    idnum = models.CharField(db_column='IDNUM', max_length=140, blank=True, null=True)
-    dn = models.CharField(db_column='DN', max_length=140, blank=True, null=True)
-    parent_id = models.CharField(db_column='Parent ID', max_length=130, blank=True, null=True)
-    parent_dn = models.CharField(db_column='Parent DN', max_length=130, blank=True, null=True)
+    ems_id = models.CharField(max_length=10, blank=True, null=True) # db_column='EMS_ID'
+    idnum = models.CharField(max_length=140, blank=True, null=True) # db_column='IDNUM'
+    dn = models.CharField(max_length=140, blank=True, null=True) # db_column='DN'
+    parent_id = models.CharField(max_length=130, blank=True, null=True) # db_column='Parent ID'
+    parent_dn = models.CharField(max_length=130, blank=True, null=True) # db_column='Parent DN'
 
     class Meta:
         #managed = False
         db_table = 'lr_3g_ima_lnk'
 
 class LRBandwidth(models.Model):
-    device_id = models.CharField(db_column='Device ID', max_length=60, blank=True, null=True)
-    bandwidth = models.CharField(db_column= 'Bandwidth', max_length=15, blank=True, null=True)
-    tech = models.CharField(db_column='Tech', max_length=20, blank=True, null=True)
+    device_id = models.CharField(max_length=60, blank=True, null=True) # db_column='Device ID'
+    bandwidth = models.CharField(max_length=15, blank=True, null=True) # db_column= 'Bandwidth'
+    tech = models.CharField(max_length=20, blank=True, null=True) # db_column='Tech'
 
     class Meta:
         db_table = 'lr_bandwidth'
 
 class LRBSC(models.Model):
-    area = models.CharField(db_column='Area', max_length=20, blank=True, null=True)
-    bsc_no = models.CharField(db_column='BSC No', max_length=20, blank=True, null=True)
-    bsc_loc = models.CharField(db_column='BSC LOCATION', max_length=30, blank=True, null=True)
-    ao_ipbh_cap = models.CharField(db_column='AO IP BH Capacity', max_length=5, blank=True, null=True)
-    sig_bh_cap = models.CharField(db_column='SIGTRAN BH Capacity', max_length=250, blank=True, null=True)
-    gbo_ipbh_cap = models.CharField(db_column='GBO IP BH Capacity', max_length=5, blank=True, null=True)
-    combined_ipbh = models.CharField(db_column='COMBINED IP BH Capacity', max_length=5, blank=True, null=True)
+    area = models.CharField(max_length=20, blank=True, null=True) # db_column='Area'
+    bsc_no = models.CharField(max_length=20, blank=True, null=True) # db_column='BSC No'
+    bsc_loc = models.CharField(max_length=30, blank=True, null=True) # db_column='BSC LOCATION'
+    ao_ipbh_cap = models.CharField(max_length=5, blank=True, null=True) # db_column='AO IP BH Capacity'
+    sig_bh_cap = models.CharField(max_length=250, blank=True, null=True) # db_column='SIGTRAN BH Capacity'
+    gbo_ipbh_cap = models.CharField(max_length=5, blank=True, null=True) # db_column='GBO IP BH Capacity'
+    combined_ipbh = models.CharField(max_length=5, blank=True, null=True) # db_column='COMBINED IP BH Capacity'
 
     class Meta:
         db_table = 'lrbsc'
 
 class LRBSC_RNC(models.Model):
-    ne_name = models.CharField(db_column='NE NAME', max_length=10, blank=True, null=True)
-    msc_poolname = models.CharField(db_column='MSC POOL NAME', max_length=250, blank=True, null=True)
-    msc_name = models.CharField(db_column='MSC NAME', max_length=5, blank=True, null=True)
-    spc_name = models.CharField(db_column='SPC NAME', max_length=10, blank=True, null=True)
-    int_net_code = models.CharField(db_column='INT NET CODE', max_length=250, blank=True, null=True)
-    int_spnet_code = models.CharField(db_column='INT SP NET CODE', max_length=250, blank=True, null=True)
-    nat_code = models.CharField(db_column='NAT CODE', max_length=250, blank=True, null=True)
-    nat_sp_code = models.CharField(db_column='NAT SP CODE', max_length=10, blank=True, null=True)
-    sgsn_name = models.CharField(db_column='SGSN NAME', max_length=250, blank=True, null=True)
-    sgsn_pool_name = models.CharField(db_column='SGSN POOL NAME', max_length=250, blank=True, null=True)
-    ne_index = models.CharField(db_column='NE INDEX', max_length=5, blank=True, null=True)
-    type = models.CharField(db_column='TYPE', max_length=5, blank=True, null=True)
-    netid = models.CharField(db_column='NET ID', max_length=250, blank=True, null=True)
+    ne_name = models.CharField(max_length=10, blank=True, null=True) # db_column='NE NAME'
+    msc_poolname = models.CharField(max_length=250, blank=True, null=True) # db_column='MSC POOL NAME'
+    msc_name = models.CharField(max_length=5, blank=True, null=True) # db_column='MSC NAME'
+    spc_name = models.CharField(max_length=10, blank=True, null=True) # db_column='SPC NAME'
+    int_net_code = models.CharField(max_length=250, blank=True, null=True) # db_column='INT NET CODE'
+    int_spnet_code = models.CharField(max_length=250, blank=True, null=True) # db_column='INT SP NET CODE'
+    nat_code = models.CharField(max_length=250, blank=True, null=True) # db_column='NAT CODE'
+    nat_sp_code = models.CharField(max_length=10, blank=True, null=True) # db_column='NAT SP CODE'
+    sgsn_name = models.CharField(max_length=250, blank=True, null=True) # db_column='SGSN NAME'
+    sgsn_pool_name = models.CharField(max_length=250, blank=True, null=True) # db_column='SGSN POOL NAME'
+    ne_index = models.CharField(max_length=5, blank=True, null=True) # db_column='NE INDEX'
+    type = models.CharField(max_length=5, blank=True, null=True) # db_column='TYPE'
+    netid = models.CharField(max_length=250, blank=True, null=True) # db_column='NET ID'
 
     class Meta:
         db_table = 'lrbsc_rnc'
 
 class LRCEMDEV(models.Model):
-    dn = models.CharField(db_column='DN', max_length=20, blank=True, null=True)
-    ne_type = models.CharField(db_column='NE TYPE', max_length=5, blank=True, null=True)
-    home_msc_pool = models.CharField(db_column='Home MSC Pool', max_length=10, blank=True, null=True)
-    gt_address = models.CharField(db_column='Gt Address', max_length=20, blank=True, null=True)
-    msc_server_type = models.CharField(db_column='MSC Server Type', max_length=5, blank=True, null=True)
-    carrier = models.CharField(db_column='Carrier', max_length=5, blank=True, null=True)
-    country = models.CharField(db_column='Country', max_length=20, blank=True, null=True)
-    spc_name = models.CharField(db_column='SPC Name', max_length=10, blank=True, null=True)
-    int_net_code = models.CharField(db_column='International Network Code', max_length=5, blank=True, null=True)
-    int_spnet = models.CharField(db_column='International Spare Network', max_length=5, blank=True, null=True)
-    nat_net_code = models.CharField(db_column='National Network Code', max_length=5, blank=True, null=True)
-    nat_spnet_code = models.CharField(db_column='National Spare Network Code', max_length=5, blank=True, null=True)
-    bcu = models.CharField(db_column='BCU', max_length=5, blank=True, null=True)
-    homing_msc = models.CharField(db_column='Homing Msc', max_length=15, blank=True, null=True)
+    dn = models.CharField(max_length=20, blank=True, null=True) # db_column='DN'
+    ne_type = models.CharField(max_length=5, blank=True, null=True) # db_column='NE TYPE'
+    home_msc_pool = models.CharField(max_length=10, blank=True, null=True) # db_column='Home MSC Pool'
+    gt_address = models.CharField(max_length=20, blank=True, null=True) # db_column='Gt Address'
+    msc_server_type = models.CharField(max_length=5, blank=True, null=True) # db_column='MSC Server Type'
+    carrier = models.CharField(max_length=5, blank=True, null=True) # db_column ='Carrier'
+    country = models.CharField(max_length=20, blank=True, null=True) # db_column='Country'
+    spc_name = models.CharField(max_length=10, blank=True, null=True) # db_column='SPC Name'
+    int_net_code = models.CharField(max_length=5, blank=True, null=True) # db_column='International Network Code'
+    int_spnet = models.CharField(max_length=5, blank=True, null=True) # db_column='International Spare Network'
+    nat_net_code = models.CharField(max_length=5, blank=True, null=True) # db_column='National Network Code'
+    nat_spnet_code = models.CharField(max_length=5, blank=True, null=True) # db_column='National Spare Network Code'
+    bcu = models.CharField(max_length=5, blank=True, null=True) # db_column='BCU'
+    homing_msc = models.CharField(max_length=15, blank=True, null=True) # db_column='Homing Msc'
 
     class Meta:
         db_table = 'lrcemdev'
 
 class LRCEMIP(models.Model):
-    dn = models.CharField(db_column='DN', max_length=20, blank=True, null=True)
-    ne_type = models.CharField(db_column='NE Type', max_length=5, blank=True, null=True)
-    ip_add = models.CharField(db_column='IP Address', max_length=15, blank=True, null=True)
-    type = models.CharField(db_column='Type', max_length=5, blank=True, null=True)
+    dn = models.CharField(max_length=20, blank=True, null=True) # db_column='DN'
+    ne_type = models.CharField(max_length=5, blank=True, null=True) # db_column='NE Type'
+    ip_add = models.CharField(max_length=15, blank=True, null=True) # db_column='IP Address'
+    type = models.CharField(max_length=5, blank=True, null=True) # db_column='Type'
 
     class Meta:
         db_table = 'lrcemip'
 
 class LRCEMNRI(models.Model):
-    dn = models.CharField(db_column='DN', max_length=20, blank=True, null=True)
-    nri = models.CharField(db_column='NRI', max_length=5, blank=True, null=True)
+    dn = models.CharField(max_length=20, blank=True, null=True) # db_column='DN'
+    nri = models.CharField(max_length=5, blank=True, null=True) # db_column='NRI'
 
     class Meta:
         db_table = 'lrcemnri'
 
 class LR_CSPGCTRL(models.Model):
-    pg_pol = models.CharField(db_column='PG POL', max_length=5, blank=True, null=True)
-    msc_spc = models.CharField(db_column='MSC SPC', max_length=10, blank=True, null=True)
-    lai = models.CharField(db_column='LAI', max_length=10, blank=True, null=True)
-    pg_type = models.CharField(db_column='PG TYPE', max_length=20, blank=True, null=True)
-    pg_times = models.CharField(db_column='PG TIMES', max_length=5, blank=True, null=True)
-    pg1_durh = models.CharField(db_column='PG1 DURH', max_length=5, blank=True, null=True)
-    pg1_idt = models.CharField(db_column='PG1 IDT', max_length=5, blank=True, null=True)
-    pg2_durh = models.CharField(db_column='PG2 DURH', max_length=5, blank=True, null=True)
-    pg2_idt = models.CharField(db_column='PG2 IDT', max_length=5, blank=True, null=True)
-    pg3_durh = models.CharField(db_column='PG3 DURH', max_length=5, blank=True, null=True)
-    lpg3_idtai = models.CharField(db_column='LPG3 IDTAI', max_length=5, blank=True, null=True)
-    pg4_durh = models.CharField(db_column='PG4 DURH', max_length=5, blank=True, null=True)
-    pg4_idt = models.CharField(db_column='PG4 IDT', max_length=5, blank=True, null=True)
-    pg5_durh = models.CharField(db_column='PG5 DURH', max_length=5, blank=True, null=True)
-    pg5_idt = models.CharField(db_column='PG5 IDT', max_length=5, blank=True, null=True)
+    pg_pol = models.CharField(max_length=5, blank=True, null=True) # db_column='PG POL'
+    msc_spc = models.CharField(max_length=10, blank=True, null=True) # db_column='MSC SPC'
+    lai = models.CharField(max_length=10, blank=True, null=True) # db_column='LAI'
+    pg_type = models.CharField(max_length=20, blank=True, null=True) # db_column='PG TYPE'
+    pg_times = models.CharField(max_length=5, blank=True, null=True) # db_column='PG TIMES'
+    pg1_durh = models.CharField(max_length=5, blank=True, null=True) # db_column='PG1 DURH'
+    pg1_idt = models.CharField(max_length=5, blank=True, null=True) # db_column='PG1 IDT'
+    pg2_durh = models.CharField(max_length=5, blank=True, null=True) # db_column='PG2 DURH'
+    pg2_idt = models.CharField(max_length=5, blank=True, null=True) # db_column='PG2 IDT'
+    pg3_durh = models.CharField(max_length=5, blank=True, null=True) # db_column='PG3 DURH'
+    lpg3_idtai = models.CharField(max_length=5, blank=True, null=True) # db_column='LPG3 IDTAI'
+    pg4_durh = models.CharField(max_length=5, blank=True, null=True) # db_column='PG4 DURH'
+    pg4_idt = models.CharField(max_length=5, blank=True, null=True) # db_column='PG4 IDT'
+    pg5_durh = models.CharField(max_length=5, blank=True, null=True) # db_column='PG5 DURH'
+    pg5_idt = models.CharField(max_length=5, blank=True, null=True) # db_column='PG5 IDT'
 
     class Meta:
         db_table = 'lr_cspgctrl'
 
 class LR_ENODEB(models.Model):
-    ne_id = models.CharField(db_column=' NE ID', max_length=10, blank=True, null=True)
-    ne_name = models.CharField(db_column='NE NAME', max_length=30, blank=True, null=True)
-    cpia = models.CharField(db_column='CPIA', max_length=20, blank=True, null=True)
-    upia = models.CharField(db_column='UPIA', max_length=20, blank=True, null=True)
-    mme_name = models.CharField(db_column='MME NAME', max_length=250, blank=True, null=True)
-    mcc = models.CharField(db_column='MCC', max_length=5, blank=True, null=True)
-    mnc = models.CharField(db_column='MNC', max_length=5, blank=True, null=True)
-    mme_pname = models.CharField(db_column='MME POOL NAME', max_length=250, blank=True, null=True)
+    ne_id = models.CharField(max_length=10, blank=True, null=True) # db_column=' NE ID'
+    ne_name = models.CharField(max_length=30, blank=True, null=True) # db_column='NE NAME'
+    cpia = models.CharField(max_length=20, blank=True, null=True) # db_column='CPIA'
+    upia = models.CharField(max_length=20, blank=True, null=True) # db_column='UPIA'
+    mme_name = models.CharField(max_length=250, blank=True, null=True) # db_column='MME NAME'
+    mcc = models.CharField(max_length=5, blank=True, null=True) # db_column='MCC'
+    mnc = models.CharField(max_length=5, blank=True, null=True) # db_column='MNC'
+    mme_pname = models.CharField(max_length=250, blank=True, null=True) # db_column='MME POOL NAME'
 
     class Meta:
         db_table = 'lr_enodeb'
 
 class LR_ERDIP(models.Model):
-    bsc_id = models.CharField(db_column='BSC.ID', max_length=10, blank=True, null=True)
-    rbl_id = models.CharField(db_column='RBL.ID', max_length=5, blank=True, null=True)
-    tg_id = models.CharField(db_column='TG.ID', max_length=10, blank=True, null=True)
-    device_id = models.CharField(db_column='DEVICE.ID', max_length=20, blank=True, null=True)
+    bsc_id = models.CharField(max_length=10, blank=True, null=True) #d b_column='BSC.ID'
+    rbl_id = models.CharField(max_length=5, blank=True, null=True) # db_column='RBL.ID'
+    tg_id = models.CharField(max_length=10, blank=True, null=True) # db_column='TG.ID
+    device_id = models.CharField(max_length=20, blank=True, null=True) # db_column='DEVICE.ID'
 
     class Meta:
         db_table = 'lr_erdip'
 
 class LR_IP_POOLINV(models.Model):
-    device_id = models.CharField(db_column='DEVICE ID', max_length=20, blank=True, null=True)
-    apn = models.CharField(db_column='APN', max_length=50, blank=True, null=True)
-    ip_pname = models.CharField(db_column='IP POOL NAME', max_length=30, blank=True, null=True)
-    cidr = models.CharField(db_column='CIDR', max_length=20, blank=True, null=True)
-    iprange = models.CharField(db_column='IPRANGE', max_length=60, blank=True, null=True)
-    totalips = models.CharField(db_column='TOTALIPS', max_length=5, blank=True, null=True)
-    usableips = models.CharField(db_column='USABLEIPS', max_length=5, blank=True, null=True)
-    remarks = models.CharField(db_column='REMARKS', max_length=250, blank=True, null=True)
+    device_id = models.CharField(max_length=20, blank=True, null=True) # db_column='DEVICE ID'
+    apn = models.CharField(max_length=50, blank=True, null=True) # db_column='APN'
+    ip_pname = models.CharField(max_length=30, blank=True, null=True) # db_column='IP POOL NAME'
+    cidr = models.CharField(max_length=20, blank=True, null=True) # db_column='CIDR'
+    iprange = models.CharField(max_length=60, blank=True, null=True) # db_column='IPRANGE'
+    totalips = models.CharField(max_length=5, blank=True, null=True) # db_column='TOTALIPS'
+    usableips = models.CharField(max_length=5, blank=True, null=True) # db_column='USABLEIPS'
+    remarks = models.CharField(max_length=250, blank=True, null=True) # db_column='REMARKS'
 
     class Meta:
         db_table = 'lr_ip_polinv'
 
 class LR_LINK(models.Model):
-    idnum = models.CharField(db_column='IDNUM', max_length=5, blank=True, null=True)
-    create_date = models.CharField(db_column='Create Date', max_length=250, blank=True, null=True)
-    dn = models.CharField(db_column='DN', max_length=250, blank=True, null=True)
-    name = models.CharField(db_column='Name', max_length=250, blank=True, null=True)
-    update_date = models.CharField(db_column='Update Date', max_length=250, blank=True, null=True)
-    link_type = models.CharField(db_column='Link Type', max_length=10, blank=True, null=True)
-    aend_node = models.CharField(db_column='AEND Node', max_length=70, blank=True, null=True)
-    aend_tp = models.CharField(db_column='AEND TP', max_length=60, blank=True, null=True)
-    add_info = models.CharField(db_column='Additional Info', max_length=250, blank=True, null=True)
-    aend_ip = models.CharField(db_column='AEND IP', max_length=20, blank=True, null=True)
-    service = models.CharField(db_column='Service', max_length=20, blank=True, null=True)
-    direction = models.CharField(db_column='Direction-', max_length=5, blank=True, null=True)
-    ems_name = models.CharField(db_column='EMS Name', max_length=30, blank=True, null=True)
-    native_ems_name = models.CharField(db_column='Native EMS Name', max_length=15, blank=True, null=True)
-    owner = models.CharField(db_column='Owner', max_length=5, blank=True, null=True)
-    parent_dn = models.CharField(db_column='Parent DN', max_length=250, blank=True, null=True)
-    rate = models.CharField(db_column='Rate', max_length=20, blank=True, null=True)
-    usr_label = models.CharField(db_column='User Label', max_length=150, blank=True, null=True)
-    zend_node = models.CharField(db_column='ZEND Node', max_length=70, blank=True, null=True)
-    zend_tp = models.CharField(db_column='ZEND TP', max_length=80, blank=True, null=True)
-    zend_ip = models.CharField(db_column='ZEND IP', max_length=20, blank=True, null=True)
-    date_res_id = models.CharField(db_column='Date Resource ID', max_length=250, blank=True, null=True)
-    domain = models.CharField(db_column='Domain', max_length=20, blank=True, null=True)
+    idnum = models.CharField(max_length=5, blank=True, null=True) # db_column='IDNUM'
+    create_date = models.CharField(max_length=250, blank=True, null=True) # db_column='Create Date'
+    dn = models.CharField(max_length=250, blank=True, null=True) # db_column='DN'
+    name = models.CharField(max_length=250, blank=True, null=True) # db_column='Name'
+    update_date = models.CharField(max_length=250, blank=True, null=True) # db_column='Update Date'
+    link_type = models.CharField(max_length=10, blank=True, null=True) # db_column='Link Type'
+    aend_node = models.CharField(max_length=70, blank=True, null=True) # db_column='AEND Node'
+    aend_tp = models.CharField(max_length=60, blank=True, null=True) # db_column='AEND TP'
+    add_info = models.CharField(max_length=250, blank=True, null=True) # db_column='Additional Info'
+    aend_ip = models.CharField(max_length=20, blank=True, null=True) # db_column='AEND IP'
+    service = models.CharField(max_length=20, blank=True, null=True) # db_column='Service'
+    direction = models.CharField(max_length=5, blank=True, null=True) # db_column='Direction-'
+    ems_name = models.CharField(max_length=30, blank=True, null=True) # db_column='EMS Name'
+    native_ems_name = models.CharField(max_length=15, blank=True, null=True) # db_column='Native EMS Name'
+    owner = models.CharField(max_length=5, blank=True, null=True) # db_column='Owner'
+    parent_dn = models.CharField(max_length=250, blank=True, null=True) # db_column='Parent DN'
+    rate = models.CharField(max_length=20, blank=True, null=True) # db_column='Rate'
+    usr_label = models.CharField(max_length=150, blank=True, null=True) #d b_column='User Label'
+    zend_node = models.CharField(max_length=70, blank=True, null=True) # db_column='ZEND Node'
+    zend_tp = models.CharField(max_length=80, blank=True, null=True) # db_column='ZEND TP'
+    zend_ip = models.CharField(max_length=20, blank=True, null=True) # db_column='ZEND IP'
+    date_res_id = models.CharField(max_length=250, blank=True, null=True) # db_column='Date Resource ID'
+    domain = models.CharField(max_length=20, blank=True, null=True) # db_column='Domain'
 
     class Meta:
         db_table = 'lr_link'
 
 class LR_LTunnel(models.Model):
-    name = models.CharField(db_column='NAME', max_length=100, blank=True, null=True)
-    linktype = models.CharField(db_column='LINK TYPE', max_length=10, blank=True, null=True)
-    capacity = models.CharField(db_column='CAPACITY', max_length=250, blank=True, null=True)
-    tunnel_id = models.CharField(db_column='TUNNEL ID', max_length=15, blank=True, null=True)
-    tunnel_bandwidth = models.CharField(db_column='TUNNEL BANDWIDTH', max_length=250, blank=True, null=True)
-    aendnode_sitecodes = models.CharField(db_column='AENDNODE SITECODES', max_length=5, blank=True, null=True)
-    aend_node = models.CharField(db_column='AENDNODE', max_length=20, blank=True, null=True)
-    aend_tp = models.CharField(db_column='AEND TP', max_length=35, blank=True, null=True)
-    aend_tp_child = models.CharField(db_column='AEND TP (CHILD)', max_length=250, blank=True, null=True)
-    aend_ip = models.CharField(db_column='AEND IP', max_length=250, blank=True, null=True)
-    aend_eq = models.CharField(db_column='AEND EQUIPMENT', max_length=10, blank=True, null=True)
-    zend_nodes_sitecodes = models.CharField(db_column='ZENDNODE SITECODES', max_length=5, blank=True, null=True)
-    zend_node = models.CharField(db_column='ZENDNODE', max_length=20, blank=True, null=True)
-    zend_tp = models.CharField(db_column='ZEND TP', max_length=35, blank=True, null=True)
-    zend_tp_child = models.CharField(db_column='ZEND TP (CHILD)', max_length=250, blank=True, null=True)
-    zend_ip = models.CharField(db_column='ZEND IP', max_length=250, blank=True, null=True)
-    zend_eq = models.CharField(db_column='ZEND EQUIPMENT', max_length=10, blank=True, null=True)
-    description = models.CharField(db_column='DESCRIPTION', max_length=30, blank=True, null=True)
-    domain = models.CharField(db_column='DOMAIN', max_length=250, blank=True, null=True)
-    cluster = models.CharField(db_column='CLUSTER', max_length=250, blank=True, null=True)
-    cao_wo = models.CharField(db_column='CAO/WO', max_length=250, blank=True, null=True)
-    band_service = models.CharField(db_column='BAND/SERVICE', max_length=250, blank=True, null=True)
-    direction = models.CharField(db_column='DIRECTION', max_length=250, blank=True, null=True)
-    remarks = models.CharField(db_column='REMARKS', max_length=60, blank=True, null=True)
-    rnc_bsc = models.CharField(db_column='RNC/BSC', max_length=10, blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True) # db_column='NAME'
+    linktype = models.CharField(max_length=10, blank=True, null=True) # db_column='LINK TYPE'
+    capacity = models.CharField(max_length=250, blank=True, null=True) # db_column='CAPACITY'
+    tunnel_id = models.CharField(max_length=15, blank=True, null=True) # db_column='TUNNEL ID'
+    tunnel_bandwidth = models.CharField(max_length=250, blank=True, null=True) # db_column='TUNNEL BANDWIDTH'
+    aendnode_sitecodes = models.CharField(max_length=5, blank=True, null=True) # db_column='AENDNODE SITECODES'
+    aend_node = models.CharField(max_length=20, blank=True, null=True) # db_column='AENDNODE'
+    aend_tp = models.CharField(max_length=35, blank=True, null=True) # db_column='AEND TP'
+    aend_tp_child = models.CharField(max_length=250, blank=True, null=True) # db_column='AEND TP (CHILD)'
+    aend_ip = models.CharField(max_length=250, blank=True, null=True) # db_column='AEND IP'
+    aend_eq = models.CharField(max_length=10, blank=True, null=True) # db_column='AEND EQUIPMENT'
+    zend_nodes_sitecodes = models.CharField(max_length=5, blank=True, null=True) # db_column='ZENDNODE SITECODES'
+    zend_node = models.CharField(max_length=20, blank=True, null=True) # db_column='ZENDNODE'
+    zend_tp = models.CharField(max_length=35, blank=True, null=True) # db_column='ZEND TP'
+    zend_tp_child = models.CharField(max_length=250, blank=True, null=True) # db_column='ZEND TP (CHILD)'
+    zend_ip = models.CharField(max_length=250, blank=True, null=True) # db_column='ZEND IP'
+    zend_eq = models.CharField(max_length=10, blank=True, null=True) # db_column='ZEND EQUIPMENT'
+    description = models.CharField(max_length=30, blank=True, null=True) # db_column='DESCRIPTION'
+    domain = models.CharField(max_length=250, blank=True, null=True) # db_column='DOMAIN'
+    cluster = models.CharField(max_length=250, blank=True, null=True) # db_column='CLUSTER'
+    cao_wo = models.CharField(max_length=250, blank=True, null=True) # db_column='CAO/WO'
+    band_service = models.CharField(max_length=250, blank=True, null=True) # db_column='BAND/SERVICE'
+    direction = models.CharField(max_length=250, blank=True, null=True) # db_column='DIRECTION'
+    remarks = models.CharField(max_length=60, blank=True, null=True) # db_column='REMARKS'
+    rnc_bsc = models.CharField(max_length=10, blank=True, null=True) # db_column='RNC/BSC
 
     class Meta:
         db_table = 'lr_ltunnel'
 
 class LR_NBINT(models.Model):
-    domain = models.CharField(db_column='Domain', max_length=20, blank=True, null=True)
-    ems_id = models.CharField(db_column='EMS ID', max_length=20, blank=True, null=True)
-    parent_id = models.CharField(db_column='Parent ID', max_length=40, blank=True, null=True)
-    lip_1 = models.CharField(db_column='LIP 1', max_length=20, blank=True, null=True)
-    lip_2 = models.CharField(db_column='LIP 2', max_length=40, blank=True, null=True)
-    own_spc = models.CharField(db_column='Own SPC', max_length=20, blank=True, null=True)
-    assoc_set_id = models.CharField(db_column='Assoc Set ID', max_length=20, blank=True, null=True)
-    assoc_set_name = models.CharField(db_column='Assoc Set Name', max_length=40, blank=True, null=True)
-    assoc_index = models.CharField(db_column='Assoc Index', max_length=40, blank=True, null=True)
-    rip_1 = models.CharField(db_column='RIP 1', max_length=30, blank=True, null=True)
-    rip_2 = models.CharField(db_column='RIP 2', max_length=50, blank=True, null=True)
-    use = models.CharField(db_column='USE', max_length=30, blank=True, null=True)
-    class_nbint = models.CharField(db_column='Class', max_length=20, blank=True, null=True)
-    assoc_name = models.CharField(db_column='ASSOC NAME', max_length=50, blank=True, null=True)
-    local_port = models.CharField(db_column='LOCAL PORT', max_length=10, blank=True, null=True)
-    peer_port = models.CharField(db_column='PEER PORT', max_length=10, blank=True, null=True)
-    deno = models.CharField(db_column='DENO', max_length=10, blank=True, null=True)
-    deno_name = models.CharField(db_column='DENO NAME', max_length=40, blank=True, null=True)
-    leno = models.CharField(db_column='LENO', max_length=5, blank=True, null=True)
-    leno_name = models.CharField(db_column='LENO NAME', max_length=40, blank=True, null=True)
-    peer_device_id = models.CharField(db_column='PEER DEVICE ID', max_length=20, blank=True, null=True)
-    peer_spc = models.CharField(db_column='PEER SPC', max_length=10, blank=True, null=True)
-    peer_nsei = models.CharField(db_column='PEER A SET ID NSEI', max_length=250, blank=True, null=True)
-    peer_assoc_set = models.CharField(db_column='PEER ASSOC SET NAME', max_length=250, blank=True, null=True)
-    name = models.CharField(db_column='', max_length=250, blank=True, null=True)
-    peer_assoc_index = models.CharField(db_column='PEER ASSOC INDEX', max_length=250, blank=True, null=True)
-    peer_assoc_name = models.CharField(db_column='PEER ASSOC NAME', max_length=250, blank=True, null=True)
+    domain = models.CharField(max_length=20, blank=True, null=True) # db_column='Domain'
+    ems_id = models.CharField(max_length=20, blank=True, null=True) # db_column='EMS ID'
+    parent_id = models.CharField(max_length=40, blank=True, null=True) # db_column='Parent ID'
+    lip_1 = models.CharField(max_length=20, blank=True, null=True) # db_column='LIP 1'
+    lip_2 = models.CharField(max_length=40, blank=True, null=True) # db_column='LIP 2'
+    own_spc = models.CharField(max_length=20, blank=True, null=True) # db_column='Own SPC'
+    assoc_set_id = models.CharField(max_length=20, blank=True, null=True) # db_column='Assoc Set ID'
+    assoc_set_name = models.CharField(max_length=40, blank=True, null=True) # db_column='Assoc Set Name'
+    assoc_index = models.CharField(max_length=40, blank=True, null=True) # db_column='Assoc Index'
+    rip_1 = models.CharField(max_length=30, blank=True, null=True) # db_column='RIP 1'
+    rip_2 = models.CharField(max_length=50, blank=True, null=True) # db_column='RIP 2'
+    use = models.CharField(max_length=30, blank=True, null=True) # db_column='USE'
+    class_nbint = models.CharField(max_length=20, blank=True, null=True) # db_column='Class'
+    assoc_name = models.CharField(max_length=50, blank=True, null=True) # db_column='ASSOC NAME'
+    local_port = models.CharField(max_length=10, blank=True, null=True) # db_column='LOCAL PORT'
+    peer_port = models.CharField(max_length=10, blank=True, null=True) # db_column='PEER PORT'
+    deno = models.CharField(max_length=10, blank=True, null=True) # db_column='DENO'
+    deno_name = models.CharField(max_length=40, blank=True, null=True) # db_column='DENO NAME'
+    leno = models.CharField(max_length=5, blank=True, null=True) # db_column='LENO'
+    leno_name = models.CharField(max_length=40, blank=True, null=True) # db_column='LENO NAME'
+    peer_device_id = models.CharField(max_length=20, blank=True, null=True) # db_column='PEER DEVICE ID'
+    peer_spc = models.CharField(max_length=10, blank=True, null=True) # db_column='PEER SPC'
+    peer_nsei = models.CharField(max_length=250, blank=True, null=True) # db_column='PEER A SET ID NSEI'
+    peer_assoc_set = models.CharField(max_length=250, blank=True, null=True) # db_column='PEER ASSOC SET NAME'
+    name = models.CharField(max_length=250, blank=True, null=True) # db_column='Name'
+    peer_assoc_index = models.CharField(max_length=250, blank=True, null=True) # db_column='PEER ASSOC INDEX'
+    peer_assoc_name = models.CharField(max_length=250, blank=True, null=True) # db_column='PEER ASSOC NAME'
 
     class Meta:
         db_table = 'lr_nbint'
 
 class LR_PCCapacity(models.Model):
-    idnum = models.CharField(db_column='IDNUM', max_length=20, blank=True, null=True)
-    device_id = models.CharField(db_column='Device ID', max_length=30, blank=True, null=True)
-    name = models.CharField(db_column='Name', max_length=20, blank=True, null=True)
-    vendor = models.CharField(db_column='Vendor', max_length=10, blank=True, null=True)
-    area_served = models.CharField(db_column='Area Served', max_length=10, blank=True, null=True)
-    sw_release = models.CharField(db_column='SW Reease', max_length=20, blank=True, null=True)
-    hw_capacity_sau = models.CharField(db_column='HW Capacity (SAU)', max_length=10, blank=True, null=True)
-    hw_capacity_pdp = models.CharField(db_column='HW Capacity (PDP)', max_length=250, blank=True, null=True)
-    sw_capacity_sau = models.CharField(db_column='SW Capacity (SAU)', max_length=250, blank=True, null=True)
-    sw_capacity_pdp = models.CharField(db_column='SW Capacity (PDP)', max_length=250, blank=True, null=True)
-    hw_capacity_tput = models.CharField(db_column='HW Capacity (TPUT)', max_length=10, blank=True, null=True)
-    hw_capacity_pdp1 = models.CharField(db_column='HW Capacity (PDP)1', max_length=250, blank=True, null=True)
-    purchasedsw_capacity_tput = models.CharField(db_column='PurchasedSW (TPUT)', max_length=250, blank=True, null=True)
-    purchasedsw_pdp = models.CharField(db_column='PurchasedSW (PDP)', max_length=10, blank=True, null=True)
-    ecu_sau = models.CharField(db_column='ECU (SAU)', max_length=10, blank=True, null=True)
-    epu_pdp = models.CharField(db_column='EPU (PDP)', max_length=10, blank=True, null=True)
-    ecu = models.CharField(db_column='ECU', max_length=5, blank=True, null=True)
-    epu = models.CharField(db_column='EPU', max_length=5, blank=True, null=True)
-    redunduncy_model = models.CharField(db_column='Redunduncy Model', max_length=5, blank=True, null=True)
-    no_of_subrack = models.CharField(db_column='No Of SubRack', max_length=5, blank=True, null=True)
-    gsc = models.CharField(db_column='GSC', max_length=5, blank=True, null=True)
-    active_cpb = models.CharField(db_column='Active CPB', max_length=5, blank=True, null=True)
-    standyby_cpb = models.CharField(db_column='Standby CPB', max_length=5, blank=True, null=True)
-    active_ppb = models.CharField(db_column='Active PPB', max_length=5, blank=True, null=True)
-    standby_ppb = models.CharField(db_column='Standby PPB', max_length=5, blank=True, null=True)
-    lc = models.CharField(db_column='LC', max_length=5, blank=True, null=True)
-    tput = models.CharField(db_column='TPUT', max_length=5, blank=True, null=True)
-    board_type = models.CharField(db_column='Board Type', max_length=5, blank=True, null=True)
-    no_of_boards = models.CharField(db_column='No Of Boards', max_length=5, blank=True, null=True)
-    sw_capacity = models.CharField(db_column='SW Capacity', max_length=10, blank=True, null=True)
-    chasis_type = models.CharField(db_column='Chasis Type', max_length=20, blank=True, null=True)
-    blade_type = models.CharField(db_column='Blade Type', max_length=5, blank=True, null=True)
-    blade_capacity = models.CharField(db_column='Blade Capacity', max_length=10, blank=True, null=True)
-    total_no_of_blades = models.CharField(db_column='Total Number of Blades', max_length=5, blank=True, null=True)
+    idnum = models.CharField(max_length=20, blank=True, null=True) # db_column='IDNUM'
+    device_id = models.CharField(max_length=30, blank=True, null=True) # db_column='Device ID'
+    name = models.CharField(max_length=20, blank=True, null=True) # db_column='Name'
+    vendor = models.CharField(max_length=10, blank=True, null=True) # db_column='Vendor'
+    area_served = models.CharField(max_length=10, blank=True, null=True) # db_column='Area Served'
+    sw_release = models.CharField(max_length=20, blank=True, null=True) # db_column='SW Reease'
+    hw_capacity_sau = models.CharField(max_length=10, blank=True, null=True) # db_column='HW Capacity (SAU)'
+    hw_capacity_pdp = models.CharField(max_length=250, blank=True, null=True) # db_column='HW Capacity (PDP)'
+    sw_capacity_sau = models.CharField(max_length=250, blank=True, null=True) # db_column='SW Capacity (SAU)
+    sw_capacity_pdp = models.CharField(max_length=250, blank=True, null=True) # db_column='SW Capacity (PDP)'
+    hw_capacity_tput = models.CharField(max_length=10, blank=True, null=True) # db_column='HW Capacity (TPUT)'
+    hw_capacity_pdp1 = models.CharField(max_length=250, blank=True, null=True) # db_column='HW Capacity (PDP)1'
+    purchasedsw_capacity_tput = models.CharField(max_length=250, blank=True, null=True) # db_column='PurchasedSW (TPUT)'
+    purchasedsw_pdp = models.CharField(max_length=10, blank=True, null=True) # db_column='PurchasedSW (PDP)'
+    ecu_sau = models.CharField(max_length=10, blank=True, null=True) # db_column='ECU (SAU)'
+    epu_pdp = models.CharField(max_length=10, blank=True, null=True) # db_column='EPU (PDP)'
+    ecu = models.CharField(max_length=5, blank=True, null=True) # db_column='ECU'
+    epu = models.CharField(max_length=5, blank=True, null=True) # db_column='EPU'
+    redunduncy_model = models.CharField(max_length=5, blank=True, null=True) # db_column='Redunduncy Model'
+    no_of_subrack = models.CharField(max_length=5, blank=True, null=True) # db_column='No Of SubRack'
+    gsc = models.CharField(max_length=5, blank=True, null=True) # db_column='GSC'
+    active_cpb = models.CharField(max_length=5, blank=True, null=True) # db_column='Active CPB'
+    standyby_cpb = models.CharField(max_length=5, blank=True, null=True) # db_column='Standby CPB'
+    active_ppb = models.CharField(max_length=5, blank=True, null=True) # db_column='Active PPB'
+    standby_ppb = models.CharField(max_length=5, blank=True, null=True) # db_column='Standby PPB'
+    lc = models.CharField(max_length=5, blank=True, null=True) # db_column='LC'
+    tput = models.CharField(max_length=5, blank=True, null=True) # db_column='TPUT'
+    board_type = models.CharField(max_length=5, blank=True, null=True) # db_column='Board Type'
+    no_of_boards = models.CharField(max_length=5, blank=True, null=True) # db_column='No Of Boards'
+    sw_capacity = models.CharField(max_length=10, blank=True, null=True) # db_column='SW Capacity'
+    chasis_type = models.CharField(max_length=20, blank=True, null=True) # db_column='Chasis Type'
+    blade_type = models.CharField(max_length=5, blank=True, null=True) # db_column='Blade Type'
+    blade_capacity = models.CharField(max_length=10, blank=True, null=True) # db_column='Blade Capacity'
+    total_no_of_blades = models.CharField(max_length=5, blank=True, null=True) # db_column='Total Number of Blades'
 
     class Meta:
         db_table = 'lr_pccapacity'
 
 class LR_Parked(models.Model):
-    site_no = models.CharField(db_column='SITENO', max_length=10, blank=True, null=True)
-    band = models.CharField(db_column='BAND', max_length=10, blank=True, null=True)
-    tech = models.CharField(db_column='TECH', max_length=10, blank=True, null=True)
+    site_no = models.CharField(max_length=10, blank=True, null=True) # db_column='SITENO'
+    band = models.CharField(max_length=10, blank=True, null=True) # db_column='BAND'
+    tech = models.CharField(max_length=10, blank=True, null=True) # db_column='TECH'
 
     class Meta:
         db_table = 'lr_parked'
 
 class LR_PSCoreDevice(models.Model):
-    dn = models.CharField(db_column='DN', max_length=15, blank=True, null=True)
-    device_id = models.CharField(db_column='Device ID', max_length=15, blank=True, null=True)
-    ems_id = models.CharField(db_column='EMS ID', max_length=20, blank=True, null=True)
-    vendor_id = models.CharField(db_column='VendorID', max_length=5, blank=True, null=True)
-    ne_type = models.CharField(db_column='NE Type', max_length=5, blank=True, null=True)
-    site_id = models.CharField(db_column='Site ID', max_length=10, blank=True, null=True)
-    sau_license_sw = models.CharField(db_column='SAU License SW', max_length=10, blank=True, null=True)
-    sau_hw = models.CharField(db_column='SAU HW', max_length=10, blank=True, null=True)
-    pdp_license_sw = models.CharField(db_column='PDP License SW', max_length=10, blank=True, null=True)
-    th_license_sw = models.CharField(db_column='Throughput License SW', max_length=10, blank=True, null=True)
-    th_hw_gbps = models.CharField(db_column='Throughput HW(Gbps)', max_length=5, blank=True, null=True)
-    maxnum_2g_subs_sw = models.CharField(db_column='Max num of 2G subs SW', max_length=5, blank=True, null=True)
-    maxnum_3g_subs_sw = models.CharField(db_column='Max num of 3G subs SW', max_length=5, blank=True, null=True)
-    maxnum_4g_subs_sw = models.CharField(db_column='Max num of 4G subs SW', max_length=5, blank=True, null=True)
-    maxnum_2g_actpdp_sw = models.CharField(db_column='Max num of 2G act PDP SW', max_length=5, blank=True, null=True)
-    maxnum_3g_actpdp_sw = models.CharField(db_column='Max num of 3G act PDPs SW', max_length=5, blank=True, null=True)
-    maxnum_4g_bnum_sw = models.CharField(db_column='Max num of 4G Bearer Num SW', max_length=5, blank=True, null=True)
-    maxtrans_cap_usr_sw = models.CharField(db_column='Max trans cap of usr plane SW', max_length=10, blank=True, null=True)
-    maxnum_234g_subs_hw = models.CharField(db_column='Max num of 2G 3G 4G subs HW', max_length=10, blank=True, null=True)
-    maxnum_234g_act_bear_hw = models.CharField(db_column='Max num 2G 3G act 4G Bear HW', max_length=10, blank=True, null=True)
-    maxtrans_cap_usr_hw = models.CharField(db_column='Max trans cap of usr plane HW', max_length=10, blank=True, null=True)
-    pdp_supt_basic_sw_ggsn = models.CharField(db_column='PDP of Supt Basic SW for GGSN', max_length=10, blank=True, null=True)
-    pdp_supt_basic_sw_pgw = models.CharField(db_column='PDP Supt Basic SW for S PGW', max_length=10, blank=True, null=True)
-    throughput_ugw_sw = models.CharField(db_column='Throughput of whole UGW SW', max_length=10, blank=True, null=True)
-    pdp_supt_basic_hw_ggsn = models.CharField(db_column='PDP Supt Basic HW GGSN S PGW', max_length=5, blank=True, null=True)
-    throuhput_ugw_hw = models.CharField(db_column='Throughput of whole UGW HW', max_length=20, blank=True, null=True)
-    hw_capacity_sau = models.CharField(db_column='HardwareCapacity(SAU)', max_length=250, blank=True, null=True)
-    hw_capacity = models.CharField(db_column='HardwareCapacity', max_length=250, blank=True, null=True)
-    hw_capcity_gbps = models.CharField(db_column='HardwareCapacity(Gbps)', max_length=250, blank=True, null=True)
-    bearer_sgw = models.CharField(db_column='Bearer Nos of SBSw for S-GW', max_length=5, blank=True, null=True)
-    bearer_pgw = models.CharField(db_column='Bearer Nos of SBSw for P-GW ', max_length=5, blank=True, null=True)
+    dn = models.CharField(max_length=15, blank=True, null=True) # db_column='DN'
+    device_id = models.CharField(max_length=15, blank=True, null=True) # db_column='Device ID'
+    ems_id = models.CharField(max_length=20, blank=True, null=True)  #db_column='EMS ID'
+    vendor_id = models.CharField(max_length=5, blank=True, null=True) # db_column='VendorID'
+    ne_type = models.CharField(max_length=5, blank=True, null=True) # db_column='NE Type'
+    site_id = models.CharField(max_length=10, blank=True, null=True) # db_column='Site ID'
+    sau_license_sw = models.CharField(max_length=10, blank=True, null=True) # db_column='SAU License SW'
+    sau_hw = models.CharField(max_length=10, blank=True, null=True) # db_column='SAU HW'
+    pdp_license_sw = models.CharField(max_length=10, blank=True, null=True) # db_column='PDP License SW'
+    th_license_sw = models.CharField(max_length=10, blank=True, null=True) # db_column='Throughput License SW'
+    th_hw_gbps = models.CharField(max_length=5, blank=True, null=True) # db_column='Throughput HW(Gbps)'
+    maxnum_2g_subs_sw = models.CharField(max_length=5, blank=True, null=True) # db_column='Max num of 2G subs SW'
+    maxnum_3g_subs_sw = models.CharField(max_length=5, blank=True, null=True) # db_column='Max num of 3G subs SW'
+    maxnum_4g_subs_sw = models.CharField(max_length=5, blank=True, null=True) # db_column='Max num of 4G subs SW'
+    maxnum_2g_actpdp_sw = models.CharField(max_length=5, blank=True, null=True) # db_column='Max num of 2G act PDP SW'
+    maxnum_3g_actpdp_sw = models.CharField(max_length=5, blank=True, null=True) # db_column='Max num of 3G act PDPs SW'
+    maxnum_4g_bnum_sw = models.CharField(max_length=5, blank=True, null=True) # db_column='Max num of 4G Bearer Num SW'
+    maxtrans_cap_usr_sw = models.CharField(max_length=10, blank=True, null=True) # db_column='Max trans cap of usr plane SW'
+    maxnum_234g_subs_hw = models.CharField(max_length=10, blank=True, null=True)  #db_column='Max num of 2G 3G 4G subs HW'
+    maxnum_234g_act_bear_hw = models.CharField(max_length=10, blank=True, null=True) # db_column='Max num 2G 3G act 4G Bear HW'
+    maxtrans_cap_usr_hw = models.CharField(max_length=10, blank=True, null=True) # db_column='Max trans cap of usr plane HW
+    pdp_supt_basic_sw_ggsn = models.CharField(max_length=10, blank=True, null=True) # db_column='PDP of Supt Basic SW for GGSN'
+    pdp_supt_basic_sw_pgw = models.CharField(max_length=10, blank=True, null=True) # db_column='PDP Supt Basic SW for S PGW'
+    throughput_ugw_sw = models.CharField(max_length=10, blank=True, null=True) # db_column='Throughput of whole UGW SW'
+    pdp_supt_basic_hw_ggsn = models.CharField(max_length=5, blank=True, null=True) # db_column='PDP Supt Basic HW GGSN S PGW'
+    throuhput_ugw_hw = models.CharField(max_length=20, blank=True, null=True) # db_column='Throughput of whole UGW HW'
+    hw_capacity_sau = models.CharField(max_length=250, blank=True, null=True) # db_column='HardwareCapacity(SAU)'
+    hw_capacity = models.CharField(max_length=250, blank=True, null=True) # db_column='HardwareCapacity'
+    hw_capcity_gbps = models.CharField(max_length=250, blank=True, null=True) # db_column='HardwareCapacity(Gbps)'
+    bearer_sgw = models.CharField(max_length=5, blank=True, null=True) # db_column='Bearer Nos of SBSw for S-GW'
+    bearer_pgw = models.CharField(max_length=5, blank=True, null=True) # db_column='Bearer Nos of SBSw for P-GW '
 
     class Meta:
         db_table = 'lr_pscoredevice'
 
 class LR_Rnc(models.Model):
-    area = models.CharField(db_column='Area', max_length=15, blank=True, null=True)
-    rnc_no = models.CharField(db_column='RNC No', max_length=20, blank=True, null=True)
-    rnc_location = models.CharField(db_column='RNC LOCATION', max_length=30, blank=True, null=True)
-    bandwidtch_cap_lups = models.CharField(db_column='Bandwidth Capacity luPS Provisioned', max_length=10, blank=True, null=True)
-    bandwidtch_cap_lucs = models.CharField(db_column='Bandwidth Capacity luCS Provisioned', max_length=5, blank=True, null=True)
-    combined_ipbh_cap = models.CharField(db_column='Combined IP BH Capacity', max_length=10, blank=True, null=True)
+    area = models.CharField(max_length=15, blank=True, null=True) # db_column='Area'
+    rnc_no = models.CharField(max_length=20, blank=True, null=True) # db_column='RNC No'
+    rnc_location = models.CharField(max_length=30, blank=True, null=True) # db_column='RNC LOCATION'
+    bandwidtch_cap_lups = models.CharField(max_length=10, blank=True, null=True) # db_column='Bandwidth Capacity luPS Provisioned'
+    bandwidtch_cap_lucs = models.CharField(max_length=5, blank=True, null=True) # db_column='Bandwidth Capacity luCS Provisioned'
+    combined_ipbh_cap = models.CharField(max_length=10, blank=True, null=True) # db_column='Combined IP BH Capacity'
 
     class Meta:
         db_table = 'lr_rnc'
 
 class LR_RSAGAlarm(models.Model):
-    host = models.CharField(db_column='HOST', max_length=10, blank=True, null=True)
-    alarm_name = models.CharField(db_column='ALARM NAME', max_length=70, blank=True, null=True)
-    network_element = models.CharField(db_column='NETWORK ELEMENT (NE)', max_length=10, blank=True, null=True)
-    alarm_category = models.CharField(db_column='ALARM CATEGORY', max_length=15, blank=True, null=True)
+    host = models.CharField(max_length=10, blank=True, null=True) # db_column='HOST'
+    alarm_name = models.CharField(max_length=70, blank=True, null=True) # db_column='ALARM NAME'
+    network_element = models.CharField(max_length=10, blank=True, null=True) # db_column='NETWORK ELEMENT (NE)'
+    alarm_category = models.CharField(max_length=15, blank=True, null=True) # db_column='ALARM CATEGORY'
 
     class Meta:
         db_table = 'lr_rsagalarm'
 
 class LR_TDTopology(models.Model):
-    aend = models.CharField(db_column='AEND', max_length=30, blank=True, null=True)
-    zend = models.CharField(db_column='ZEND', max_length=30, blank=True, null=True)
-    domain = models.CharField(db_column='DOMAIN', max_length=20, blank=True, null=True)
-    function = models.CharField(db_column='FUNCTION', max_length=20, blank=True, null=True)
+    aend = models.CharField(max_length=30, blank=True, null=True) # db_column='AEND'
+    zend = models.CharField(max_length=30, blank=True, null=True) # db_column='ZEND'
+    domain = models.CharField(max_length=20, blank=True, null=True) # db_column='DOMAIN'
+    function = models.CharField(max_length=20, blank=True, null=True) # db_column='FUNCTION'
 
     class Meta:
         db_table = 'lr_tdtopology'
 
 class LR_TRX(models.Model):
-    ems_trx_id = models.CharField(db_column='EMS TRX ID', max_length=140, blank=True, null=True)
-    ems_id = models.CharField(db_column='EMS ID', max_length=15, blank=True, null=True)
-    trx_name = models.CharField(db_column='TRX Name', max_length=140, blank=True, null=True)
-    dn = models.CharField(db_column='DN', max_length=140, blank=True, null=True)
-    site_id = models.CharField(db_column='Site ID', max_length=10, blank=True, null=True)
-    parent_id = models.CharField(db_column='Parent ID', max_length=20, blank=True, null=True)
-    parent_dn = models.CharField(db_column='Parent DN', max_length=140, blank=True, null=True)
-    admin_state = models.CharField(db_column='Admin State', max_length=15, blank=True, null=True)
-    e1_assignment = models.CharField(db_column='E1 Assignment', max_length=10, blank=True, null=True)
-    homing_bts = models.CharField(db_column='HOMING BTS', max_length=20, blank=True, null=True)
+    ems_trx_id = models.CharField(max_length=140, blank=True, null=True) # db_column='EMS TRX ID'
+    ems_id = models.CharField(max_length=15, blank=True, null=True) # db_column='EMS ID'
+    trx_name = models.CharField(max_length=140, blank=True, null=True) # db_column='TRX Name'
+    dn = models.CharField(max_length=140, blank=True, null=True) # db_column='DN'
+    site_id = models.CharField(max_length=10, blank=True, null=True) # db_column='Site ID'
+    parent_id = models.CharField(max_length=20, blank=True, null=True) # db_column='Parent ID'
+    parent_dn = models.CharField(max_length=140, blank=True, null=True) # db_column='Parent DN'
+    admin_state = models.CharField(max_length=15, blank=True, null=True) # db_column='Admin State'
+    e1_assignment = models.CharField(max_length=10, blank=True, null=True) # db_column='E1 Assignment'
+    homing_bts = models.CharField(max_length=20, blank=True, null=True) # db_column='HOMING BTS'
 
     class Meta:
         db_table = 'lr_trx'
 
 class SiteListReport(models.Model):
-    site_id = models.CharField(db_column='Site ID', max_length=10, blank=True, null=True)
-    parent_site_id = models.CharField(db_column='Parent Site ID', max_length=20, blank=True, null=True)
-    site_name = models.CharField(db_column='Site Name', max_length=110, blank=True, null=True)
-    latitude = models.CharField(db_column='Latitude', max_length=10, blank=True, null=True)
-    longitude = models.CharField(db_column='Logitude', max_length=10, blank=True, null=True)
-    site_stage_name = models.CharField(db_column='Site Stage Name', max_length=20, blank=True, null=True)
-    site_type_name = models.CharField(db_column='Site Type Name', max_length=20, blank=True, null=True)
-    access_restriction = models.CharField(db_column='Access Restriction', max_length=250, blank=True, null=True)
-    area_name = models.CharField(db_column='Area Name', max_length=20, blank=True, null=True)
-    major_node = models.CharField(db_column='Major Node', max_length=5, blank=True, null=True)
-    has_room = models.CharField(db_column='Has Room', max_length=25, blank=True, null=True)
-    site_owner = models.CharField(db_column='Site Owner', max_length=250, blank=True, null=True)
-    region_name = models.CharField(db_column='Region Name', max_length=10, blank=True, null=True)
-    city = models.CharField(db_column='City', max_length=50, blank=True, null=True)
-    ppgis_city_code = models.CharField(db_column='PPGIS City Code', max_length=5, blank=True, null=True)
-    province = models.CharField(db_column='Province', max_length=40, blank=True, null=True)
-    lessor_name = models.CharField(db_column='Lessor Name', max_length=170, blank=True, null=True)
-    lessor_phone = models.CharField(db_column='Lessor Phone', max_length=170, blank=True, null=True)
-    altitude_m = models.CharField(db_column='Altitude(m)', max_length=10, blank=True, null=True)
-    address = models.CharField(db_column='Address', max_length=250, blank=True, null=True)
-    travel_duration = models.CharField(db_column='Travel Duration(m)', max_length=250, blank=True, null=True)
-    tower_height = models.CharField(db_column='Tower Height', max_length=30, blank=True, null=True)
-    tower_type = models.CharField(db_column='Tower Type', max_length=90, blank=True, null=True)
-    mtf = models.CharField(db_column='MTF', max_length=5, blank=True, null=True)
-    vip = models.CharField(db_column='VIP', max_length=5, blank=True, null=True)
-    malls = models.CharField(db_column='Malls', max_length=5, blank=True, null=True)
-    schools = models.CharField(db_column='Schools', max_length=5, blank=True, null=True)
-    residentials = models.CharField(db_column='Residentials', max_length=5, blank=True, null=True)
-    churches = models.CharField(db_column='Churches', max_length=5, blank=True, null=True)
-    hospitals = models.CharField(db_column='Hospitals', max_length=5, blank=True, null=True)
-    cemetery = models.CharField(db_column='Cemetery', max_length=5, blank=True, null=True)
-    port = models.CharField(db_column='Port', max_length=5, blank=True, null=True)
-    intl_airport = models.CharField(db_column='Intl Airport', max_length=5, blank=True, null=True)
-    dom_airport = models.CharField(db_column='Dom Airport', max_length=5, blank=True, null=True)
-    bus_terminal = models.CharField(db_column='Bus Terminal', max_length=5, blank=True, null=True)
-    cbd = models.CharField(db_column='CBD', max_length=5, blank=True, null=True)
-    gov = models.CharField(db_column='Government', max_length=5, blank=True, null=True)
-    offices = models.CharField(db_column='Offices', max_length=5, blank=True, null=True)
-    tourists_spots = models.CharField(db_column='Tourists Spots', max_length=5, blank=True, null=True)
-    events_serving_site = models.CharField(db_column='Events Serving Site', max_length=5, blank=True, null=True)
-    hotels = models.CharField(db_column='Hotels', max_length=5, blank=True, null=True)
-    corp = models.CharField(db_column='Corp', max_length=5, blank=True, null=True)
-    pd_rd = models.CharField(db_column='PD/RD', max_length=5, blank=True, null=True)
-    mpic_office = models.CharField(db_column='MPIC Offices', max_length=5, blank=True, null=True)
-    smart_stores = models.CharField(db_column='Smart Stores', max_length=5, blank=True, null=True)
+    site_id = models.CharField(max_length=10, blank=True, null=True)  #db_column='Site ID'
+    parent_site_id = models.CharField(max_length=20, blank=True, null=True) # db_column='Parent Site ID'
+    site_name = models.CharField(max_length=110, blank=True, null=True) # db_column='Site Name'
+    latitude = models.CharField(max_length=10, blank=True, null=True) # db_column='Latitude'
+    longitude = models.CharField(max_length=10, blank=True, null=True) # db_column='Logitude'
+    site_stage_name = models.CharField(max_length=20, blank=True, null=True) # db_column='Site Stage Name'
+    site_type_name = models.CharField(max_length=20, blank=True, null=True) # db_column='Site Type Name'
+    access_restriction = models.CharField(max_length=250, blank=True, null=True) #db_column='Access Restriction'
+    area_name = models.CharField(max_length=20, blank=True, null=True) # db_column='Area Name'
+    major_node = models.CharField(max_length=5, blank=True, null=True) # db_column='Major Node'
+    has_room = models.CharField(max_length=25, blank=True, null=True) # db_column='Has Room'
+    site_owner = models.CharField(max_length=250, blank=True, null=True) # db_column='Site Owner'
+    region_name = models.CharField(max_length=10, blank=True, null=True) # db_column='Region Name'
+    city = models.CharField(max_length=50, blank=True, null=True) # db_column='City'
+    ppgis_city_code = models.CharField(max_length=5, blank=True, null=True) # db_column='PPGIS City Code'
+    province = models.CharField(max_length=40, blank=True, null=True) # db_column='Province'
+    lessor_name = models.CharField(max_length=170, blank=True, null=True) # db_column='Lessor Name'
+    lessor_phone = models.CharField(max_length=170, blank=True, null=True) # db_column='Lessor Phone'
+    altitude_m = models.CharField(max_length=10, blank=True, null=True) # db_column='Altitude(m)'
+    address = models.CharField(max_length=250, blank=True, null=True) # db_column='Address'
+    travel_duration = models.CharField(max_length=250, blank=True, null=True) #d b_column='Travel Duration(m)'
+    tower_height = models.CharField(max_length=30, blank=True, null=True) # db_column='Tower Height'
+    tower_type = models.CharField(max_length=90, blank=True, null=True) # db_column='Tower Type'
+    mtf = models.CharField(max_length=5, blank=True, null=True) # db_column='MTF'
+    vip = models.CharField(max_length=5, blank=True, null=True) # db_column='VIP'
+    malls = models.CharField(max_length=5, blank=True, null=True) # db_column='Malls'
+    schools = models.CharField(max_length=5, blank=True, null=True) # db_column='Schools'
+    residentials = models.CharField(max_length=5, blank=True, null=True) # db_column='Residentials'
+    churches = models.CharField(max_length=5, blank=True, null=True) # db_column='Churches'
+    hospitals = models.CharField(max_length=5, blank=True, null=True) # db_column='Hospitals'
+    cemetery = models.CharField(max_length=5, blank=True, null=True) # db_column='Cemetery'
+    port = models.CharField(max_length=5, blank=True, null=True) # db_column='Port'
+    intl_airport = models.CharField(max_length=5, blank=True, null=True) # db_column='Intl Airport'
+    dom_airport = models.CharField(max_length=5, blank=True, null=True) # db_column='Dom Airport'
+    bus_terminal = models.CharField(max_length=5, blank=True, null=True) # db_column='Bus Terminal'
+    cbd = models.CharField(max_length=5, blank=True, null=True) # db_column='CBD'
+    gov = models.CharField(max_length=5, blank=True, null=True) # db_column='Government'
+    offices = models.CharField(max_length=5, blank=True, null=True) # db_column='Offices'
+    tourists_spots = models.CharField(max_length=5, blank=True, null=True) # db_column='Tourists Spots'
+    events_serving_site = models.CharField(max_length=5, blank=True, null=True) # db_column='Events Serving Site'
+    hotels = models.CharField(max_length=5, blank=True, null=True) # db_column='Hotels'
+    corp = models.CharField(max_length=5, blank=True, null=True) # db_column='Corp'
+    pd_rd = models.CharField(max_length=5, blank=True, null=True) # db_column='PD/RD'
+    mpic_office = models.CharField(max_length=5, blank=True, null=True) # db_column='MPIC Offices'
+    smart_stores = models.CharField(max_length=5, blank=True, null=True) # db_column='Smart Stores'
 
     class Meta:
         db_table = 'sitelistreport'
+
 
 '''
 class ApiUserToken(models.Model):

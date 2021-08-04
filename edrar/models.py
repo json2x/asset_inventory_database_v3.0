@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from api.models import SmartSite, Device, Cell
+from api.models import SmartSite, Device, Cell, Trx
 
 # Create your models here.
 User = get_user_model()
@@ -82,5 +82,12 @@ class DailyActivity_Cell(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     daily_activity = models.ForeignKey(DailyActivity, on_delete=models.CASCADE)
     cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
+    create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
+    update_flag = models.BooleanField()
+
+class DailyActivity_Trx(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    daily_activity = models.ForeignKey(DailyActivity, on_delete=models.CASCADE)
+    trx = models.ForeignKey(Trx, on_delete=models.CASCADE)
     create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
     update_flag = models.BooleanField()

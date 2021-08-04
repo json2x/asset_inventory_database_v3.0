@@ -116,6 +116,25 @@ class Cell(models.Model):
         unique_together = (('ems_id', 'dn', 'site', 'band', 'subdomain'),)
         verbose_name_plural = 'Cells'
 
+class Trx(models.Model):
+    ems_trx_id = models.CharField(max_length=140, blank=True, null=True) # db_column='EMS TRX ID'
+    ems_id = models.CharField(max_length=15, blank=True, null=True) # db_column='EMS ID'
+    trx_name = models.CharField(max_length=140, blank=True, null=True) # db_column='TRX Name'
+    dn = models.CharField(max_length=140, blank=True, null=True) # db_column='DN'
+    site_id = models.CharField(max_length=10, blank=True, null=True) # db_column='Site ID'
+    parent_id = models.CharField(max_length=20, blank=True, null=True) # db_column='Parent ID'
+    parent_dn = models.CharField(max_length=140, blank=True, null=True) # db_column='Parent DN'
+    admin_state = models.CharField(max_length=15, blank=True, null=True) # db_column='Admin State'
+    e1_assignment = models.CharField(max_length=10, blank=True, null=True) # db_column='E1 Assignment'
+    homing_bts = models.CharField(max_length=20, blank=True, null=True) # db_column='HOMING BTS'
+    record_status = models.IntegerField(default=1)
+    cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'Trx'
+        verbose_name_plural = 'TRX'
+
 
 class Location(models.Model):
     code = models.IntegerField()
@@ -582,21 +601,6 @@ class LR_TDTopology(models.Model):
 
     class Meta:
         db_table = 'lr_tdtopology'
-
-class LR_TRX(models.Model):
-    ems_trx_id = models.CharField(max_length=140, blank=True, null=True) # db_column='EMS TRX ID'
-    ems_id = models.CharField(max_length=15, blank=True, null=True) # db_column='EMS ID'
-    trx_name = models.CharField(max_length=140, blank=True, null=True) # db_column='TRX Name'
-    dn = models.CharField(max_length=140, blank=True, null=True) # db_column='DN'
-    site_id = models.CharField(max_length=10, blank=True, null=True) # db_column='Site ID'
-    parent_id = models.CharField(max_length=20, blank=True, null=True) # db_column='Parent ID'
-    parent_dn = models.CharField(max_length=140, blank=True, null=True) # db_column='Parent DN'
-    admin_state = models.CharField(max_length=15, blank=True, null=True) # db_column='Admin State'
-    e1_assignment = models.CharField(max_length=10, blank=True, null=True) # db_column='E1 Assignment'
-    homing_bts = models.CharField(max_length=20, blank=True, null=True) # db_column='HOMING BTS'
-
-    class Meta:
-        db_table = 'lr_trx'
 
 class SiteListReport(models.Model):
     site_id = models.CharField(max_length=10, blank=True, null=True)  #db_column='Site ID'

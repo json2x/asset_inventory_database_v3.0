@@ -1,6 +1,24 @@
 {% extends 'edrar/edrar_base_template.html'%}
 {% block content %}
-Add activity
+<h3 class="mx-4 my-2">Add activity</h3>
+<form action="#"></form>
+    {% csrf_token %}
+    <div class="row m-3">
+        <div class="col">
+            <div class="form-group">
+                <label for="activity">Activity</label>
+                {{form.activity}}
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="siteid">Siteid</label>
+                {{form.siteid}}
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</form>
 {% endblock content %}
 {% block customJs %}
 <script>

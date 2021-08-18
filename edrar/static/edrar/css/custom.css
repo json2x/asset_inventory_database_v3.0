@@ -1,0 +1,31 @@
+@media (min-width: 768px) {
+    .modal-xl {
+        width: 90%;
+        max-width:1200px;
+    }
+}
+
+.nowrap {
+    white-space:nowrap;
+}
+
+div.table-container{
+    overflow-x: scroll;
+}
+
+div.tabContent{
+    padding: 0.5rem;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #dddfeb #dddfeb;
+    margin-bottom: 10px;
+}
+
+#aid-device-search-table tbody tr{
+    cursor: pointer;
+}
+
+#aid-cell-search-table tbody tr{
+    cursor: pointer;
+}

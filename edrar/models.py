@@ -44,7 +44,7 @@ class DailyActivity(models.Model):
     homing = models.CharField(max_length=250, blank=True, null=True)
     bts_id = models.CharField(max_length=250, blank=True, null=True)
     device_name = models.CharField(max_length=250, blank=True, null=True)
-    equipment_type = models.CharField(max_length=250, blank=True, null=True)
+    equipment_type = models.CharField(max_length=250, blank=True, null=True) #model field in device?
     trx_config = models.CharField(max_length=250, blank=True, null=True)
     #trx_count = models.IntegerField(max_length=3, blank=True, null=True)
     iub_type = models.CharField(max_length=250, blank=True, null=True)

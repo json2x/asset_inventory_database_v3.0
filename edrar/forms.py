@@ -35,15 +35,15 @@ class DailyActivityForm(forms.Form):
     equipment_type = forms.CharField(max_length=250)
     
     bts_id = forms.CharField(max_length=250)
-    
+    cell_name = forms.CharField(max_length=250)
+    cell_id = forms.CharField(max_length=250)
+    sac = forms.CharField(max_length=250)
+    lac = forms.CharField(max_length=250)
+    pci = forms.CharField(max_length=250)
+
     trx_config = forms.CharField(max_length=250)
     iub_type = forms.CharField(max_length=250)
     bandwidth = forms.IntegerField()
-    sac = forms.CharField(max_length=250)
-    cell_id = forms.CharField(max_length=250)
-    cell_name = forms.CharField(max_length=250)
-    lac = forms.CharField(max_length=250)
-    pci = forms.CharField(max_length=250)
     omip = forms.CharField(max_length=250)
     s1_c = forms.CharField(max_length=250)
     s1_u = forms.CharField(max_length=250)
@@ -58,7 +58,7 @@ class DailyActivityForm(forms.Form):
         super(DailyActivityForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
-            if visible.field.label == 'siteid' or visible.field.label == 'tech' \
-                or visible.field.label == 'band':
+            if visible.field.label == 'activity' or visible.field.label == 'siteid' \
+                or visible.field.label == 'tech' or visible.field.label == 'band':
                 visible.field.widget.attrs['class'] = 'form-control select2'
 

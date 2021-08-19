@@ -7,7 +7,7 @@ from django.db.models import Q
 from dal import autocomplete
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from .forms import DailyActivityForm
-from .models import MobileTechnology, MobileFrequencyBand
+from .models import Activity, MobileTechnology, MobileFrequencyBand
 from api.models import SmartSite, Device, Cell
 
 # Create your views here.
@@ -23,6 +23,19 @@ def activity_add(request):
         pass
 
     return render(request, 'edrar/activity_add.html', {'form': DailyActivityForm})
+
+class ActivityAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Activity.objects.none()
+
+        qs = Activity.objects.all()
+
+        if self.q:
+            qs = qs.filter(siteid__icontains=self.q)
+
+        return qs
 
 class SiteIdAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -80,33 +93,9 @@ class DeviceDatatableView(BaseDatatableView):
 class CellDatatableView(BaseDatatableView):
     model = Cell
     columns = [
-        'id', 'domain', 'cell_name', 'parent_id', 'site', 'tech', 'subdomain', 'band', 'ne_type',
+        'id', 'domain', 'ems_id', 'nodeid', 'cell_name', 'parent_id', 'site', 'tech', 'subdomain', 'band', 'ne_type',
         'lac_tac', 'sac_ci_eutra', 'rnc_cid', 'phy_cid', 'lcr_cid', 'sector_id',
         'function', 'sdcch_cap', 'tch_cap', 'record_status'
     ]
-
-    def filter_queryset(self, qs):
-        deviceStr = self.request.GET.get("columns[2][search][value]", None)
-        techStr = self.request.GET.get("columns[4][search][value]", None)
-        print(deviceStr)
-        qs_params = None
-        
-        if techStr:
-            qs = qs.filter(subdomain=techStr)
-
-        if deviceStr:
-            if "|" in deviceStr:
-                devices = deviceStr.split('|')
-                for device in devices:
-                    q = Q(parent_id=device)
-                    if qs_params:
-                        qs_params = qs_params | q
-                    else:
-                        qs_params = q
-
-                qs = qs.filter(qs_params)
-            else:
-                qs = qs.filter(parent_id=deviceStr)
-        
-        return qs
+    
 

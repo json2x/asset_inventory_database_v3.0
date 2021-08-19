@@ -6,7 +6,8 @@ from django.db.models import Q
 
 from dal import autocomplete
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from .forms import DailyActivityForm, DailyActivityModelForm
+from .forms import DailyActivityForm
+from .models import MobileTechnology, MobileFrequencyBand
 from api.models import SmartSite, Device, Cell
 
 # Create your views here.
@@ -23,7 +24,7 @@ def activity_add(request):
 
     return render(request, 'edrar/activity_add.html', {'form': DailyActivityForm})
 
-class siteid_autocomplete(autocomplete.Select2QuerySetView):
+class SiteIdAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
         if not self.request.user.is_authenticated:
@@ -33,6 +34,32 @@ class siteid_autocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(siteid__icontains=self.q)
+
+        return qs
+
+class MobileTechAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return MobileTechnology.objects.none()
+
+        qs = MobileTechnology.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+class MobileFreqBandAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return MobileFrequencyBand.objects.none()
+
+        qs = MobileFrequencyBand.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
 
         return qs
 

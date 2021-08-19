@@ -138,8 +138,7 @@ $(document).ready(function() {
     **********************************************************************/
     $('#id_activity').change(function(){
         if($(this).val()){
-            $('.select2').prop("disabled", false);
-            
+            $('select.select2').prop("disabled", false);
         }else{
             $('.select2').val(null).trigger('change');
             reset_activity_logger_form();
@@ -295,13 +294,30 @@ $(document).ready(function() {
     /**********************************************************************
      * ON PAGE LOAD TRIGGERS
     **********************************************************************/
-     $('.select2').select2({
+     $('#id_siteid').select2({
         placeholder: 'Select Site',
         ajax: {
             url: "/edrar/data/siteid-autocomplete/",
             dataType: 'json',
         }
     });
+
+    $('#id_tech').select2({
+        placeholder: 'Select Tech',
+        ajax: {
+            url: "/edrar/data/mobiletech-autocomplete/",
+            dataType: 'json',
+        }
+    });
+
+    $('#id_band').select2({
+        placeholder: 'Select Freq Band',
+        ajax: {
+            url: "/edrar/data/mobilefreqband-autocomplete/",
+            dataType: 'json',
+        }
+    });
+    
 
     disable_input_fields();
     reset_selected_tables();

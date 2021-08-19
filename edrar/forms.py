@@ -2,7 +2,7 @@
 from django import forms
 from django.conf.urls import url
 from django.contrib.auth.models import User
-from .models import DailyActivity, Activity, SiteStatus
+from .models import DailyActivity, Activity, SiteStatus, MobileTechnology, MobileFrequencyBand
 from api.models import SmartSite
 
 from dal import autocomplete
@@ -26,15 +26,16 @@ class DailyActivityModelForm(forms.ModelForm):
 class DailyActivityForm(forms.Form):
     activity = forms.ModelChoiceField(label='activity', queryset=Activity.objects.all())
     siteid = forms.ModelChoiceField(label='siteid', queryset=SmartSite.objects.all())
+    tech = forms.ModelChoiceField(label='tech', queryset=MobileTechnology.objects.all())
+    band = forms.ModelChoiceField(label='band', queryset=MobileFrequencyBand.objects.all())
 
     device_name = forms.CharField(max_length=250)
-    tech = forms.CharField(max_length=250)
     vendor = forms.CharField(max_length=250)
     homing = forms.CharField(max_length=250)
     equipment_type = forms.CharField(max_length=250)
     
     bts_id = forms.CharField(max_length=250)
-    band = forms.CharField(max_length=250)
+    
     trx_config = forms.CharField(max_length=250)
     iub_type = forms.CharField(max_length=250)
     bandwidth = forms.IntegerField()
@@ -57,6 +58,7 @@ class DailyActivityForm(forms.Form):
         super(DailyActivityForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
-            if visible.field.label == 'siteid':
+            if visible.field.label == 'siteid' or visible.field.label == 'tech' \
+                or visible.field.label == 'band':
                 visible.field.widget.attrs['class'] = 'form-control select2'
 

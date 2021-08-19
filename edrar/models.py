@@ -16,13 +16,23 @@ class Activity(models.Model):
 
 class MobileTechnology(models.Model):
     name = models.CharField(max_length=250)
-    alias = models.CharField(max_length=250)
+    alias = models.CharField(max_length=250, blank=True, null=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
     class Meta:
         verbose_name_plural = 'Mobile Technologies'
+
+class MobileFrequencyBand(models.Model):
+    band = models.IntegerField()
+    alias = models.CharField(max_length=250, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.band)
+
+    class Meta:
+        verbose_name_plural = 'Mobile Freq Bands'
 
 class SiteStatus(models.Model):
     name = models.CharField(max_length=250)

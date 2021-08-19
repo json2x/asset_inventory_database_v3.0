@@ -16,9 +16,13 @@ class Activity(models.Model):
 
 class MobileTechnology(models.Model):
     name = models.CharField(max_length=250)
+    alias = models.CharField(max_length=250)
 
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        verbose_name_plural = 'Mobile Technologies'
 
 class SiteStatus(models.Model):
     name = models.CharField(max_length=250)

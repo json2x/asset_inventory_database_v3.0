@@ -14,6 +14,12 @@ class Activity(models.Model):
     class Meta:
         verbose_name_plural = 'Activities'
 
+class MobileTechnology(models.Model):
+    name = models.CharField(max_length=250)
+
+    def __str__(self) -> str:
+        return self.name
+
 class SiteStatus(models.Model):
     name = models.CharField(max_length=250)
 

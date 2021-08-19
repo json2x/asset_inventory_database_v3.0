@@ -28,12 +28,12 @@ class DailyActivityForm(forms.Form):
     siteid = forms.ModelChoiceField(label='siteid', queryset=SmartSite.objects.all())
 
     device_name = forms.CharField(max_length=250)
-    tech = forms.CharField(max_length=250, widget=forms.HiddenInput())
-    vendor = forms.CharField(max_length=250, widget=forms.HiddenInput())
-    homing = forms.CharField(max_length=250, widget=forms.HiddenInput())
-    equipment_type = forms.CharField(max_length=250, widget=forms.HiddenInput())
+    tech = forms.CharField(max_length=250)
+    vendor = forms.CharField(max_length=250)
+    homing = forms.CharField(max_length=250)
+    equipment_type = forms.CharField(max_length=250)
     
-    bts_id = forms.CharField(max_length=250, widget=forms.HiddenInput())
+    bts_id = forms.CharField(max_length=250)
     band = forms.CharField(max_length=250)
     trx_config = forms.CharField(max_length=250)
     iub_type = forms.CharField(max_length=250)

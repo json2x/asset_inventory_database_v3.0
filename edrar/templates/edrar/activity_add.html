@@ -80,7 +80,10 @@
                         <th>Band</th>
                         <th>NE Type</th>
                         <th>LAC/TAC</th>
-                        <th>SAC/CI</th>
+                        <th>Cell ID</th>
+                        <!-- HIDDEN FIELDS -->
+                        <th>SAC</th>
+                        <th>PCI</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,26 +96,26 @@
 
     <hr id="filtered-cell-table-separator" class="dt-separator">
 
-    <div class="row mx-3 mt-1">
-        <div class="col-sm-3">
+    <div class="row mx-3 mt-1 input-grp-container">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="device_name">Device name</label>
                 {{form.device_name}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="vendor">Vendor</label>
                 {{form.vendor}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="homing">Homing</label>
                 {{form.homing}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="equipment_type">Equipment type</label>
                 {{form.equipment_type}}
@@ -120,91 +123,82 @@
         </div>
     </div>
 
-    <hr>
-
-    <div class="row mx-3 mt-1">
-        <div class="col-sm-3">
+    <div class="row mx-3 mt-1 input-grp-container">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="bts_id">BTS ID</label>
                 {{form.bts_id}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="cell_name">Cell Name</label>
                 {{form.cell_name}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="cell_id">Cell ID</label>
                 {{form.cell_id}}
             </div>
         </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="iub_type">IuB Type</label>
-                {{form.iub_type}}
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="bandwidth">Bandwidth</label>
-                {{form.bandwidth}}
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="omip">OMIP</label>
-                {{form.omip}}
-            </div>
-        </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="lac">LAC</label>
                 {{form.lac}}
             </div>
         </div>
-        
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="sac">SAC</label>
                 {{form.sac}}
             </div>
         </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="trx_config">TRX Config</label>
-                {{form.trx_config}}
-            </div>
-        </div>
-        
-        
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
                 <label for="sac">PCI</label>
                 {{form.pci}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
-                <label for="cell_id">S1_C</label>
+                <label for="iub_type">IuB Type</label>
+                {{form.iub_type}}
+            </div>
+        </div>
+        <div class="col-sm-3 tf-container">
+            <div class="form-group">
+                <label for="bandwidth">Bandwidth</label>
+                {{form.bandwidth}}
+            </div>
+        </div>
+        <div class="col-sm-3 tf-container">
+            <div class="form-group">
+                <label for="omip">OMIP</label>
+                {{form.omip}}
+            </div>
+        </div>
+        <div class="col-sm-3 tf-container">
+            <div class="form-group">
+                <label for="trx_config">TRX Config</label>
+                {{form.trx_config}}
+            </div>
+        </div>
+        <div class="col-sm-3 tf-container">
+            <div class="form-group">
+                <label for="s1_c">S1_C</label>
                 {{form.s1_c}}
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 tf-container">
             <div class="form-group">
-                <label for="cell_name">S1_U</label>
+                <label for="s1_u">S1_U</label>
                 {{form.s1_u}}
             </div>
         </div>
     </div>
-    
 
-    <hr>
-
-    <div class="row mx-3 mt-1">
+    <div class="row mx-3 mt-1 general-input-container">
         <div class="col-sm-3">
             <div class="form-group">
                 <label for="site_status">Site status</label>
@@ -225,8 +219,8 @@
         </div>
     </div>
 
-    <div class="row mx-3 mt-1">
-        <div class="col">
+    <div class="row mx-3 mt-1 general-input-container">
+        <div class="col-lg-12">
             <div class="form-group">
                 <label for="remarks">Remarks</label>
                 {{form.remarks}}
@@ -234,7 +228,7 @@
         </div>
     </div>
 
-    <div class="row mx-3 mt-1 mb-3">
+    <div class="row mx-3 mt-3 mb-3">
         <div class="col">
             <button id="cancel-save-activity" class="btn btn-secondary btn-lg btn-block">Cancel</button>
         </div>

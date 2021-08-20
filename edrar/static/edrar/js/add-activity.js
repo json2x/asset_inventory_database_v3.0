@@ -3,6 +3,25 @@
  **/
 
 $(document).ready(function() {
+
+    /**********************************************************************
+     * CONSTANTS
+    **********************************************************************/
+    var selectActivity = null;
+    var selectSiteid = null;
+    var selectTech = null;
+    var selectBand = null;
+    var textFieldsHidden = false;
+    var tableCleared = false;
+    const TECH_LIST = {'2G': '2G', '3G': '3G', 'FD-LTE': 'FD-LTE', 'TD-LTE': 'TD-LTE', '5G': '5G'}
+    const DEVICE_FIELD_MAP = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'};
+    const CELL_FIELD_MAP = {
+        '2G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'trx_config': '', 'bandwidth': '',},
+        '3G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'rnc_cid', 'lac': 'lac_tac', 'sac': 'sac_ci_eutra', 'iub_type': '', 'bandwidth': '',},
+        'FD-LTE':   {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
+        'TD-LTE':   {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
+        '5G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
+    }
     
     /**********************************************************************
      * Functions
@@ -20,24 +39,63 @@ $(document).ready(function() {
     }
 
     function clear_tables(){
-        tables = ['#filtered-device-table', '#filtered-cell-table'];
-        for(let i=0; i<tables.length; i++){
-            if($.fn.DataTable.isDataTable(tables[i])){
-                $(tables[i]).DataTable().destroy();
+        if(!tableCleared){
+            tables = ['#filtered-device-table', '#filtered-cell-table'];
+            for(let i=0; i<tables.length; i++){
+                if($.fn.DataTable.isDataTable(tables[i])){
+                    $(tables[i]).DataTable().destroy();
+                }
             }
+            $('.datatable-container').hide();
+            $('.dt-separator').hide();
+            tableCleared = true;
         }
-        $('.datatable-container').hide();
-        $('.dt-separator').hide();
     }
 
-    
-
-    function disable_input_fields(){
+    function disable_stb_select_fields(){
         $('#activity-logger-form *').filter(':input').each(function(){
-            if(this.type != 'hidden' &&  this.name != 'activity'){
+            if(this.type != 'hidden' &&  
+                (this.name == 'siteid' || this.name == 'tech' || this.name == 'band')){
                 $(this).prop("disabled", true);
             }
         });
+    }
+
+    function hide_text_field_containers(){
+        if(!textFieldsHidden){
+            $('#activity-logger-form *').filter('.tf-container').each(function(){
+                let field_name = $(this).find('label').attr('for');
+                $(this).attr('id', `${field_name}_field_container`);
+                $(this).hide();
+                $(`${field_name}_field_container :input`).val('');
+            });
+            textFieldsHidden = true;
+        }
+    }
+
+    function hide_text_fields(fieldMap){
+        if(!textFieldsHidden){
+            for(item in fieldMap){
+                if(fieldMap[item].constructor == Object){
+                    for(field in fieldMap[item]){
+                        $(`#${field}_field_container`).hide();
+                        $(`#id_${field}`).val('');
+                    }
+                }else{
+                    $(`#${item}_field_container`).hide();
+                    $(`#id_${item}`).val('');
+                }
+            }
+        }
+    }
+
+    function hide_general_input_container(){
+        $('.general-input-container').hide();
+        $('.general-input-container :input').val('');
+    }
+
+    function show_general_input_container(){
+        $('.general-input-container').show();
     }
 
     function draw_datatable(tableId, dataTableOptions){
@@ -45,6 +103,29 @@ $(document).ready(function() {
         dataTable=$(tableId).DataTable(dataTableOptions);
         $(`${tableId}-container`).show();
         $(`${tableId}-separator`).show();
+        tableCleared = false;
+    }
+
+    function revise_table_option(tech, options){
+        switch(tech){
+            case TECH_LIST['2G']:
+                break;
+            case TECH_LIST['3G']:
+                options['columns'][10]['data'] = 'rnc_cid';
+                options['columns'][11]['data'] = 'sac_ci_eutra';
+                options['columnDefs'][10]['name'] = 'rnc_cid';
+                options['columnDefs'][11]['name'] = 'sac_ci_eutra';
+                break;
+            case TECH_LIST['FD-LTE']:
+                break;
+            case TECH_LIST['TD-LTE']:
+                break;
+            case TECH_LIST['5G']:
+                break;
+            default:
+        }
+
+        return options;
     }
 
     function draw_device_datatable(siteid, tech){
@@ -81,7 +162,8 @@ $(document).ready(function() {
             ],
             dom: 'ltipr',
             'initComplete': function(settings, json){
-                fill_device_data_to_form_fields(json.data);
+                //fill_device_data_to_form_fields(json.data);
+                fill_to_form_fields(json.data, DEVICE_FIELD_MAP);
                 console.log(json.data);
             }
         }
@@ -107,6 +189,8 @@ $(document).ready(function() {
                 {data: 'ne_type'},
                 {data: 'lac_tac'},
                 {data: 'sac_ci_eutra'},
+                {data: 'rnc_cid'},
+                {data: 'phy_cid'},
             ],
             columnDefs: [
                 {name: 'domain', searchable: false, visible: false, targets: [0]},
@@ -120,19 +204,24 @@ $(document).ready(function() {
                 {name: 'ne_type', searchable: false, targets: [8]},
                 {name: 'lac_tac', searchable: false, targets: [9]},
                 {name: 'sac_ci_eutra', searchable: false, targets: [10]},
+                {name: 'rnc_cid', searchable: false, visible: false, targets: [11]},
+                {name: 'phy_cid', searchable: false, visible: false, targets: [12]},
             ],
             searchCols: [ 
                 null, null, null, null, null,
                 {'search': siteid}, {'search': tech}, {'search': band}, 
-                null, null, null,
+                null, null, null, null,
             ],
             dom: 'fltipr',
             'initComplete': function(settings, json){
-                fill_cell_data_to_form_fields(json.data);
+                //fill_cell_data_to_form_fields(json.data);
+                fill_to_form_fields(json.data, CELL_FIELD_MAP[selectTech]);
+                show_general_input_container();
                 console.log(json.data);
             }
         }
 
+        options = revise_table_option(TECH_LIST['3G'], options)
         draw_datatable('#filtered-cell-table', options);
     }
 
@@ -144,78 +233,72 @@ $(document).ready(function() {
         return uniqDataArray.join(';');
     }
 
-    function fill_device_data_to_form_fields(data){
+    function fill_to_form_fields(data, inputFieldMap){
+        //let input_field_map = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'};
         if(data.length == 1){
-            $('#id_device_name').prop("disabled", false).val(data[0]['device_id']);
-            $('#id_vendor').prop("disabled", false).val(data[0]['vendor_id']);
-            $('#id_homing').prop("disabled", false).val(data[0]['parent_device_id']);
-            $('#id_equipment_type').prop("disabled", false).val(data[0]['model']);
+            Object.keys(inputFieldMap).map(field => $(`#id_${field}`).val(data[0][inputFieldMap[field]]));
         }else if(data.length > 1){
-            $('#id_device_name').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.device_id)));
-            $('#id_vendor').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.vendor_id)));
-            $('#id_homing').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.parent_device_id)));
-            $('#id_equipment_type').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.model)));
+            Object.keys(inputFieldMap).map(field => $(`#id_${field}`)
+                .val(concat_unique_multiple_values(data.map(row => row[inputFieldMap[field]]))));
         }
+        Object.keys(inputFieldMap).map(field => $(`#${field}_field_container`).show());
+        textFieldsHidden = false;
     }
-
-    function fill_cell_data_to_form_fields(data){
-        if(data.length == 1){
-            $('#id_bts_id').prop("disabled", false).val(data[0]['nodeid']);
-            $('#id_cell_name').prop("disabled", false).val(data[0]['cell_name']);
-            $('#id_cell_id').prop("disabled", false).val(data[0]['sac_ci_eutra']);
-        }else if(data.length > 1){
-            $('#id_bts_id').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.nodeid)));
-            $('#id_cell_name').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.cell_name)));
-            $('#id_cell_id').prop("disabled", false).val(concat_unique_multiple_values(data.map(row => row.sac_ci_eutra)));
-        }
-    }
+    
 
 
     /**********************************************************************
      * Page Events
     **********************************************************************/
-    siteid = null;
-    tech = null;
-    band = null;
+    
 
     $('#id_activity').on('change', function(){
-        if($(this).val()){
+        selectActivity = $('#id_activity').val() ? $('#id_activity').find(':selected').text() : null;
+        if(selectActivity){
             $('select.select2').prop("disabled", false);
         }else{
             reset_activity_logger_form();
-            disable_input_fields();
+            disable_stb_select_fields();
             clear_tables();
+            hide_text_field_containers();
         }
     });
 
     $('#id_siteid').on('change', function(){
-        siteid = $('#id_siteid').val() ? $('#id_siteid').find(':selected').text() : null;
+        selectSiteid = $('#id_siteid').val() ? $('#id_siteid').find(':selected').text() : null;
         $('#id_tech').val(null).trigger('change');
 
-        if(siteid && tech){
-            draw_device_datatable(siteid, tech);
+        if(selectSiteid && selectTech){
+            draw_device_datatable(selectSiteid, selectTech);
         }else{
+            hide_text_field_containers();
+            hide_general_input_container();
             clear_tables();
         }
     });
 
     $('#id_tech').on('change', function(){
-        tech = $('#id_tech').val() ? $('#id_tech').find(':selected').text() : null;
+        selectTech = $('#id_tech').val() ? $('#id_tech').find(':selected').text() : null;
         $('#id_band').val(null).trigger('change');
 
-        if(siteid && tech){
-            draw_device_datatable(siteid, tech);
+        if(selectSiteid && selectTech){
+            draw_device_datatable(selectSiteid, selectTech);
         }else{
+            hide_text_field_containers();
+            hide_general_input_container();
             clear_tables();
         }
     });
 
     $('#id_band').on('change', function(){
-        band = $('#id_band').val() ? $('#id_band').find(':selected').text() : null;
-
-        if(siteid && tech && band){
-            draw_cell_datatable(siteid, tech, band);
+        selectBand = $('#id_band').val() ? $('#id_band').find(':selected').text() : null;
+        
+        if(selectSiteid && selectTech && selectBand){
+            Object.keys(CELL_FIELD_MAP[selectTech]).map(field => $(`id_${field}`).val(''));
+            draw_cell_datatable(selectSiteid, selectTech, selectBand);
         }else{
+            hide_text_fields(CELL_FIELD_MAP);
+            hide_general_input_container();
             clear_table('#filtered-cell-table');
         }
     });
@@ -256,9 +339,10 @@ $(document).ready(function() {
     });
 
 
-    disable_input_fields();
+    disable_stb_select_fields();
     clear_tables();
-
+    hide_text_field_containers();
+    hide_general_input_container();
 
     /*******************************************************************************************
      * *****************************************************************************************

@@ -29,3 +29,7 @@ div.tabContent{
 #aid-cell-search-table tbody tr{
     cursor: pointer;
 }
+
+div.input-grp-container{
+    min-height: 50px;
+}

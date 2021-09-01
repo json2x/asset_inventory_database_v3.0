@@ -110,6 +110,10 @@ class Cell(models.Model):
     def __str__(self):
         return self.cell_name
 
+    @property
+    def trx(self):
+        return self.trx_set.all()
+
     class Meta:
         #managed = False
         db_table = 'cell'

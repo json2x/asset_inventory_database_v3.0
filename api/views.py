@@ -13,6 +13,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
 
@@ -451,3 +455,17 @@ class LocationView(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = (InventoryAccessPolicy,)
+
+#-------------------------------------
+class GetUserToken(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        refresh = RefreshToken.for_user(request.user)
+        content = {
+            'user': str(request.user),  # `django.contrib.auth.User` instance.
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }
+        return Response(content)

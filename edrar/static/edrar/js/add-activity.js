@@ -13,6 +13,9 @@ $(document).ready(function() {
     var selectBand = null;
     var textFieldsHidden = false;
     var tableCleared = false;
+    var deviceData = null;
+    var cellData = null;
+    var trxData = null;
     const TECH_LIST = {'2G': '2G', '3G': '3G', 'FD-LTE': 'FD-LTE', 'TD-LTE': 'TD-LTE', '5G': '5G'}
     const DEVICE_FIELD_MAP = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'};
     const CELL_FIELD_MAP = {
@@ -32,7 +35,7 @@ $(document).ready(function() {
 
     function clear_table(tableId){
         if($.fn.dataTable.isDataTable(tableId)){
-            $(tableId).DataTable().destroy();
+            $(tableId).DataTable().clear().destroy();
             $(`${tableId}-container`).hide();
             $(`${tableId}-separator`).hide();
         }
@@ -43,7 +46,7 @@ $(document).ready(function() {
             tables = ['#filtered-device-table', '#filtered-cell-table'];
             for(let i=0; i<tables.length; i++){
                 if($.fn.DataTable.isDataTable(tables[i])){
-                    $(tables[i]).DataTable().destroy();
+                    $(tables[i]).DataTable().clear().destroy();
                 }
             }
             $('.datatable-container').hide();
@@ -66,8 +69,8 @@ $(document).ready(function() {
             $('#activity-logger-form *').filter('.tf-container').each(function(){
                 let field_name = $(this).find('label').attr('for');
                 $(this).attr('id', `${field_name}_field_container`);
+                $(`#${field_name}_field_container :input`).prop('required', false).val('');
                 $(this).hide();
-                $(`${field_name}_field_container :input`).val('');
             });
             textFieldsHidden = true;
         }
@@ -109,12 +112,25 @@ $(document).ready(function() {
     function revise_table_option(tech, options){
         switch(tech){
             case TECH_LIST['2G']:
+                options['initComplete'] = function(settings, json){
+                    cellData = json.data;
+                    //fill_to_form_fields(cellData, CELL_FIELD_MAP[selectTech]);
+                    console.log(cellData);
+                    if(cellData.length > 0){
+                        show_general_input_container();
+                        cellIDs = concat_unique_multiple_values(cellData.map(item => item.id))
+                        draw_trx_datatable(cellIDs);
+                    }else{
+                        $('#concat-ne-id').html(`(${selectSiteid}-${selectTech}-${selectBand})`);
+                        $('#ne-not-found-modal').modal('show');
+                    }
+                }
                 break;
             case TECH_LIST['3G']:
-                options['columns'][10]['data'] = 'rnc_cid';
-                options['columns'][11]['data'] = 'sac_ci_eutra';
-                options['columnDefs'][10]['name'] = 'rnc_cid';
-                options['columnDefs'][11]['name'] = 'sac_ci_eutra';
+                options['columns'][8]['data'] = 'rnc_cid';
+                options['columns'][10]['data'] = 'sac_ci_eutra';
+                options['columnDefs'][8]['name'] = 'rnc_cid';
+                options['columnDefs'][10]['name'] = 'sac_ci_eutra';
                 break;
             case TECH_LIST['FD-LTE']:
                 break;
@@ -128,46 +144,65 @@ $(document).ready(function() {
         return options;
     }
 
-    function draw_device_datatable(siteid, tech){
+    function draw_device_datatable(siteid, tech, device_id = null){
         options = {
             processing: true,
             serverSide: true,
             select: true,
-            ajax: '/edrar/data/device/',
+            ajax: '/edrar/data/datatable/device/',
             columns: [
                 {data: 'ems_id'},
+                {data: 'dn'},
                 {data: 'device_id'},
-                {data: 'site_id'},                
-                {data: 'vendor_id'},
                 {data: 'parent_device_id'},
                 {data: 'ne_type'},
+                {data: 'record_status'},
+                {data: 'site_id'},
                 {data: 'subdomain'},
+                {data: 'vendor_id'},
                 {data: 'domain'},
                 {data: 'model'},
+                {data: 'id'},
             ],
             columnDefs: [
-                {name: 'ems_id', searchable: false, targets: [0]},
-                {name: 'device_id', searchable: false, targets: [1]},
-                {name: 'site_id', searchable: true, visible: false, targets: [2]},
-                {name: 'vendor_id', searchable: false, targets: [3]},
-                {name: 'parent_device_id', searchable: false, targets: [4]},
-                {name: 'ne_type', searchable: false, targets: [5]},
-                {name: 'subdomain', searchable: true, visible: false, targets: [6]},
-                {name: 'domain', searchable: false, visible: false, targets: [7]},
-                {name: 'model', searchable: false, visible: false, targets: [8]},
+                {name: 'ems_id', searchable: true, targets: [0]},
+                {name: 'dn', searchable: false, visible: false,  targets: [1]},
+                {name: 'device_id', searchable: true, targets: [2]},
+                {name: 'parent_device_id', searchable: true, targets: [3]},
+                {name: 'ne_type', searchable: true, targets: [4]},
+                {name: 'record_status', searchable: false, targets: [5]},
+                {name: 'site_id', searchable: false, visible: false, targets: [6]},
+                {name: 'subdomain', searchable: false, visible: false, targets: [7]},
+                {name: 'vendor_id', searchable: false, visible: false,  targets: [8]},
+                {name: 'domain', searchable: false, visible: false, targets: [9]},
+                {name: 'model', searchable: false, visible: false, targets: [10]},
+                {name: 'id', searchable: false, visible: false, targets: [11]},
             ],
             searchCols: [ 
-                null, null, {'search': siteid}, null, 
-                null, null, {'search': tech}, null, null,
+                null, null, null, null, null, 
+                {'search': siteid}, {'search': tech}, null, null, null, 
+                null, 
             ],
+            order: [[2,'asc']],
             dom: 'ltipr',
+            language: {
+                processing: 'Loading. Please wait...'
+            },
             'initComplete': function(settings, json){
                 //fill_device_data_to_form_fields(json.data);
-                fill_to_form_fields(json.data, DEVICE_FIELD_MAP);
-                console.log(json.data);
+                deviceData = json.data;
+                fill_to_form_fields(deviceData, DEVICE_FIELD_MAP);
+                console.log(deviceData);
             }
         }
 
+        if(device_id){
+            options['searchCols'] = [
+                null, null, null, null, null, 
+                null, null, null, null, null, 
+                null, {'search': device_id}, 
+            ]
+        }
         draw_datatable('#filtered-device-table', options);
     }
 
@@ -176,53 +211,175 @@ $(document).ready(function() {
             processing: true,
             serverSide: true,
             select: true,
-            ajax: '/edrar/data/cell/',
+            ajax: '/edrar/data/datatable/cell/',
             columns: [
-                {data: 'domain'},
                 {data: 'ems_id'},
-                {data: 'nodeid'},
                 {data: 'cell_name'},
                 {data: 'parent_id'},
-                {data: 'site'},
-                {data: 'subdomain'},
+                {data: 'parent_dn'},
                 {data: 'band'},
                 {data: 'ne_type'},
+                {data: 'nodeid'},
                 {data: 'lac_tac'},
                 {data: 'sac_ci_eutra'},
+                {data: 'record_status'},
                 {data: 'rnc_cid'},
                 {data: 'phy_cid'},
+                {data: 'domain'},
+                {data: 'site'},
+                {data: 'subdomain'},
+                {data: 'id'},
             ],
             columnDefs: [
-                {name: 'domain', searchable: false, visible: false, targets: [0]},
-                {name: 'ems_id', searchable: true, targets: [1]},
-                {name: 'nodeid', searchable: false, targets: [2]},
-                {name: 'cell_name', searchable: true, targets: [3]},
-                {name: 'parent_id', searchable: true, targets: [4]},
-                {name: 'site', searchable: false, visible: false, targets: [5]},
-                {name: 'subdomain', searchable: true, visible: false, targets: [6]},
-                {name: 'band', searchable: true, targets: [7]},
-                {name: 'ne_type', searchable: false, targets: [8]},
-                {name: 'lac_tac', searchable: false, targets: [9]},
-                {name: 'sac_ci_eutra', searchable: false, targets: [10]},
-                {name: 'rnc_cid', searchable: false, visible: false, targets: [11]},
-                {name: 'phy_cid', searchable: false, visible: false, targets: [12]},
+                {name: 'ems_id', searchable: true, targets: [0]},
+                {name: 'cell_name', searchable: true, targets: [1]},
+                {name: 'parent_id', searchable: true, targets: [2]},
+                {name: 'parent_dn', searchable: false, visible: false, targets: [3]},
+                {name: 'band', searchable: true, targets: [4]},
+                {name: 'ne_type', searchable: true, targets: [5]},
+                {name: 'nodeid', searchable: true, targets: [6]},
+                {name: 'lac_tac', searchable: true, targets: [7]},
+                {name: 'sac_ci_eutra', searchable: true, targets: [8]},
+                {name: 'record_status', searchable: false, targets: [9]},
+                {name: 'rnc_cid', searchable: false, visible: false, targets: [10]},
+                {name: 'phy_cid', searchable: false, visible: false, targets: [11]},
+                {name: 'domain', searchable: false, visible: false, targets: [12]},
+                {name: 'site', searchable: false, visible: false, targets: [13]},
+                {name: 'subdomain', searchable: false, visible: false, targets: [14]},
+                {name: 'id', searchable: false, visible: false, targets: [15]},
             ],
             searchCols: [ 
-                null, null, null, null, null,
-                {'search': siteid}, {'search': tech}, {'search': band}, 
-                null, null, null, null,
+                null, null, null, null, {'search': band},
+                null, null, null, null, null, null, 
+                null, null, {'search': siteid}, {'search': tech}, null,
             ],
+            order: [[1,'asc']],
             dom: 'fltipr',
+            language: {
+                processing: 'Loading. Please wait...'
+            },
             'initComplete': function(settings, json){
-                //fill_cell_data_to_form_fields(json.data);
-                fill_to_form_fields(json.data, CELL_FIELD_MAP[selectTech]);
-                show_general_input_container();
-                console.log(json.data);
+                cellData = json.data;
+                //fill_to_form_fields(cellData, CELL_FIELD_MAP[selectTech]);
+                if(cellData.length > 0){
+                    show_general_input_container();
+                    console.log(cellData);
+                }else{
+                    $('#concat-ne-id').html(`(${selectSiteid}-${selectTech}-${selectBand})`);
+                    $('#ne-not-found-modal').modal('show');
+                }
             }
         }
 
-        options = revise_table_option(TECH_LIST['3G'], options)
+        options = revise_table_option(tech, options);
         draw_datatable('#filtered-cell-table', options);
+        get_full_ne_data(siteid, tech, band);
+    }
+
+    function draw_trx_datatable(cell_ids){
+        options = {
+            processing: true,
+            serverSide: true,
+            select: true,
+            ajax: '/edrar/data/datatable/trx/',
+            columns: [
+                {data: 'ems_id'},
+                {data: 'trx_name'},
+                {data: 'parent_id'},
+                {data: 'homing_bts'},
+                {data: 'e1_assignment'},
+                {data: 'admin_state'},
+                {data: 'cell'},
+                {data: 'id'},
+            ],
+            columnDefs: [
+                {name: 'ems_id', searchable: true, visible: false, targets: [0]},
+                {name: 'trx_name', searchable: true, targets: [1]},
+                {name: 'parent_id', searchable: true, targets: [2]},
+                {name: 'homing_bts', searchable: true, targets: [3]},
+                {name: 'e1_assignment', searchable: true, targets: [4]},
+                {name: 'admin_state', searchable: true, targets: [5]},
+                {name: 'cell', searchable: false, visible: false, targets: [6]},
+                {name: 'id', searchable: false, visible: false, targets: [7]},
+            ],
+            order: [[2,'asc']],
+            searchCols: [ 
+                null, null, null, 
+                null, null, {'search': cell_ids}, 
+                null, null,
+            ],
+            dom: 'fltipr',
+            language: {
+                processing: 'Loading. Please wait...'
+            },
+            'initComplete': function(settings, json){
+                trxData = json.data;
+                fill_trx_config_field();
+                console.log(trxData);
+            }
+        }
+
+        draw_datatable('#filtered-trx-table', options);
+    }
+
+    function verify_device_data(data){
+        redraw_device_tbl = false;
+        uniq_device_dict = {}
+        device_data = Object.values(data).map(cell => cell.device);
+        for(i in device_data){
+            if(Object.keys(uniq_device_dict).indexOf(String(device_data[i].id)) < 0){
+                uniq_device_dict[device_data[i].id] = device_data[i].device_id;
+            }
+        }
+
+        if($.fn.dataTable.isDataTable('#filtered-device-table')){
+            datatable = $('#filtered-device-table').DataTable();
+            if(datatable.data().any()){
+                datatable.rows().every(function(){
+                    device_row = this.data();
+                    if(Object.keys(uniq_device_dict).indexOf(String(device_row.id)) < 0){
+                        redraw_device_tbl = true;
+                    }
+                });
+            }else{
+                //if datatable is empty.
+                redraw_device_tbl = true;
+            }
+            
+        }
+
+        search_ids = Object.keys(uniq_device_dict).map(device => device).join(';');
+        if(redraw_device_tbl) draw_device_datatable(null, null, search_ids);
+    }
+
+    function get_full_ne_data(siteid, tech, band){
+        cells_data = null;
+        $.ajax({
+            type: "GET",
+            url: '/edrar/data/tfdata/',
+            data: {
+                'site': siteid,
+                'tech': tech,
+                'band': band,
+            },
+            cache: false,
+            success: function(json, status){
+                if(status == 'success'){
+                    //verify_device_data(json.results);
+                    cells_data = json.results
+                }
+            },
+            error: function(xhr, status, error){
+                console.log(`${status}: ${error}`);
+                alert('Unexpected error occured. Contact administrator.');
+            },
+            complete: function(xhr, status){
+                if(status == 'success' && cells_data.length > 0){
+                    verify_device_data(cells_data);
+                    fill_to_form_fields(cells_data, CELL_FIELD_MAP[tech]);
+                }
+            }
+        });
     }
 
     function concat_unique_multiple_values(dataArray){
@@ -236,13 +393,29 @@ $(document).ready(function() {
     function fill_to_form_fields(data, inputFieldMap){
         //let input_field_map = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'};
         if(data.length == 1){
-            Object.keys(inputFieldMap).map(field => $(`#id_${field}`).val(data[0][inputFieldMap[field]]));
+            Object.keys(inputFieldMap).map(field => $(`#id_${field}`).prop('required', true)
+                .val(data[0][inputFieldMap[field]]));
         }else if(data.length > 1){
-            Object.keys(inputFieldMap).map(field => $(`#id_${field}`)
+            Object.keys(inputFieldMap).map(field => $(`#id_${field}`).prop('required', true)
                 .val(concat_unique_multiple_values(data.map(row => row[inputFieldMap[field]]))));
         }
         Object.keys(inputFieldMap).map(field => $(`#${field}_field_container`).show());
         textFieldsHidden = false;
+    }
+
+    function fill_trx_config_field(){
+        trxParentDictCount = {};
+        trxParentDict = Object.values(trxData).map(item => item.parent_id);
+        for(i in trxParentDict){
+            if(trxParentDict[i] in trxParentDictCount){
+                trxParentDictCount[trxParentDict[i]] += 1;
+            }else{
+                trxParentDictCount[trxParentDict[i]] = 1;
+            }
+        }
+
+        trxConfig = Object.values(trxParentDictCount).map(trxCount => trxCount).join('+');
+        $('#id_trx_config').val(trxConfig);
     }
     
 
@@ -268,6 +441,10 @@ $(document).ready(function() {
         selectSiteid = $('#id_siteid').val() ? $('#id_siteid').find(':selected').text() : null;
         $('#id_tech').val(null).trigger('change');
 
+        deviceData = null;
+        cellData = null;
+        trxData = null;
+
         if(selectSiteid && selectTech){
             draw_device_datatable(selectSiteid, selectTech);
         }else{
@@ -281,6 +458,10 @@ $(document).ready(function() {
         selectTech = $('#id_tech').val() ? $('#id_tech').find(':selected').text() : null;
         $('#id_band').val(null).trigger('change');
 
+        deviceData = null;
+        cellData = null;
+        trxData = null;
+
         if(selectSiteid && selectTech){
             draw_device_datatable(selectSiteid, selectTech);
         }else{
@@ -292,16 +473,27 @@ $(document).ready(function() {
 
     $('#id_band').on('change', function(){
         selectBand = $('#id_band').val() ? $('#id_band').find(':selected').text() : null;
-        
+
+        cellData = null;
+        trxData = null;
+
         if(selectSiteid && selectTech && selectBand){
             Object.keys(CELL_FIELD_MAP[selectTech]).map(field => $(`id_${field}`).val(''));
+            if(selectTech == TECH_LIST['2G']){
+                clear_table('#filtered-trx-table');
+            }
             draw_cell_datatable(selectSiteid, selectTech, selectBand);
         }else{
             hide_text_fields(CELL_FIELD_MAP);
             hide_general_input_container();
             clear_table('#filtered-cell-table');
+            clear_table('#filtered-trx-table');
         }
     });
+
+    $('#ne-not-found-modal').on('hidden.bs.modal', function(){
+        $('#concat-ne-id').html('');
+    })
 
     /**********************************************************************
      * ON PAGE LOAD TRIGGERS
@@ -309,7 +501,7 @@ $(document).ready(function() {
     $('#id_activity').select2({
         placeholder: 'Select Activity',
         ajax: {
-        url: "/edrar/data/activity-autocomplete/",
+        url: "/edrar/data/select2/activity-autocomplete/",
         dataType: 'json',
         }
     });
@@ -317,7 +509,7 @@ $(document).ready(function() {
     $('#id_siteid').select2({
         placeholder: 'Select Site',
         ajax: {
-            url: "/edrar/data/siteid-autocomplete/",
+            url: "/edrar/data/select2/siteid-autocomplete/",
             dataType: 'json',
         }
     });
@@ -325,7 +517,7 @@ $(document).ready(function() {
     $('#id_tech').select2({
         placeholder: 'Select Tech',
         ajax: {
-            url: "/edrar/data/mobiletech-autocomplete/",
+            url: "/edrar/data/select2/mobiletech-autocomplete/",
             dataType: 'json',
         }
     });
@@ -333,7 +525,7 @@ $(document).ready(function() {
     $('#id_band').select2({
         placeholder: 'Select Freq Band',
         ajax: {
-            url: "/edrar/data/mobilefreqband-autocomplete/",
+            url: "/edrar/data/select2/mobilefreqband-autocomplete/",
             dataType: 'json',
         }
     });
@@ -343,65 +535,4 @@ $(document).ready(function() {
     clear_tables();
     hide_text_field_containers();
     hide_general_input_container();
-
-    /*******************************************************************************************
-     * *****************************************************************************************
-     * DUMPED METHODS
-     ******************************************************************************************
-     ******************************************************************************************/
-
-    //$('.select2').on("select2:select", function(e){
-    //    $("#device-search").prop("disabled", false);
-    //});
-
-    function destroy_datatable(domSelector){
-        table=$(domSelector).DataTable();
-        table.destroy();
-    }
-
-    $("#device-search").click(function(e){
-        e.preventDefault();
-    });
-    $("#cell-search").click(function(e){
-        e.preventDefault();
-    });
-
-    $('#aid-device-select-rows').click(function(e){
-        e.preventDefault();
-        selectedData = [];
-        dataTable = $('#aid-device-search-table').DataTable();
-        data = dataTable.rows('.selected').data();
-        for(i=0;i<data.length;i++){
-            selectedData.push(data[i]);
-        }
-        
-        fill_device_data_to_form_fields(selectedData);
-        $('#device-search-modal').modal('hide');
-    });
-    // MODAL EVENTS
-    //when device search modal shows
-    $('#device-search-modal').on('show.bs.modal', function(e){
-        siteid = $('.select2').find(':selected').text();
-        draw_device_datatable(siteid);
-    });
-
-    //when device search modal is hidden
-    $('#device-search-modal').on('hidden.bs.modal', function(e){
-        destroy_datatable('#aid-device-search-table');
-
-        if($('#id_device_name').val()){
-            $("#cell-search").prop("disabled", false);
-        }
-    });
-
-    $('#cell-search-modal').on('show.bs.modal', function(e){
-        tech = $('#id_tech').val();
-        deviceName = $('#id_device_name').val();
-        draw_cell_datatable(tech, deviceName);
-    });
-
-    $('#cell-search-modal').on('hidden.bs.modal', function(e){
-        destroy_datatable('#aid-cell-search-table');
-    });
-    // END OF MODAL EVENTS
 });

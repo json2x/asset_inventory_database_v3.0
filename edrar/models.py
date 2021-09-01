@@ -43,13 +43,6 @@ class SiteStatus(models.Model):
     class Meta:
         verbose_name_plural = 'Site Statuses'
 
-class DailyActivityModified(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
-    field = models.CharField(max_length=250, blank=True, null=True)
-    old_value = models.CharField(max_length=250, blank=True, null=True)
-    new_value = models.CharField(max_length=250, blank=True, null=True)
-
 class DailyActivity(models.Model):
     date_logged = models.DateTimeField()
     tech = models.CharField(max_length=250)
@@ -66,23 +59,28 @@ class DailyActivity(models.Model):
     device_name = models.CharField(max_length=250, blank=True, null=True)
     equipment_type = models.CharField(max_length=250, blank=True, null=True) #model field in device?
     trx_config = models.CharField(max_length=250, blank=True, null=True)
-    #trx_count = models.IntegerField(max_length=3, blank=True, null=True)
     iub_type = models.CharField(max_length=250, blank=True, null=True)
     bandwidth = models.IntegerField(blank=True, null=True)
     sac = models.CharField(max_length=250, blank=True, null=True)
     cell_id = models.CharField(max_length=250, blank=True, null=True)
     cell_name = models.CharField(max_length=250, blank=True, null=True)
     lac = models.CharField(max_length=250, blank=True, null=True)
-    #cell_count = models.IntegerField(max_length=2, blank=True, null=True)
     pci = models.CharField(max_length=250, blank=True, null=True)
     omip = models.CharField(max_length=250, blank=True, null=True)
     s1_c = models.CharField(max_length=250, blank=True, null=True)
     s1_u = models.CharField(max_length=250, blank=True, null=True)
     remarks = models.CharField(max_length=250, blank=True, null=True)
-    modified = models.ForeignKey(DailyActivityModified, models.SET_NULL, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Daily Activities'
+
+class DailyActivityModified(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True)
+    activity = models.ForeignKey(DailyActivity, on_delete=models.CASCADE)
+    field = models.CharField(max_length=250, blank=True, null=True)
+    old_value = models.CharField(max_length=250, blank=True, null=True)
+    new_value = models.CharField(max_length=250, blank=True, null=True)
 
 class DailyActivity_SmartSite(models.Model):
     date = models.DateTimeField(auto_now_add=True)

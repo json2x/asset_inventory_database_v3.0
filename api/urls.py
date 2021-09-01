@@ -44,4 +44,5 @@ urlpatterns = [
     path('api/docs/', views.api_docs, name='apiDocs'),
 
     path('api/', include(router.urls)),
+    path('api/user/token/', views.GetUserToken.as_view(), name='get-user-token'),
 ]

@@ -33,3 +33,17 @@ div.tabContent{
 div.input-grp-container{
     min-height: 50px;
 }
+
+table.dataTable tbody tr{
+    background-color: white;
+}
+
+.dataTables_wrapper .dataTables_processing {
+    color: red;
+    font-weight: bold;
+}
+
+.loading-ellipsis{
+    width: auto;
+    height: 30px;
+}

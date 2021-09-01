@@ -1,6 +1,16 @@
 from rest_framework import serializers
-from .models import Cell, Device, Location, SiteNeAsset, SmartNe, SmartSite, TocAor
+from .models import Trx, Cell, Device, Location, SiteNeAsset, SmartNe, SmartSite, TocAor
 
+
+class TrxSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Trx
+        fields = (
+            'id', 'ems_trx_id', 'ems_id', 'trx_name', 'dn', 'site_id', 'parent_id', 
+            'parent_dn', 'admin_state', 'e1_assignment', 'homing_bts', 'record_status'
+        )
+    
 
 class CellsSerializer(serializers.ModelSerializer):
 

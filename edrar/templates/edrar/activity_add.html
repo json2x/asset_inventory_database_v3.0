@@ -36,22 +36,25 @@
 
     <hr>
 
-    <div id="filtered-device-table-container" class="row mx-3 mt-1 datatable-container">
+    <div id="filtered-device-table-container" class="row mx-3 mt-1 small datatable-container">
         <h5>Asset Inventory Device Data</h5>
         <div class="col-lg-12">
             <table id="filtered-device-table" class="table nowrap" style="width: 100%;">
                 <thead class="thead-light">
                     <tr>
                         <th>EMS ID</th>
-                        <th>Device</th>
-                        <th>Site ID</th>
-                        <th>Vendor</th>
-                        <th>Parent Device</th>
+                        <th>DN</th>
+                        <th>Device ID</th>
+                        <th>Parent</th>
                         <th>NE Type</th>
-                        <th>Subdomain</th>
-                        <th>Domain</th>
+                        <th>Status</th>
                         <!-- Hidden fields for form fields reference-->
+                        <th>Site ID</th>
+                        <th>Subdomain</th>
+                        <th>Vendor</th>
+                        <th>Domain</th>
                         <th>Model</th>
+                        <th>ID</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,26 +67,29 @@
 
     <hr id="filtered-device-table-separator" class="dt-separator">
 
-    <div id="filtered-cell-table-container" class="row mx-3 mt-1 datatable-container">
+    <div id="filtered-cell-table-container" class="row mx-3 mt-1 small datatable-container">
         <h5>Asset Inventory Cell Data</h5>
         <div class="col-lg-12">
             <table id="filtered-cell-table" class="table nowrap" style="width: 100%;">
                 <thead class="thead-light">
                     <tr>
-                        <th>Domain</th>
                         <th>EMS ID</th>
-                        <th>BTS ID</th>
                         <th>Cell Name</th>
                         <th>Parent</th>
-                        <th>Site ID</th>
-                        <th>Tech</th>
+                        <th>Parent DN</th>
                         <th>Band</th>
                         <th>NE Type</th>
+                        <th>BTS ID</th>
                         <th>LAC/TAC</th>
                         <th>Cell ID</th>
+                        <th>Status</th>
                         <!-- HIDDEN FIELDS -->
                         <th>SAC</th>
                         <th>PCI</th>
+                        <th>Domain</th>
+                        <th>Site ID</th>
+                        <th>Tech</th>
+                        <th>ID</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +101,33 @@
     </div>
 
     <hr id="filtered-cell-table-separator" class="dt-separator">
+
+    <div id="filtered-trx-table-container" class="row mx-3 mt-1 small datatable-container">
+        <h5>Asset Inventory TRX Data</h5>
+        <div class="col-lg-12">
+            <table id="filtered-trx-table" class="table nowrap" style="width: 100%;">
+                <thead class="thead-light">
+                    <tr>
+                        <th>EMS ID</th>
+                        <th>TRX Name</th>
+                        <th>Cell Name</th>
+                        <th>BTS Name</th>
+                        <th>E1 Assignment</th>
+                        <th>Admin State</th>
+                        <!-- HIDDEN FIELDS -->
+                        <th>CellTableID</th>
+                        <th>ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr id="filtered-trx-table-separator" class="dt-separator">
 
     <div class="row mx-3 mt-1 input-grp-container">
         <div class="col-sm-3 tf-container">
@@ -156,7 +189,7 @@
         </div>
         <div class="col-sm-3 tf-container">
             <div class="form-group">
-                <label for="sac">PCI</label>
+                <label for="pci">PCI</label>
                 {{form.pci}}
             </div>
         </div>
@@ -230,184 +263,82 @@
 
     <div class="row mx-3 mt-3 mb-3">
         <div class="col">
-            <button id="cancel-save-activity" class="btn btn-secondary btn-lg btn-block">Cancel</button>
+            <a href="{% url 'edrar_home' %}" id="cancel-save-activity" class="btn btn-secondary btn-lg btn-block">Cancel</a>
         </div>
         <div class="col">
             <button id="save-activity" class="btn btn-primary btn-lg btn-block">Save</button>
         </div>
     </div>
-    
 </form>
 
 <!-- Page Modals -->
-<!-- Device Search Modal-->
-<div id="device-search-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<!-- Confirm Save Modal-->
+<div id="confirm-save-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myConfirmSaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Search Device</h5>
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-exclamation-circle text-warning"></i> Confirm Saving Activity</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-
-                <ul class="nav nav-tabs" id="deviceTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="aid-device-tab" data-toggle="tab" href="#aid" role="tab" aria-controls="aid" aria-selected="true">AID</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="nms-device-tab" data-toggle="tab" href="#nms" role="tab" aria-controls="nms" aria-selected="false">NMS</a>
-                    </li>
-                </ul>
-                <div class="tab-content tabContent" id="deviceTabContent">
-                    <div class="tab-pane fade show active" id="aid-device" role="tabpanel" aria-labelledby="aid-tab">
-                        <div class="table-container">
-                            <table id="aid-device-search-table" class="table nowrap" style="width: 100%;">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>Device</th>
-                                        <th>Site ID</th>
-                                        <th>EMS ID</th>
-                                        <th>Vendor</th>
-                                        <th>Parent Device</th>
-                                        <th>NE Type</th>
-                                        <th>Subdomain</th>
-                                        <th>Domain</th>
-                                        <th>Model</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-6">
-                                <p>Select device(s) that is/are part of activity being logged.</p>
-                            </div>
-                            <div class="col-6 text-right">
-                                <button id="aid-device-select-rows" class="btn btn-primary">Select</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="nms-device" role="tabpanel" aria-labelledby="nms-tab">
-                        <div class="table-container">
-                            <table id="nms-device-search-table" class="table nowrap">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>Device</th>
-                                        <th>Site ID</th>
-                                        <th>EMS ID</th>
-                                        <th>Vendor</th>
-                                        <th>Parent Device</th>
-                                        <th>NE Type</th>
-                                        <th>Subdomain</th>
-                                        <th>Domain</th>
-                                        <th>Model</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class="col text-right mt-3">
-                                <button id="nms-device-select-rows" class="btn btn-primary">Select</button>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col">
+                        <p>
+                            Are you sure you want to save this activity?
+                        </p>
+                        <p>
+                            Saving this activity will not only log the activity you did but will also reflect the 
+                            <strong class="text-danger">changes</strong> to our <strong><u>Asset Inventory Database</u></strong>.
+                        </p>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col">
+                        <button id="cancel-confirm-activity" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <div class="col">
+                        <button id="confirm-activity" class="btn btn-primary btn-lg btn-block">
+                            <img class="loading-ellipsis" src="{% static 'edrar/img/loading-ellipsis-50px.gif' %}" alt="loading">
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!-- End of Device Search Modal -->
-<!-- Cell Search Modal-->
-<div id="cell-search-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<!-- End of Confirm Save Modal -->
+<!-- NE Not Found Modal-->
+<div id="ne-not-found-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNENotFoundModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Search Device</h5>
+                <h5 class="modal-title text-danger" id="exampleModalLabel"><i class="fas fa-exclamation-circle"></i> NE Not Found!</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-
-                <ul class="nav nav-tabs" id="cellTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="aid-cell-tab" data-toggle="tab" href="#aid" role="tab" aria-controls="aid" aria-selected="true">AID</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="nms-cell-tab" data-toggle="tab" href="#nms" role="tab" aria-controls="nms" aria-selected="false">NMS</a>
-                    </li>
-                </ul>
-                <div class="tab-content tabContent" id="cellTabContent">
-                    <div class="tab-pane fade show active" id="aid-cell" role="tabpanel" aria-labelledby="aid-tab">
-                        <div class="table-container">
-                            <table id="aid-cell-search-table" class="table nowrap" style="width: 100%;">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>Domain</th>
-                                        <th>Cell Name</th>
-                                        <th>Parent</th>
-                                        <th>Site ID</th>
-                                        <th>Tech</th>
-                                        <th>Band</th>
-                                        <th>NE Type</th>
-                                        <th>LAC/TAC</th>
-                                        <th>SAC/CI</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class="col text-right mt-3">
-                                <button id="aid-cell-select-rows" class="btn btn-primary">Select</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="nms-cell" role="tabpanel" aria-labelledby="nms-tab">
-                        <div class="table-container">
-                            <table id="nms-cell-search-table" class="table nowrap">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>Domain</th>
-                                        <th>Cell Name</th>
-                                        <th>Parent</th>
-                                        <th>Site ID</th>
-                                        <th>Tech</th>
-                                        <th>Band</th>
-                                        <th>NE Type</th>
-                                        <th>LAC/TAC</th>
-                                        <th>SAC/CI</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="row">
+                    <div class="col">
+                        <p>
+                            Network element <strong id="concat-ne-id"></strong> is not in the data source.
+                        </p>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary btn-lg btn-block" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<!-- End of NE Not Found Modal-->
 {% endblock content %}
 {% block customJs %}
 <script src="{% static 'edrar/js/add-activity.js' %}"></script>
-
+<script src="{% static 'edrar/js/post-activity.js' %}"></script>
 {% endblock customJs %}

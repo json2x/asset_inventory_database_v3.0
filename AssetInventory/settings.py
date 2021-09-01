@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'edrar.apps.EdrarConfig',
+    'nmsdata.apps.NmsdataConfig',
     'users.apps.UsersConfig',
     'rest_framework',
     'crispy_forms',

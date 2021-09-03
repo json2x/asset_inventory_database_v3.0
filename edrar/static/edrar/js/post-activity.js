@@ -242,10 +242,11 @@
     **********************************************************************/
     var loading_html = $('#confirm-activity').html();
     $('#save-activity').click(function(e){
+        console.log(NE_DATA);
         $('#confirm-activity').prop('disabled', true);
         let show_confirm_modal = true;
         LoggedActivity = new Activity();
-         $('#activity-logger-form *').filter(':input[required]').each(function(){
+        $('#activity-logger-form *').filter(':input[required]').each(function(){
             let propertyName = ($(this).attr('id')).replace('id_', '');
             if($(this).is('select')){
                 LoggedActivity[propertyName] = $(this).find(':selected').text();

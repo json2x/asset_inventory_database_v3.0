@@ -27,6 +27,7 @@ urlpatterns = [
     path('edrar/data/datatable/trx/nms/', views.NmsTrxDatatableView.as_view(), name='nms-trx-datatable'),
     
     path('edrar/data/tfdata/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
+    path('edrar/data/ne/', authentication_classes([])(permission_classes([AllowAny])(views.GetNEData)).as_view(), name='ne-lookup'),
     #path('edrar/data/tfdata/nms/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
 
     url('edrar/data/device/', authentication_classes([])(permission_classes([AllowAny])(views.GetDeviceDataByID)).as_view(), name='device-lookup'),

@@ -16,20 +16,7 @@ $(document).ready(function() {
     var deviceData = null;
     var cellData = null;
     var trxData = null;
-    const TECH_LIST = {'2G': '2G', '3G': '3G', 'FD-LTE': 'FD-LTE', 'TD-LTE': 'TD-LTE', '5G': '5G'}
-    const DEVICE_FIELD_MAP = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'}
-    const CELL_FIELD_MAP = {
-        '2G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'trx_config': '', 'bandwidth': '',},
-        '3G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'rnc_cid', 'lac': 'lac_tac', 'sac': 'sac_ci_eutra', 'iub_type': '', 'bandwidth': '',},
-        'FD-LTE':   {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
-        'TD-LTE':   {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
-        '5G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
-    }
-    const NMS_SRC_ACTIVITY = {
-        'Device': ['Rollout'],
-        'Cell': ['Rollout', 'Expansion'],
-        'Trx': ['Rollout', 'Expansion', 'TRX Expansion']
-    }
+    
     
     /**********************************************************************
      * Functions
@@ -110,6 +97,13 @@ $(document).ready(function() {
             }).prop('selected', true);
         }
 
+        if(selectActivity == 'On-Air'){
+            $("#id_site_status option").filter(function() {
+                //may want to use $.trim in here
+                return $(this).text() == 'On-air';
+            }).prop('selected', true);
+        }
+
         $('#id_user option').filter(function(){
             return $(this).text() == Cookies.get('aid-user');
         }).prop('selected', true);
@@ -127,34 +121,19 @@ $(document).ready(function() {
 
     function revise_table_option(tech, options){
         switch(tech){
-            case TECH_LIST['2G']:
-                /**
-                options['initComplete'] = function(settings, json){
-                    cellData = json.data;
-                    //fill_to_form_fields(cellData, CELL_FIELD_MAP[selectTech]);
-                    console.log(cellData);
-                    if(cellData.length > 0){
-                        show_general_input_container();
-                        cellIDs = concat_unique_multiple_values(cellData.map(item => item.id))
-                        draw_trx_datatable(cellIDs);
-                    }else{
-                        $('#concat-ne-id').html(`(${selectSiteid}-${selectTech}-${selectBand})`);
-                        $('#ne-not-found-modal').modal('show');
-                    }
-                }
-                */
+            case G_TECH_LIST['2G']:
                 break;
-            case TECH_LIST['3G']:
+            case G_TECH_LIST['3G']:
                 options['columns'][8]['data'] = 'rnc_cid';
                 options['columns'][10]['data'] = 'sac_ci_eutra';
                 options['columnDefs'][8]['name'] = 'rnc_cid';
                 options['columnDefs'][10]['name'] = 'sac_ci_eutra';
                 break;
-            case TECH_LIST['FD-LTE']:
+            case G_TECH_LIST['FD-LTE']:
                 break;
-            case TECH_LIST['TD-LTE']:
+            case G_TECH_LIST['TD-LTE']:
                 break;
-            case TECH_LIST['5G']:
+            case G_TECH_LIST['5G']:
                 break;
             default:
         }
@@ -163,7 +142,7 @@ $(document).ready(function() {
     }
 
     function draw_device_datatable(siteid, tech, device_rec_id = null){
-        var list_of_activity_where_src_is_nms = NMS_SRC_ACTIVITY['Device'];
+        var list_of_activity_where_src_is_nms = G_NMS_SRC_ACTIVITY['Device'];
         var options = {
             processing: true,
             serverSide: true,
@@ -210,7 +189,7 @@ $(document).ready(function() {
             'initComplete': function(settings, json){
                 //fill_device_data_to_form_fields(json.data);
                 deviceData = json.data;
-                fill_to_form_fields(deviceData, DEVICE_FIELD_MAP);
+                fill_to_form_fields(deviceData, G_FIELD_MAP['DEVICE']);
                 console.log(deviceData);
             }
         }
@@ -234,7 +213,7 @@ $(document).ready(function() {
     }
 
     function draw_cell_datatable(siteid, tech, band){
-        var list_of_activity_where_src_is_nms = NMS_SRC_ACTIVITY['Cell'];
+        var list_of_activity_where_src_is_nms = G_NMS_SRC_ACTIVITY['Cell'];
         var src = null;
         var options = {
             processing: true,
@@ -289,7 +268,6 @@ $(document).ready(function() {
             },
             'initComplete': function(settings, json){
                 cellData = json.data;
-                //fill_to_form_fields(cellData, CELL_FIELD_MAP[selectTech]);
                 if(cellData.length > 0){
                     show_general_input_container();
                     console.log(cellData);
@@ -315,7 +293,7 @@ $(document).ready(function() {
     }
 
     function draw_trx_datatable(trx_rec_ids){
-        var list_of_activity_where_src_is_nms = NMS_SRC_ACTIVITY['Trx'];
+        var list_of_activity_where_src_is_nms = G_NMS_SRC_ACTIVITY['Trx'];
         var options = {
             processing: true,
             serverSide: true,
@@ -430,6 +408,7 @@ $(document).ready(function() {
                 if(status == 'success'){
                     //verify_device_data(json.results);
                     cells_data = json.results
+                    NE_DATA = json.results;
                 }
             },
             error: function(xhr, status, error){
@@ -439,8 +418,8 @@ $(document).ready(function() {
             complete: function(xhr, status){
                 if(status == 'success' && cells_data.length > 0){
                     verify_device_data(cells_data);
-                    fill_to_form_fields(cells_data, CELL_FIELD_MAP[tech]);
-                    if(tech == TECH_LIST['2G']){
+                    fill_to_form_fields(cells_data, G_FIELD_MAP['CELL'][tech]);
+                    if(tech == G_TECH_LIST['2G']){
                         trx_data = Object.values(cells_data).map(cell => cell.trx);
                         let uniq_trx_dict = {}
                         for(i in trx_data){
@@ -499,6 +478,42 @@ $(document).ready(function() {
         trxConfig = Object.values(trxParentDictCount).map(trxCount => trxCount).join('+');
         $('#id_trx_config').val(trxConfig);
     }
+
+    async function get_aid_ne_data(siteid, tech, band){
+        const response = await fetch(`/edrar/data/ne/?site=${siteid}&tech=${tech}&band=${band}`, {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.json();
+    }
+
+    async function get_nms_ne_data(siteid, tech, band){
+        const response = await fetch(`/edrar/data/ne/?site=${siteid}&tech=${tech}&band=${band}&src=nms`, {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.json();
+    }
+
+    async function get_ne_data(){
+        await get_aid_ne_data(selectSiteid, selectTech, selectBand)
+            .then(data => {
+                G_NE_DATA['aid'] = data.results
+            }).catch(e => console.log(e));
+        await get_nms_ne_data(selectSiteid, selectTech, selectBand)
+            .then(data => {
+                G_NE_DATA['nms'] = data.results
+            }).catch(e => console.log(e));
+        
+    }
     
 
 
@@ -528,7 +543,7 @@ $(document).ready(function() {
         trxData = null;
 
         if(selectSiteid && selectTech){
-            draw_device_datatable(selectSiteid, selectTech);
+            //draw_device_datatable(selectSiteid, selectTech);
         }else{
             hide_text_field_containers();
             hide_general_input_container();
@@ -545,7 +560,7 @@ $(document).ready(function() {
         trxData = null;
 
         if(selectSiteid && selectTech){
-            draw_device_datatable(selectSiteid, selectTech);
+            //draw_device_datatable(selectSiteid, selectTech);
         }else{
             hide_text_field_containers();
             hide_general_input_container();
@@ -560,13 +575,37 @@ $(document).ready(function() {
         trxData = null;
 
         if(selectSiteid && selectTech && selectBand){
-            Object.keys(CELL_FIELD_MAP[selectTech]).map(field => $(`id_${field}`).val(''));
-            if(selectTech == TECH_LIST['2G']){
+            //Clear input text fields for activity log form
+            Object.keys(G_FIELD_MAP['CELL'][selectTech]).map(field => $(`id_${field}`).val(''));
+
+            if(selectTech == G_TECH_LIST['2G']){
                 clear_table('#filtered-trx-table');
             }
-            draw_cell_datatable(selectSiteid, selectTech, selectBand);
+            //draw_cell_datatable(selectSiteid, selectTech, selectBand);
+
+            ///////////////// NEW DEVELOPMENT /////////////////
+            get_ne_data()
+                .then(function(){
+                    let devices = Object.values(G_NE_DATA['aid']).map(cell => cell.device);
+                    let trx = Object.values(G_NE_DATA['aid']).map(cell => {for(let i=0; i<cell.trx.length; i++) return cell.trx[i]} );
+                    let cell = Object.values(G_NE_DATA['aid']).map(cell => {delete cell.device; delete cell.trx; return cell} );
+                    //let devices = Object.values(G_NE_DATA['nms']).map(cell => {for(let i=0; i<cell.device.length; i++) return cell.device[i]});
+                    // trx = Object.values(G_NE_DATA['nms']).map(cell => {for(let i=0; i<cell.trx.length; i++) return cell.trx[i]} );
+                    // cell = Object.values(G_NE_DATA['nms']).map(cell => {delete cell.device; delete cell.trx; return cell} );
+
+                    MyDataTable.set_info(selectActivity, selectSiteid, selectTech, selectBand);
+                    MyDataTable.draw_device_table(devices);
+                    MyDataTable.draw_cell_table(cell);
+                    MyDataTable.draw_trx_table(trx);
+
+                    //NEXT Fill form text fields
+                })
+                .catch(function(err){
+                    console.log(err)
+                });
+            /////////////////// END OF CODE ///////////////////
         }else{
-            hide_text_fields(CELL_FIELD_MAP);
+            hide_text_fields(G_FIELD_MAP['CELL']);
             hide_general_input_container();
             clear_table('#filtered-cell-table');
             clear_table('#filtered-trx-table');

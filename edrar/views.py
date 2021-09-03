@@ -247,6 +247,21 @@ class ActivityLogTextFieldData(generics.ListAPIView):
         else:
             return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
 
+class GetNEData(generics.ListAPIView):
+    serializer_class = CellsDeviceTrxSerializer
+    
+    def get_queryset(self):
+        site = self.request.GET.get('site', None)
+        tech = self.request.GET.get('tech', None)
+        band = self.request.GET.get('band', None)
+        src = self.request.GET.get('src', None)
+
+        if src == 'nms':
+            self.serializer_class = CellsDeviceTrxNMSDataSerializer
+            return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+        else:
+            return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+
 class GetDeviceDataByID(generics.ListAPIView):
     serializer_class = DevicesSerializer
 

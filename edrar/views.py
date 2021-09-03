@@ -11,7 +11,9 @@ from .forms import DailyActivityForm
 from .models import Activity, MobileTechnology, MobileFrequencyBand
 from api.models import SmartSite, Device, Cell, Trx
 from api.serializers import DevicesSerializer, CellsSerializer, TrxSerializer
-from .serializers import CellsDeviceTrxSerializer, NmsDevicesSerializer, NmsCellsSerializer, NmsTrxSerializer
+from nmsdata import models as Nms
+from nmsdata.serializers import NmsDevicesSerializer, NmsCellsSerializer, NmsTrxSerializer
+from .serializers import CellsDeviceTrxSerializer, CellsDeviceTrxNMSDataSerializer
 from rest_framework import generics
 
 from edrar import serializers
@@ -28,7 +30,12 @@ def activity_add(request):
     if request.method == 'POST':
         pass
 
-    return render(request, 'edrar/activity_add.html', {'form': DailyActivityForm})
+    context= {'form': DailyActivityForm}
+
+    if request.user.is_authenticated:
+        context['user'] = request.user
+
+    return render(request, 'edrar/activity_add.html', context)
 
 class AddActivity(View):
     template_name = 'edrar/activity_add.html'
@@ -106,25 +113,26 @@ class DeviceDatatableView(BaseDatatableView):
         site = self.request.GET.get('columns[5][search][value]', None)
         tech = self.request.GET.get('columns[6][search][value]', None)
         tbl_ids = self.request.GET.get('columns[11][search][value]', None)
+        
         if tbl_ids:
-            if tbl_ids.find(';') > 1:
+            if tbl_ids.find(';') > 0:
                 tbl_ids = tbl_ids.split(';')
+                qs_params = None
                 for tbl_id in tbl_ids:
-                    qs_params = None
                     if qs_params:
-                        qs_params = qs_params | Q(id=tbl_id)
+                        qs_params = qs_params | Q(id=int(tbl_id))
                     else:
-                        qs_params = Q(id=tbl_id)
+                        qs_params = Q(id=int(tbl_id))
                 qs = qs.filter(qs_params)
             else:
-                 qs = qs.filter(id=tbl_ids)
+                 qs = qs.filter(id=int(tbl_ids))
         else:
             qs = qs.filter(site_id=site).filter(subdomain=tech)
 
         return qs
 
 class NmsDeviceDatatableView(BaseDatatableView):
-    model = Device #Change to nmsdata Device data model
+    model = Nms.Device #Change to nmsdata Device data model
     columns = [
         'id', 'ems_id',  'dn', 'device_id', 'parent_device_id', 'ne_type', 
         'site_id', 'subdomain', 'vendor_id', 'domain', 'model', 
@@ -136,17 +144,19 @@ class NmsDeviceDatatableView(BaseDatatableView):
         tech = self.request.GET.get('columns[6][search][value]', None)
         tbl_ids = self.request.GET.get('columns[11][search][value]', None)
         if tbl_ids:
-            if tbl_ids.find(';') > 1:
+            if tbl_ids.find(';') > 0:
                 tbl_ids = tbl_ids.split(';')
+
+            if type(tbl_ids) is list:
+                qs_params = None
                 for tbl_id in tbl_ids:
-                    qs_params = None
                     if qs_params:
-                        qs_params = qs_params | Q(id=tbl_id)
+                        qs_params = qs_params | Q(id=int(tbl_id))
                     else:
-                        qs_params = Q(id=tbl_id)
+                        qs_params = Q(id=int(tbl_id))
                 qs = qs.filter(qs_params)
             else:
-                 qs = qs.filter(id=tbl_ids)
+                 qs = qs.filter(id=int(tbl_ids))
         else:
             qs = qs.filter(site_id=site).filter(subdomain=tech)
 
@@ -155,17 +165,19 @@ class NmsDeviceDatatableView(BaseDatatableView):
 class CellDatatableView(BaseDatatableView):
     model = Cell
     columns = [
-        'id', 'domain', 'ems_id', 'nodeid', 'cell_name', 'parent_id', 'parent_dn', 'site', 'tech', 'subdomain', 'band', 'ne_type',
-        'lac_tac', 'sac_ci_eutra', 'rnc_cid', 'phy_cid', 'lcr_cid', 'sector_id',
-        'function', 'sdcch_cap', 'tch_cap', 'record_status'
+        'id', 'domain', 'ems_id', 'nodeid', 'cell_name', 'parent_id', 'parent_dn', 
+        'site', 'tech', 'subdomain', 'band', 'ne_type', 'lac_tac', 'sac_ci_eutra', 'rnc_cid', 'phy_cid', 
+        'lcr_cid', 'sector_id', 'function', 'sdcch_cap', 'tch_cap', 'record_status'
     ]
 
 class NmsCellDatatableView(BaseDatatableView):
-    model = Cell #Change to nmsdata Cell data model
+    model = Nms.Cell #Change to nmsdata Cell data model
     columns = [
-        'id', 'domain', 'ems_id', 'nodeid', 'cell_name', 'parent_id', 'parent_dn', 'site', 'tech', 'subdomain', 'band', 'ne_type',
-        'lac_tac', 'sac_ci_eutra', 'rnc_cid', 'phy_cid', 'lcr_cid', 'sector_id',
-        'function', 'sdcch_cap', 'tch_cap', 'record_status'
+        'id', 'ems_cell_id', 'ems_id', 'cell_name', 'dn', 'site', 'parent_id', 'parent_dn', 
+        'tech', 'band', 'admin_state', 'alias', 'lac_tac', 'sac_ci_eutra', 'rnc_cid', 'phy_cid', 
+        'lcr_cid', 'mcc', 'mnc', 'nodeid', 'sector_id', 'carrier', 'ne_type', 'subdomain', 'function', 
+        'sdcch_cap', 'tch_cap', 'homing_id', 'dlear_fcn', 'ulear_dcn', 'dlc_hbw', 'ulc_hbw',
+        'rac', 'ncc', 'bcc', 'nnode_id', 'nbscid', 'azimuth', 'psc', 'bcchno'
     ]
 
 class TrxDatatableView(BaseDatatableView):
@@ -176,46 +188,48 @@ class TrxDatatableView(BaseDatatableView):
 
     def filter_queryset(self, qs):
 
-        search = self.request.GET.get('columns[5][search][value]', None)
-        if search.find(';') > 1:
-            search = search.split(';')
+        trx_ids = self.request.GET.get('columns[7][search][value]', None)
+        if trx_ids.find(';') > 1:
+            trx_ids = trx_ids.split(';')
 
-        if type(search) is list:
+        if type(trx_ids) is list:
             qs_params = None
-            for cellid in search:
+            for trx_id in trx_ids:
                 if qs_params:
-                    qs_params = qs_params | Q(cell=int(cellid))
+                    qs_params = qs_params | Q(id=int(trx_id))
                 else:
-                    qs_params = Q(cell=int(cellid))
+                    qs_params = Q(id=int(trx_id))
             qs = qs.filter(qs_params)
         else:
-            qs = qs.filter(cell=int(search))
+            qs = qs.filter(id=int(trx_ids))
 
         return qs
 
 class NmsTrxDatatableView(BaseDatatableView):
-    model = Trx #Change to nmsdata Trx data model
+    model = Nms.Trx #Change to nmsdata Trx data model
     columns = [
-        'id', 'ems_id', 'trx_name', 'parent_id', 'admin_state', 'e1_assignment', 'homing_bts', 'cell', 'device'
+        'id', 'ems_trx_id', 'ems_id', 'trx_name', 'dn', 'site_id', 'parent_id', 
+        'parent_dn', 'admin_state', 'e1_assignment', 'homing_bts', 'homing_id',
+        'trxfreq', 'record_status'
     ]
 
     def filter_queryset(self, qs):
 
-        search = self.request.GET.get('columns[5][search][value]', None)
-        if search.find(';') > 1:
-            search = search.split(';')
+        trx_ids = self.request.GET.get('columns[7][search][value]', None)
+        if trx_ids.find(';') > 1:
+            trx_ids = trx_ids.split(';')
 
-        if type(search) is list:
+        if type(trx_ids) is list:
             qs_params = None
-            for cellid in search:
+            for trx_id in trx_ids:
                 if qs_params:
-                    qs_params = qs_params | Q(cell=int(cellid))
+                    qs_params = qs_params | Q(id=int(trx_id))
                 else:
-                    qs_params = Q(cell=int(cellid))
+                    qs_params = Q(id=int(trx_id))
             qs = qs.filter(qs_params)
         else:
-            qs = qs.filter(cell=int(search))
-
+            qs = qs.filter(id=int(trx_ids))
+        
         return qs
 
 class ActivityLogTextFieldData(generics.ListAPIView):
@@ -225,8 +239,13 @@ class ActivityLogTextFieldData(generics.ListAPIView):
         site = self.request.GET.get('site', None)
         tech = self.request.GET.get('tech', None)
         band = self.request.GET.get('band', None)
+        src = self.request.GET.get('src', None)
 
-        return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+        if src == 'nms':
+            self.serializer_class = CellsDeviceTrxNMSDataSerializer
+            return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+        else:
+            return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
 
 class GetDeviceDataByID(generics.ListAPIView):
     serializer_class = DevicesSerializer

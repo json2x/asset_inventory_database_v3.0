@@ -8,7 +8,8 @@ class TrxSerializer(serializers.ModelSerializer):
         model = Trx
         fields = (
             'id', 'ems_trx_id', 'ems_id', 'trx_name', 'dn', 'site_id', 'parent_id', 
-            'parent_dn', 'admin_state', 'e1_assignment', 'homing_bts', 'record_status'
+            'parent_dn', 'admin_state', 'e1_assignment', 'homing_bts', 'record_status',
+            'cell', 'device'
         )
     
 

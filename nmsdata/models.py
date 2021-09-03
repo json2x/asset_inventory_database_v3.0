@@ -35,6 +35,7 @@ class Device(models.Model):
     iubce_dl_lic = models.CharField(max_length=250, blank=True, null=True)
     iubce_ul_lic = models.CharField(max_length=250, blank=True, null=True)
     s1cu_lic = models.CharField(max_length=250, blank=True, null=True)
+    record_status = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Devices'
@@ -55,7 +56,7 @@ class Cell(models.Model):
     sac_ci_eutra = models.CharField(max_length=250, blank=True, null=True)
     rnc_cid = models.CharField(max_length=250, blank=True, null=True)
     phy_cid = models.CharField(max_length=250, blank=True, null=True)
-    lcr_id = models.CharField(max_length=250, blank=True, null=True)
+    lcr_cid = models.CharField(max_length=250, blank=True, null=True)
     mcc = models.CharField(max_length=250, blank=True, null=True)
     mnc = models.CharField(max_length=250, blank=True, null=True)
     nodeid = models.CharField(max_length=250, blank=True, null=True)
@@ -78,9 +79,11 @@ class Cell(models.Model):
     nbscid = models.CharField(max_length=250, blank=True, null=True) #Not in AID
     psc = models.CharField(max_length=250, blank=True, null=True) #Not in AID
     bcchno = models.CharField(max_length=250, blank=True, null=True) #Not in AID
-
+    record_status = models.CharField(max_length=250, blank=True, null=True)
+    
     class Meta:
         verbose_name_plural = 'Cells'
+    
 
 class Trx(models.Model):
     ems_trx_id = models.CharField(max_length=250, blank=True, null=True)
@@ -95,6 +98,7 @@ class Trx(models.Model):
     homing_bts = models.CharField(max_length=250, blank=True, null=True)
     homing_id = models.CharField(max_length=250, blank=True, null=True) #Not is AID
     trxfreq = models.CharField(max_length=250, blank=True, null=True) #Not is AID
+    record_status = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'TRX'

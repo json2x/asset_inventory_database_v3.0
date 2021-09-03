@@ -17,13 +17,18 @@ $(document).ready(function() {
     var cellData = null;
     var trxData = null;
     const TECH_LIST = {'2G': '2G', '3G': '3G', 'FD-LTE': 'FD-LTE', 'TD-LTE': 'TD-LTE', '5G': '5G'}
-    const DEVICE_FIELD_MAP = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'};
+    const DEVICE_FIELD_MAP = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'}
     const CELL_FIELD_MAP = {
         '2G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'trx_config': '', 'bandwidth': '',},
         '3G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'rnc_cid', 'lac': 'lac_tac', 'sac': 'sac_ci_eutra', 'iub_type': '', 'bandwidth': '',},
         'FD-LTE':   {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
         'TD-LTE':   {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
         '5G':       {'bts_id': 'nodeid', 'cell_name': 'cell_name', 'cell_id': 'sac_ci_eutra', 'lac': 'lac_tac', 'pci': 'phy_cid', 'bandwidth': '', 'omip': '', 's1_c': '', 's1_u': '',},
+    }
+    const NMS_SRC_ACTIVITY = {
+        'Device': ['Rollout'],
+        'Cell': ['Rollout', 'Expansion'],
+        'Trx': ['Rollout', 'Expansion', 'TRX Expansion']
     }
     
     /**********************************************************************
@@ -98,6 +103,17 @@ $(document).ready(function() {
     }
 
     function show_general_input_container(){
+        if(selectActivity == 'Rollout'){
+            $("#id_site_status option").filter(function() {
+                //may want to use $.trim in here
+                return $(this).text() == 'Unlocked';
+            }).prop('selected', true);
+        }
+
+        $('#id_user option').filter(function(){
+            return $(this).text() == Cookies.get('aid-user');
+        }).prop('selected', true);
+
         $('.general-input-container').show();
     }
 
@@ -112,6 +128,7 @@ $(document).ready(function() {
     function revise_table_option(tech, options){
         switch(tech){
             case TECH_LIST['2G']:
+                /**
                 options['initComplete'] = function(settings, json){
                     cellData = json.data;
                     //fill_to_form_fields(cellData, CELL_FIELD_MAP[selectTech]);
@@ -125,6 +142,7 @@ $(document).ready(function() {
                         $('#ne-not-found-modal').modal('show');
                     }
                 }
+                */
                 break;
             case TECH_LIST['3G']:
                 options['columns'][8]['data'] = 'rnc_cid';
@@ -144,12 +162,13 @@ $(document).ready(function() {
         return options;
     }
 
-    function draw_device_datatable(siteid, tech, device_id = null){
-        options = {
+    function draw_device_datatable(siteid, tech, device_rec_id = null){
+        var list_of_activity_where_src_is_nms = NMS_SRC_ACTIVITY['Device'];
+        var options = {
             processing: true,
             serverSide: true,
             select: true,
-            ajax: '/edrar/data/datatable/device/',
+            ajax: device_url_selector(),
             columns: [
                 {data: 'ems_id'},
                 {data: 'dn'},
@@ -196,22 +215,32 @@ $(document).ready(function() {
             }
         }
 
-        if(device_id){
+        if(device_rec_id){
             options['searchCols'] = [
                 null, null, null, null, null, 
                 null, null, null, null, null, 
-                null, {'search': device_id}, 
+                null, {'search': device_rec_id}, 
             ]
+        }
+
+        function device_url_selector(){
+            let url = '/edrar/data/datatable/device/aid/';
+            if(list_of_activity_where_src_is_nms.includes(selectActivity)){
+                url = '/edrar/data/datatable/device/nms/';
+            }
+            return url
         }
         draw_datatable('#filtered-device-table', options);
     }
 
     function draw_cell_datatable(siteid, tech, band){
-        options = {
+        var list_of_activity_where_src_is_nms = NMS_SRC_ACTIVITY['Cell'];
+        var src = null;
+        var options = {
             processing: true,
             serverSide: true,
             select: true,
-            ajax: '/edrar/data/datatable/cell/',
+            ajax: cell_url_selector(),
             columns: [
                 {data: 'ems_id'},
                 {data: 'cell_name'},
@@ -271,17 +300,27 @@ $(document).ready(function() {
             }
         }
 
+        function cell_url_selector(){
+            let url = '/edrar/data/datatable/cell/aid/';
+            if(list_of_activity_where_src_is_nms.includes(selectActivity)){
+                url = '/edrar/data/datatable/cell/nms/';
+                src = 'nms'
+            }
+            return url
+        }
+
         options = revise_table_option(tech, options);
         draw_datatable('#filtered-cell-table', options);
-        get_full_ne_data(siteid, tech, band);
+        get_full_ne_data(siteid, tech, band, src);
     }
 
-    function draw_trx_datatable(cell_ids){
-        options = {
+    function draw_trx_datatable(trx_rec_ids){
+        var list_of_activity_where_src_is_nms = NMS_SRC_ACTIVITY['Trx'];
+        var options = {
             processing: true,
             serverSide: true,
             select: true,
-            ajax: '/edrar/data/datatable/trx/',
+            ajax: trx_url_selector(),
             columns: [
                 {data: 'ems_id'},
                 {data: 'trx_name'},
@@ -305,8 +344,8 @@ $(document).ready(function() {
             order: [[2,'asc']],
             searchCols: [ 
                 null, null, null, 
-                null, null, {'search': cell_ids}, 
-                null, null,
+                null, null, null, 
+                null, {'search': trx_rec_ids},
             ],
             dom: 'fltipr',
             language: {
@@ -319,40 +358,63 @@ $(document).ready(function() {
             }
         }
 
+        function trx_url_selector(){
+            let url = '/edrar/data/datatable/trx/aid/';
+            if(list_of_activity_where_src_is_nms.includes(selectActivity)){
+                url = '/edrar/data/datatable/trx/nms/';
+            }
+            return url
+        }
+
         draw_datatable('#filtered-trx-table', options);
     }
 
     function verify_device_data(data){
-        redraw_device_tbl = false;
         uniq_device_dict = {}
         device_data = Object.values(data).map(cell => cell.device);
         for(i in device_data){
-            if(Object.keys(uniq_device_dict).indexOf(String(device_data[i].id)) < 0){
+            if(Array.isArray(device_data[i])){
+                for(j in device_data[i]){
+                    uniq_device_dict[device_data[i][j].id] = device_data[i][j].device_id;
+                }
+            }else{
                 uniq_device_dict[device_data[i].id] = device_data[i].device_id;
             }
         }
 
+        let redraw_device_table = compare_datatable_v_device_data(uniq_device_dict);
+
+        search_ids = Object.keys(uniq_device_dict).map(id => id).join(';');
+        if(redraw_device_table) draw_device_datatable(null, null, search_ids);
+    }
+
+    function compare_datatable_v_device_data(uniq_device_id_dict){
+        redraw_device_tbl = false;
         if($.fn.dataTable.isDataTable('#filtered-device-table')){
             datatable = $('#filtered-device-table').DataTable();
             if(datatable.data().any()){
-                datatable.rows().every(function(){
-                    device_row = this.data();
-                    if(Object.keys(uniq_device_dict).indexOf(String(device_row.id)) < 0){
-                        redraw_device_tbl = true;
+                device_rec_ids = Object.keys(uniq_device_id_dict);
+                datatable_device_data = Object.values(datatable.rows().data()).filter(device => device.id);
+                datatable_device_row_ids = Object.values(datatable_device_data).map(device => device.id);
+                for(i in device_rec_ids){
+                    foundIndex = datatable_device_row_ids.indexOf(device_rec_ids[i]);
+                    if(foundIndex > -1){
+                        datatable_device_row_ids.splice(foundIndex, 1)
                     }
-                });
+                }
+
+                if(datatable_device_row_ids.length > 0){
+                    redraw_device_tbl = true;
+                }
             }else{
-                //if datatable is empty.
                 redraw_device_tbl = true;
             }
-            
         }
 
-        search_ids = Object.keys(uniq_device_dict).map(device => device).join(';');
-        if(redraw_device_tbl) draw_device_datatable(null, null, search_ids);
+        return redraw_device_tbl;
     }
 
-    function get_full_ne_data(siteid, tech, band){
+    function get_full_ne_data(siteid, tech, band, src){
         cells_data = null;
         $.ajax({
             type: "GET",
@@ -361,6 +423,7 @@ $(document).ready(function() {
                 'site': siteid,
                 'tech': tech,
                 'band': band,
+                'src': src
             },
             cache: false,
             success: function(json, status){
@@ -377,6 +440,25 @@ $(document).ready(function() {
                 if(status == 'success' && cells_data.length > 0){
                     verify_device_data(cells_data);
                     fill_to_form_fields(cells_data, CELL_FIELD_MAP[tech]);
+                    if(tech == TECH_LIST['2G']){
+                        trx_data = Object.values(cells_data).map(cell => cell.trx);
+                        let uniq_trx_dict = {}
+                        for(i in trx_data){
+                            if(Array.isArray(trx_data[i])){
+                                for(j in trx_data[i]){
+                                    uniq_trx_dict[trx_data[i][j].id] = trx_data[i][j].trx_name;
+                                }
+                            }else{
+                                uniq_trx_dict[trx_data[i].id] = trx_data[i].trx_name;
+                            }
+                        }
+                        let search_ids = Object.keys(uniq_trx_dict).map(id => id).join(';');
+                        if(search_ids != ''){
+                            draw_trx_datatable(search_ids);
+                        }else{
+                            $('#no-trx-found-modal').modal('show');
+                        }
+                    }
                 }
             }
         });

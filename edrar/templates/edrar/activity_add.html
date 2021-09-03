@@ -309,7 +309,7 @@
     </div>
 </div>
 <!-- End of Confirm Save Modal -->
-<!-- NE Not Found Modal-->
+<!-- NE Not Found Modal -->
 <div id="ne-not-found-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNENotFoundModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -336,7 +336,35 @@
         </div>
     </div>
 </div>
-<!-- End of NE Not Found Modal-->
+<!-- End of NE Not Found Modal -->
+<!-- No TRX Found Modal -->
+<div id="no-trx-found-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNoTRXFoundModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="exampleModalLabel"><i class="fas fa-exclamation-circle"></i> No TRX Found!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <p>
+                            No TRX found for the selected NE in the data source.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary btn-lg btn-block" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of No TRX Found Modal -->
 {% endblock content %}
 {% block customJs %}
 <script src="{% static 'edrar/js/add-activity.js' %}"></script>

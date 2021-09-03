@@ -224,6 +224,18 @@
         return token.json();
     }
 
+    function set_jwt_token_cookie(){
+        get_jwt_token().then(function(result){
+            Cookies.set('aid-user', result.user,  {expires: 1});
+            Cookies.set('aid-token-access', result.access,  {expires: 1});
+            Cookies.set('aid-token-refresh', result.refresh,  {expires: 1});
+            
+            console.log(Cookies.get('aid-user'));
+            console.log(Cookies.get('aid-token-access'));
+            console.log(Cookies.get('aid-token-refresh'));
+        }).catch((e) => console.log(e));
+    }
+
 
     /**********************************************************************
      * Events
@@ -283,15 +295,12 @@
     **********************************************************************/
 
     if (!Cookies.get('aid-user') && !Cookies.get('aid-token-access') && !Cookies.get('aid-token-refresh')) {
-        get_jwt_token().then(function(result){
-            Cookies.set('aid-user', result.user,  {expires: 1});
-            Cookies.set('aid-token-access', result.access,  {expires: 1});
-            Cookies.set('aid-token-refresh', result.refresh,  {expires: 1});
-            
-            console.log(Cookies.get('aid-user'));
-            console.log(Cookies.get('aid-token-access'));
-            console.log(Cookies.get('aid-token-refresh'));
-        }).catch((e) => console.log(e));
+        set_jwt_token_cookie();
+    }else{
+        let logged_user = $('#user-name').html();
+        if(Cookies.get('aid-user') != logged_user){
+            set_jwt_token_cookie();
+        }
     }
     
 

@@ -36,25 +36,27 @@
 
     <hr>
 
-    <div id="filtered-device-table-container" class="row mx-3 mt-1 small datatable-container">
+    <div id="filtered-device-table-container" class="row mx-3 mt-1 small datatable-container d-none">
         <h5>Asset Inventory Device Data</h5>
         <div class="col-lg-12">
             <table id="filtered-device-table" class="table nowrap" style="width: 100%;">
                 <thead class="thead-light">
                     <tr>
                         <th>EMS ID</th>
-                        <th>DN</th>
                         <th>Device ID</th>
                         <th>Parent</th>
                         <th>NE Type</th>
                         <th>Status</th>
                         <!-- Hidden fields for form fields reference-->
+                        <th>DN</th>
                         <th>Site ID</th>
                         <th>Subdomain</th>
                         <th>Vendor</th>
                         <th>Domain</th>
                         <th>Model</th>
                         <th>ID</th>
+                        <th>Rel_ID</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,9 +67,9 @@
         </div>
     </div>
 
-    <hr id="filtered-device-table-separator" class="dt-separator">
+    <hr id="filtered-device-table-separator" class="dt-separator d-none">
 
-    <div id="filtered-cell-table-container" class="row mx-3 mt-1 small datatable-container">
+    <div id="filtered-cell-table-container" class="row mx-3 mt-1 small datatable-container d-none">
         <h5>Asset Inventory Cell Data</h5>
         <div class="col-lg-12">
             <table id="filtered-cell-table" class="table nowrap" style="width: 100%;">
@@ -90,6 +92,8 @@
                         <th>Site ID</th>
                         <th>Tech</th>
                         <th>ID</th>
+                        <th>Rel_ID</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -100,9 +104,9 @@
         </div>
     </div>
 
-    <hr id="filtered-cell-table-separator" class="dt-separator">
+    <hr id="filtered-cell-table-separator" class="dt-separator d-none">
 
-    <div id="filtered-trx-table-container" class="row mx-3 mt-1 small datatable-container">
+    <div id="filtered-trx-table-container" class="row mx-3 mt-1 small datatable-container d-none">
         <h5>Asset Inventory TRX Data</h5>
         <div class="col-lg-12">
             <table id="filtered-trx-table" class="table nowrap" style="width: 100%;">
@@ -115,8 +119,9 @@
                         <th>E1 Assignment</th>
                         <th>Admin State</th>
                         <!-- HIDDEN FIELDS -->
-                        <th>CellTableID</th>
                         <th>ID</th>
+                        <th>Rel_ID</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,28 +132,28 @@
         </div>
     </div>
 
-    <hr id="filtered-trx-table-separator" class="dt-separator">
+    <hr id="filtered-trx-table-separator" class="dt-separator d-none">
 
     <div class="row mx-3 mt-1 input-grp-container">
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="device_name">Device name</label>
                 {{form.device_name}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="vendor">Vendor</label>
                 {{form.vendor}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="homing">Homing</label>
                 {{form.homing}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="equipment_type">Equipment type</label>
                 {{form.equipment_type}}
@@ -157,73 +162,73 @@
     </div>
 
     <div class="row mx-3 mt-1 input-grp-container">
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="bts_id">BTS ID</label>
                 {{form.bts_id}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="cell_name">Cell Name</label>
                 {{form.cell_name}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="cell_id">Cell ID</label>
                 {{form.cell_id}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="lac">LAC</label>
                 {{form.lac}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="sac">SAC</label>
                 {{form.sac}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="pci">PCI</label>
                 {{form.pci}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="iub_type">IuB Type</label>
                 {{form.iub_type}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="bandwidth">Bandwidth</label>
                 {{form.bandwidth}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="omip">OMIP</label>
                 {{form.omip}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="trx_config">TRX Config</label>
                 {{form.trx_config}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="s1_c">S1_C</label>
                 {{form.s1_c}}
             </div>
         </div>
-        <div class="col-sm-3 tf-container">
+        <div class="col-sm-3 tf-container d-none">
             <div class="form-group">
                 <label for="s1_u">S1_U</label>
                 {{form.s1_u}}
@@ -309,12 +314,12 @@
     </div>
 </div>
 <!-- End of Confirm Save Modal -->
-<!-- NE Not Found Modal -->
-<div id="ne-not-found-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNENotFoundModalLabel" aria-hidden="true">
+<!-- Missing Data Modal -->
+<div id="missing-data-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myMissingDataModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-danger" id="exampleModalLabel"><i class="fas fa-exclamation-circle"></i> NE Not Found!</h5>
+                <h5 class="modal-title text-danger" id="exampleModalLabel"><i class="fas fa-exclamation-circle"></i> Missing Data!</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -322,9 +327,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
-                        <p>
-                            Network element <strong id="concat-ne-id"></strong> is not in the data source.
-                        </p>
+                        <p id="missing-data-msg" class="text-center text-danger"></p>
                     </div>
                 </div>
                 <div class="row">
@@ -336,39 +339,32 @@
         </div>
     </div>
 </div>
-<!-- End of NE Not Found Modal -->
-<!-- No TRX Found Modal -->
-<div id="no-trx-found-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNoTRXFoundModalLabel" aria-hidden="true">
+<!-- End of Missing Data Modal -->
+<!-- Missing Data Modal -->
+<div id="fetching-data-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myFetchingDataModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-danger" id="exampleModalLabel"><i class="fas fa-exclamation-circle"></i> No TRX Found!</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
+            <div class="modal-body border border-dark">
                 <div class="row">
                     <div class="col">
-                        <p>
-                            No TRX found for the selected NE in the data source.
-                        </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <button class="btn btn-primary btn-lg btn-block" data-dismiss="modal">OK</button>
+                        <div class="mx-auto py-2">
+                            <p class="my-0 text-center text-danger">
+                                <img src="{% static 'edrar/img/loading-spin-100px.gif' %}" alt="laoading-spin-100px" class="pr-2">
+                                <strong>Fetching data, please wait...</strong>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- End of No TRX Found Modal -->
+<!-- End of Missing Data Modal -->
 {% endblock content %}
 {% block customJs %}
 <script src="{% static 'edrar/js/global.js' %}"></script>
 <script src="{% static 'edrar/js/page-datatable.js' %}"></script>
+<script src="{% static 'edrar/js/page-activity-form.js' %}"></script>
 <script src="{% static 'edrar/js/add-activity.js' %}"></script>
 <script src="{% static 'edrar/js/post-activity.js' %}"></script>
 {% endblock customJs %}

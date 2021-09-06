@@ -9,9 +9,12 @@
     white-space:nowrap;
 }
 
-div.table-container{
-    overflow-x: scroll;
+/*div.datatable-container{
+    visibility: hidden;
 }
+hr.dt-separator{
+    visibility: hidden;
+}*/
 
 div.tabContent{
     padding: 0.5rem;
@@ -46,4 +49,16 @@ table.dataTable tbody tr{
 .loading-ellipsis{
     width: auto;
     height: 30px;
+}
+
+tr.discard td:not(.dt-row-option){
+    text-decoration: line-through;
+}
+
+tr.discard{
+    color: #d95757;
+}
+
+tr.discard > td.dt-row-option > button > i{
+    color: #d95757;
 }

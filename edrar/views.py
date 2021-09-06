@@ -258,9 +258,9 @@ class GetNEData(generics.ListAPIView):
 
         if src == 'nms':
             self.serializer_class = CellsDeviceTrxNMSDataSerializer
-            return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+            return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band).order_by('cell_name')
         else:
-            return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+            return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band).order_by('cell_name')
 
 class GetDeviceDataByID(generics.ListAPIView):
     serializer_class = DevicesSerializer

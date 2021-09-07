@@ -56,9 +56,17 @@ tr.discard td:not(.dt-row-option){
 }
 
 tr.discard{
-    color: #d95757;
+    color: #d95757 !important;
 }
 
 tr.discard > td.dt-row-option > button > i{
     color: #d95757;
+}
+
+tr.aid-data{
+    color: #343cb3;
+}
+
+tr.nms-data{
+    color: #d47f35;
 }

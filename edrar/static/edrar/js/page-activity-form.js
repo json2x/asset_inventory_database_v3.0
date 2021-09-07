@@ -26,6 +26,8 @@ var MyActivityForm = {
         }else if(data.length > 1){
             Object.keys(fieldMap).map(field => $(`#id_${field}`)
                 .val(this.concat_unique_multiple_values(data.map(row => row[fieldMap[field]]))));
+        }else{
+            Object.keys(fieldMap).map(field => $(`#id_${field}`).val(''));
         }
         Object.keys(fieldMap).map(field => $(`#${field}_field_container :input`).prop('required', true));
         Object.keys(fieldMap).map(field => $(`#${field}_field_container`).show());

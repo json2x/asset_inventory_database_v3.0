@@ -159,14 +159,161 @@
         //}
     }
 
-    function instantiateObject(data, Obj, GlobalVar){
-        for(i in data){
-            GlobalVar[i] = new Obj();
-            for(let [key, val] of Object.entries(data[i])){
-                GlobalVar[i][key] = val;
+    // function instantiateObjectOLD(data, Obj, GlobalVar){
+    //     for(i in data){
+    //         GlobalVar[i] = new Obj();
+    //         for(let [key, val] of Object.entries(data[i])){
+    //             setObjectProperty(GlobalVar[i], key, val);
+    //             //GlobalVar[i][key] = val;
+    //         }
+    //     }
+    //     //console.log(Devices);
+    // }
+
+    function instantiateObject(dataObject, Obj){
+        let MyObj = new Obj();
+        for(let [key, val] of Object.entries(MyObj)){
+            if(key in dataObject){
+                if(dataObject[key]){
+                    MyObj[key] = dataObject[key];
+                }
             }
         }
-        //console.log(Devices);
+
+        return MyObj;
+    }
+
+    // function setObjectProperty(obj, property, setValue){
+    //     if(property in obj){
+    //         if(setValue){
+    //             obj[property] = setValue;
+    //         }
+    //     }
+    // }
+
+    function reset_ne_data(){
+        Devices = [];
+        Cells = [];
+        Trxs = [];
+    }
+
+    function prepare_data_to_send_to_server(activityData, neData){
+        reset_ne_data();
+        instantiate_undiscarded_ne_data(neData);
+        instantiate_activity_data(activityData);
+        var POST_DATA = {
+            'activity': LoggedActivity,
+            'devices': Devices,
+            'cells': Cells,
+            'trxs': Trxs
+        }
+
+        console.log(POST_DATA);
+        return POST_DATA;
+    }
+
+    function instantiate_undiscarded_ne_data(neData){
+        let CLEAN_NE_DATA = neData;
+        for(let[src, srcObjDataArray] of Object.entries(G_DISCARDED_NE_DATA)){
+            for(let[tbl_src, neDataArray] of Object.entries(srcObjDataArray)){
+                switch(tbl_src){
+                    case 'DEVICE':
+                        discard_data = neDataArray.map(device => device.id);
+                        inserted_element_id = [];
+                        for(i in CLEAN_NE_DATA[src]){
+                            if(Array.isArray(CLEAN_NE_DATA[src][i]['device'])){
+                                //nms ne device data has an array of device obj || cell,device = [{device object},...]
+                                for(j in CLEAN_NE_DATA[src][i]['device']){
+                                    let keep_data = CLEAN_NE_DATA[src][i]['device'][j];
+                                    if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id)){
+                                        Devices.push(instantiateObject(keep_data, Device))
+                                        inserted_element_id.push(keep_data.id)
+                                        
+                                    }
+                                }
+                            }else{
+                                //aid ne device data is a nested object || cell.device = {device object}
+                                let keep_data = CLEAN_NE_DATA[src][i]['device'];
+                                if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id)){
+                                    Devices.push(instantiateObject(keep_data, Device))
+                                    inserted_element_id.push(keep_data.id)
+                                }
+                            }
+                        }
+                        break;
+                    case 'CELL':
+                        discard_data = neDataArray.map(cell => cell.id);
+                        inserted_element_id = [];
+                        for(i in CLEAN_NE_DATA[src]){
+                            let cell_data = CLEAN_NE_DATA[src][i];
+                            if(discard_data.indexOf(cell_data.id) == -1 && inserted_element_id.indexOf(cell_data.id)){
+                                Cells.push(instantiateObject(cell_data, Cell));
+                                inserted_element_id.push(cell_data.id)
+                            }
+                        }
+                        break;
+                    case 'TRX':
+                        discard_data = neDataArray.map(trx => trx.id);
+                        inserted_element_id = [];
+                        for(i in CLEAN_NE_DATA[src]){
+                            if(Array.isArray(CLEAN_NE_DATA[src][i]['trx'])){
+                                index_to_delete = [];
+                                for(j in CLEAN_NE_DATA[src][i]['trx']){
+                                    let keep_data = CLEAN_NE_DATA[src][i]['trx'][j];
+                                    if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id)){
+                                        Trxs.push(instantiateObject(keep_data, Trx));
+                                        inserted_element_id.push(keep_data.id)
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    function instantiate_activity_data(activityData){
+        LoggedActivity = instantiateObject(activityData, Activity);
+    }
+
+    function get_activity_form_data(){
+        var activityData = {};
+        $('#activity-logger-form *').filter(':input[required]').each(function(){
+            let propertyName = $(this).attr('name');
+            if($(this).is('select')){
+                activityData[propertyName] = $(this).find(':selected').text();
+            }else{
+                activityData[propertyName] = $(this).val();
+            }
+        });
+
+        return activityData;
+    }
+
+    function verify_activity_form_data(activityData){
+        all_required_filled = true;
+        for(let[key, val] of Object.entries(activityData)){
+            if(!val){
+                all_required_filled = false;
+            }
+        }
+
+        return all_required_filled;
+    }
+
+    async function post_data_to_server(postData, csrftoken){
+        const response = await fetch(`/edrar/activity/log`, {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: {
+                "X-CSRFToken": csrftoken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
+
+        return response.json();
     }
 
     async function get_device_data_by_id(){
@@ -242,35 +389,23 @@
     **********************************************************************/
     var loading_html = $('#confirm-activity').html();
     $('#save-activity').click(function(e){
-        console.log(NE_DATA);
         $('#confirm-activity').prop('disabled', true);
-        let show_confirm_modal = true;
-        LoggedActivity = new Activity();
-        $('#activity-logger-form *').filter(':input[required]').each(function(){
-            let propertyName = ($(this).attr('id')).replace('id_', '');
-            if($(this).is('select')){
-                LoggedActivity[propertyName] = $(this).find(':selected').text();
-            }else{
-                LoggedActivity[propertyName] = $(this).val();
-            }
-            
-            if(!LoggedActivity[propertyName]){
-                 show_confirm_modal = false;
-             }
-        });
+        let activity_data = get_activity_form_data();
+        let show_confirm_modal = verify_activity_form_data(activity_data);
+        
 
         if(show_confirm_modal){
             e.preventDefault();
-            get_datatables_data().then(function(){
-                console.log(Devices);
-                console.log(Cells);
-                console.log(Trxs);
-                $('#confirm-activity').html('Confirm');
-                $('#confirm-activity').prop('disabled', false);
+            var post_data = prepare_data_to_send_to_server(activity_data, G_NE_DATA);
+            post_data_to_server(post_data, csrftoken).then(function(data){
+                console.log(data);
             }).catch(function(e){
                 console.log(e);
+                alert('Unexpected error occured!');
             });
-            //Promise.all([Devices, Cells, Trxs]).then(console.log([Devices, Cells, Trxs]));
+            // $('#confirm-activity').html('Confirm');
+            // $('#confirm-activity').prop('disabled', false);
+
             $('#confirm-save-modal').modal('show');
         }
     });
@@ -294,7 +429,7 @@
     /**********************************************************************
      * ON PAGE LOAD TRIGGERS
     **********************************************************************/
-
+    var csrftoken = $("#activity-logger-form > input[name='csrfmiddlewaretoken']").val() || null;
     if (!Cookies.get('aid-user') && !Cookies.get('aid-token-access') && !Cookies.get('aid-token-refresh')) {
         set_jwt_token_cookie();
     }else{

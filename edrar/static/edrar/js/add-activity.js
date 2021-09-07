@@ -130,8 +130,7 @@ $(document).ready(function() {
         return dataArray;
     }
 
-    function set_page_ne_data(){
-        assign_relationship_ids_to_datatable_row_data();
+    function set_page_ne_data(reset_discarded_ne_data = true){
         if(selectTech == G_TECH_LIST['2G']){
             Trxs = {
                 'aid': get_data_array_in_obj(G_NE_DATA['aid'], 'trx'),
@@ -147,10 +146,16 @@ $(document).ready(function() {
             'nms': Object.values(G_NE_DATA['nms']).map(cell => cell)
         }
         //reset G_DISCARD_NE_DATA
-        G_DISCARDED_NE_DATA = {
-            'nms': {'DEVICE': [],'CELL': [],'TRX': [],}, 
-            'aid': {'DEVICE': [],'CELL': [],'TRX': [],}
+        if(reset_discarded_ne_data){
+            G_DISCARDED_NE_DATA = {
+                'nms': {'DEVICE': [],'CELL': [],'TRX': [],}, 
+                'aid': {'DEVICE': [],'CELL': [],'TRX': [],}
+            }
         }
+    }
+
+    function reset_page_ne_data(){
+        set_page_ne_data(false);
     }
 
     function assign_relationship_ids_to_datatable_row_data(){
@@ -253,6 +258,7 @@ $(document).ready(function() {
 
             get_ne_data()
                 .then(function(){
+                    assign_relationship_ids_to_datatable_row_data();
                     set_page_ne_data();
                     draw_datatables();
                     draw_fill_form_fields();
@@ -270,7 +276,6 @@ $(document).ready(function() {
                         $('#missing-data-msg').html(msg);
                         $('#missing-data-modal').modal('show');
                     }
-                    console.log(G_NE_DATA);
                 })
                 .catch(function(err){
                     console.log(err)
@@ -312,22 +317,80 @@ $(document).ready(function() {
     // $('.dt-row-discard').click(function(e){
     // });
 
+    // $('#save-activity').click(function(e){
+    //     e.preventDefault();
+    // });
+    function update_form_fields(){
+        reset_page_ne_data();
+        let has_change_in_ne_data = false;
+        for(let[data_src, dataObjectArray] of Object.entries(G_DISCARDED_NE_DATA)){
+            for(let[tbl_src, neDataObjArray] of Object.entries(dataObjectArray)){
+                switch(tbl_src){
+                    case 'DEVICE':
+                        remove_device_id = neDataObjArray.map(device => device.id);
+                        if(remove_device_id.length > 0){
+                            has_change_in_ne_data = true;
+                        }
+                        break;
+                    case 'CELL':
+                        remove_cell_id = neDataObjArray.map(cell => cell.id);
+                        if(remove_cell_id.length > 0){
+                            has_change_in_ne_data = true;
+                        }
+                        break;
+                    case 'TRX':
+                        remove_trx_id = neDataObjArray.map(trx => trx.id);
+                        if(remove_trx_id.length > 0){
+                            has_change_in_ne_data = true;
+                        }
+                        break;
+                }
+            }
+
+            if(has_change_in_ne_data){
+                Devices[data_src] = Devices[data_src].filter(function(element){
+                    if(remove_device_id.indexOf(element.id) == -1){
+                        return element;
+                    }
+                });
+    
+                Cells[data_src] = Cells[data_src].filter(function(element){
+                    if(remove_cell_id.indexOf(element.id) == -1){
+                        return element;
+                    }
+                });
+    
+                Trxs[data_src] = Trxs[data_src].filter(function(element){
+                    if(remove_trx_id.indexOf(element.id) == -1){
+                        return element;
+                    }
+                });
+            }
+        }
+
+        draw_fill_form_fields();
+    }
+
+
     $('#filtered-device-table tbody').on('click', 'tr td button.dt-row-discard', function(e){
         e.preventDefault();
         MyDataTableActions.set_info(selectActivity, selectSiteid, selectTech, selectBand)
         MyDataTableActions.discard_table_row('#filtered-device-table', this, G_DISCARDED_NE_DATA);
+        update_form_fields();
     });
 
     $('#filtered-cell-table tbody').on('click', 'tr td button.dt-row-discard', function(e){
         e.preventDefault();
         MyDataTableActions.set_info(selectActivity, selectSiteid, selectTech, selectBand)
         MyDataTableActions.discard_table_row('#filtered-cell-table', this, G_DISCARDED_NE_DATA);
+        update_form_fields();
     });
 
     $('#filtered-trx-table tbody').on('click', 'tr td button.dt-row-discard', function(e){
         e.preventDefault();
         MyDataTableActions.set_info(selectActivity, selectSiteid, selectTech, selectBand)
         MyDataTableActions.discard_table_row('#filtered-trx-table', this, G_DISCARDED_NE_DATA);
+        update_form_fields();
     });
 
     $('#missing-data-modal').on('hidden.bs.modal', function(){

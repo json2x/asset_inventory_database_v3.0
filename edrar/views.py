@@ -1,10 +1,11 @@
 from django.db import models
 from django.http.response import JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, request
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse, JsonResponse, request
 from django.views import View
 from django.db.models import Q
 
+import json
 from dal import autocomplete
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from .forms import DailyActivityForm
@@ -44,6 +45,13 @@ class AddActivity(View):
     def get(self, request):
         return render(request, self.template_name, {'form': self.form_class})
 
+    def post(self, request):
+
+        post_data = json.loads(request.body.decode('utf-8'))
+        
+        return JsonResponse(post_data)
+
+
 
 class ActivityAutocomplete(autocomplete.Select2QuerySetView):
 
@@ -55,7 +63,7 @@ class ActivityAutocomplete(autocomplete.Select2QuerySetView):
         qs = Activity.objects.all()
 
         if self.q:
-            qs = qs.filter(siteid__icontains=self.q)
+            qs = qs.filter(name__icontains=self.q)
 
         return qs
 
@@ -232,20 +240,20 @@ class NmsTrxDatatableView(BaseDatatableView):
         
         return qs
 
-class ActivityLogTextFieldData(generics.ListAPIView):
-    serializer_class = CellsDeviceTrxSerializer
+# class ActivityLogTextFieldData(generics.ListAPIView):
+#     serializer_class = CellsDeviceTrxSerializer
     
-    def get_queryset(self):
-        site = self.request.GET.get('site', None)
-        tech = self.request.GET.get('tech', None)
-        band = self.request.GET.get('band', None)
-        src = self.request.GET.get('src', None)
+#     def get_queryset(self):
+#         site = self.request.GET.get('site', None)
+#         tech = self.request.GET.get('tech', None)
+#         band = self.request.GET.get('band', None)
+#         src = self.request.GET.get('src', None)
 
-        if src == 'nms':
-            self.serializer_class = CellsDeviceTrxNMSDataSerializer
-            return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
-        else:
-            return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+#         if src == 'nms':
+#             self.serializer_class = CellsDeviceTrxNMSDataSerializer
+#             return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+#         else:
+#             return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
 
 class GetNEData(generics.ListAPIView):
     serializer_class = CellsDeviceTrxSerializer
@@ -262,86 +270,86 @@ class GetNEData(generics.ListAPIView):
         else:
             return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band).order_by('cell_name')
 
-class GetDeviceDataByID(generics.ListAPIView):
-    serializer_class = DevicesSerializer
+# class GetDeviceDataByID(generics.ListAPIView):
+#     serializer_class = DevicesSerializer
 
-    def get_queryset(self):
-        id = self.request.GET.get('id', None)
-        self.serializer_class = self.get_serializer_class()
+#     def get_queryset(self):
+#         id = self.request.GET.get('id', None)
+#         self.serializer_class = self.get_serializer_class()
 
-        qs_params = None
-        if id.find(';'):
-            ids = id.split(';')
-            for id in ids:
-                if qs_params:
-                    qs_params = qs_params | Q(id=id)
-                else:
-                    qs_params = Q(id=id)
-            qs = Device.objects.filter(qs_params)
-        else:
-            qs = Device.objects.filter(id=id)
+#         qs_params = None
+#         if id.find(';'):
+#             ids = id.split(';')
+#             for id in ids:
+#                 if qs_params:
+#                     qs_params = qs_params | Q(id=id)
+#                 else:
+#                     qs_params = Q(id=id)
+#             qs = Device.objects.filter(qs_params)
+#         else:
+#             qs = Device.objects.filter(id=id)
 
-        return qs
+#         return qs
 
-    def get_serializer_class(self):
-        data_source = self.request.GET.get('src', None)
-        if data_source and data_source == 'nms':
-            return NmsDevicesSerializer
-        else:
-            return DevicesSerializer
+#     def get_serializer_class(self):
+#         data_source = self.request.GET.get('src', None)
+#         if data_source and data_source == 'nms':
+#             return NmsDevicesSerializer
+#         else:
+#             return DevicesSerializer
 
-class GetCellDataByID(generics.ListAPIView):
-    serializer_class = CellsSerializer
+# class GetCellDataByID(generics.ListAPIView):
+#     serializer_class = CellsSerializer
     
-    def get_queryset(self):
-        id = self.request.GET.get('id', None)
-        self.serializer_class = self.get_serializer_class()
+#     def get_queryset(self):
+#         id = self.request.GET.get('id', None)
+#         self.serializer_class = self.get_serializer_class()
 
-        qs_params = None
-        if id.find(';'):
-            ids = id.split(';')
-            for id in ids:
-                if qs_params:
-                    qs_params = qs_params | Q(id=id)
-                else:
-                    qs_params = Q(id=id)
-            qs = Cell.objects.filter(qs_params)
-        else:
-            qs = Cell.objects.filter(id=id)
+#         qs_params = None
+#         if id.find(';'):
+#             ids = id.split(';')
+#             for id in ids:
+#                 if qs_params:
+#                     qs_params = qs_params | Q(id=id)
+#                 else:
+#                     qs_params = Q(id=id)
+#             qs = Cell.objects.filter(qs_params)
+#         else:
+#             qs = Cell.objects.filter(id=id)
 
-        return qs
+#         return qs
 
-    def get_serializer_class(self):
-        data_source = self.request.GET.get('src', None)
-        if data_source and data_source == 'nms':
-            return NmsCellsSerializer
-        else:
-            return CellsSerializer
+#     def get_serializer_class(self):
+#         data_source = self.request.GET.get('src', None)
+#         if data_source and data_source == 'nms':
+#             return NmsCellsSerializer
+#         else:
+#             return CellsSerializer
 
-class GetTrxDataByID(generics.ListAPIView):
-    serializer_class = TrxSerializer
+# class GetTrxDataByID(generics.ListAPIView):
+#     serializer_class = TrxSerializer
     
-    def get_queryset(self):
-        id = self.request.GET.get('id', None)
-        self.serializer_class = self.get_serializer_class()
+#     def get_queryset(self):
+#         id = self.request.GET.get('id', None)
+#         self.serializer_class = self.get_serializer_class()
 
-        qs_params = None
-        if id.find(';'):
-            ids = id.split(';')
-            for id in ids:
-                if qs_params:
-                    qs_params = qs_params | Q(id=id)
-                else:
-                    qs_params = Q(id=id)
-            qs = Trx.objects.filter(qs_params)
-        else:
-            qs = Trx.objects.filter(id=id)
+#         qs_params = None
+#         if id.find(';'):
+#             ids = id.split(';')
+#             for id in ids:
+#                 if qs_params:
+#                     qs_params = qs_params | Q(id=id)
+#                 else:
+#                     qs_params = Q(id=id)
+#             qs = Trx.objects.filter(qs_params)
+#         else:
+#             qs = Trx.objects.filter(id=id)
 
-        return qs
+#         return qs
 
-    def get_serializer_class(self):
-        data_source = self.request.GET.get('src', None)
-        if data_source and data_source == 'nms':
-            return NmsTrxSerializer
-        else:
-            return TrxSerializer
+#     def get_serializer_class(self):
+#         data_source = self.request.GET.get('src', None)
+#         if data_source and data_source == 'nms':
+#             return NmsTrxSerializer
+#         else:
+#             return TrxSerializer

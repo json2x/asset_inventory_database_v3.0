@@ -106,8 +106,8 @@ var MyDataTable = {
                 {name: 'rel_id', searchable: false, visible: false, targets: [12]},
             ],
             order: [[2,'asc']],
-            language: {
-                processing: 'Loading. Please wait...'
+            createdRow: function(row, data, dataindex){
+                $(row).addClass(`${src}-data`);
             }
         }
         
@@ -173,8 +173,8 @@ var MyDataTable = {
                 {name: 'rel_id', searchable: false, visible: false, targets: [16]},
             ],
             order: [[1,'asc']],
-            language: {
-                processing: 'Loading. Please wait...'
+            createdRow: function(row, data, dataindex){
+                $(row).addClass(`${src}-data`);
             }
         }
 
@@ -222,8 +222,8 @@ var MyDataTable = {
                 {name: 'rel_id', searchable: false, visible: false, targets: [7]},
             ],
             order: [[2,'asc']],
-            language: {
-                processing: 'Loading. Please wait...'
+            createdRow: function(row, data, dataindex){
+                $(row).addClass(`${src}-data`);
             }
         }
     
@@ -274,10 +274,10 @@ var MyDataTableActions = {
         }
         this.data_src = data_src;
         this.tbl_src = tbl_src;
-        this.discard_related_rows_from_other_table_v2(data.rel_id);
-        console.log(data);
+        this.discard_related_rows_from_other_table_v2(data);
     },
-    discard_related_rows_from_other_table_v2: function(rel_id){
+    discard_related_rows_from_other_table_v2: function(refRowData){
+        var rel_id = refRowData.rel_id;
         for(i in this.discard_tree[this.tbl_src]){
             var ref_tbl = this.discard_tree[this.tbl_src][i];
             var tableId = `#filtered-${ref_tbl}-table`;
@@ -285,7 +285,7 @@ var MyDataTableActions = {
             var myInstance = this;
             table.rows().every(function(){
                 var row_data = this.data();
-                if(row_data.rel_id == rel_id){
+                if(myInstance.validate_referenced_row(refRowData, row_data)){
                     let discarded = myInstance.render_toggle_discard_table_row(this.node());
                     if(discarded){
                         G_DISCARDED_NE_DATA[myInstance.data_src][(ref_tbl).toUpperCase()].push(row_data);
@@ -300,6 +300,17 @@ var MyDataTableActions = {
                 }
             });
         }
+    },
+    validate_referenced_row: function(refRowData, currRowData){
+        var matched = false;
+        if(this.tbl_src == 'DEVICE' && refRowData.rel_id == currRowData.rel_id){
+            matched = true;
+        }else if(this.tbl_src == 'CELL' && refRowData.rel_id == currRowData.rel_id 
+        && refRowData.ems_id == currRowData.ems_id && refRowData.cell_name == currRowData.parent_id){
+            matched = true;
+        }
+    
+        return matched;
     },
     discard_related_rows_from_other_table_v1(){
         var src = this.data_src;

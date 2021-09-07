@@ -26,11 +26,11 @@ urlpatterns = [
     path('edrar/data/datatable/cell/nms/', views.NmsCellDatatableView.as_view(), name='nms-cell-datatable'),
     path('edrar/data/datatable/trx/nms/', views.NmsTrxDatatableView.as_view(), name='nms-trx-datatable'),
     
-    path('edrar/data/tfdata/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
+    #path('edrar/data/tfdata/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
     path('edrar/data/ne/', authentication_classes([])(permission_classes([AllowAny])(views.GetNEData)).as_view(), name='ne-lookup'),
     #path('edrar/data/tfdata/nms/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
 
-    url('edrar/data/device/', authentication_classes([])(permission_classes([AllowAny])(views.GetDeviceDataByID)).as_view(), name='device-lookup'),
-    url('edrar/data/cell/', authentication_classes([])(permission_classes([AllowAny])(views.GetCellDataByID)).as_view(), name='cell-lookup'),
-    url('edrar/data/trx/', authentication_classes([])(permission_classes([AllowAny])(views.GetTrxDataByID)).as_view(), name='trx-lookup'),
+    # url('edrar/data/device/', authentication_classes([])(permission_classes([AllowAny])(views.GetDeviceDataByID)).as_view(), name='device-lookup'),
+    # url('edrar/data/cell/', authentication_classes([])(permission_classes([AllowAny])(views.GetCellDataByID)).as_view(), name='cell-lookup'),
+    # url('edrar/data/trx/', authentication_classes([])(permission_classes([AllowAny])(views.GetTrxDataByID)).as_view(), name='trx-lookup'),
 ]

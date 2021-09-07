@@ -1,3 +1,4 @@
+var G_LOGGED_ACTIVITY = {}
 var G_NE_DATA = {};
 var G_DISCARDED_NE_DATA = {
     'nms': {

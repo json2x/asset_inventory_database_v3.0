@@ -62,10 +62,12 @@ var MyActivityForm = {
                 return $(this).text() == 'On-air';
             }).prop('selected', true);
         }
+        $("#id_site_status").prop('required', true);
 
         $('#id_user option').filter(function(){
             return $(this).text() == Cookies.get('aid-user');
         }).prop('selected', true);
+        $("#id_user").prop('required', true);
 
         $('.general-input-container').show();
     }

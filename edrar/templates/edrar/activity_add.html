@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <h3 class="mx-4 my-2">Add activity</h3>
-<form id="activity-logger-form" action="{% url 'edrar_add' %}" method="POST">
+<form id="activity-logger-form" action="{% url 'edrar_log' %}" method="POST">
     {% csrf_token %}
 
     <div class="row mx-3 mt-3">

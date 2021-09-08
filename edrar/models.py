@@ -71,6 +71,9 @@ class DailyActivity(models.Model):
     s1_u = models.CharField(max_length=250, blank=True, null=True)
     remarks = models.CharField(max_length=250, blank=True, null=True)
 
+    def __str__(self):
+        return self.activity.name
+
     class Meta:
         verbose_name_plural = 'Daily Activities'
 

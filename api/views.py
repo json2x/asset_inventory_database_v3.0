@@ -464,6 +464,7 @@ class GetUserToken(APIView):
     def get(self, request, format=None):
         refresh = RefreshToken.for_user(request.user)
         content = {
+            'user_id': str(request.user.id),  # `django.contrib.auth.User` instance.
             'user': str(request.user),  # `django.contrib.auth.User` instance.
             'access': str(refresh.access_token),
             'refresh': str(refresh),

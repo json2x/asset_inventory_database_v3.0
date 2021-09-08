@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('edrar/', login_required(views.home), name='edrar_home'),
-    path('edrar/activity/add', login_required(views.activity_add), name='edrar_add'),
+    #path('edrar/activity/add', login_required(views.activity_add), name='edrar_add'),
     path('edrar/activity/log', login_required(views.AddActivity.as_view()), name='edrar_log'),
     
     #path('edrar/smart_site_list', views.SiteList.as_view()),

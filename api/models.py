@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+#User = get_user_model()
 
 class Device(models.Model):
     dn = models.CharField(max_length=250, blank=True, null=True)  # db_column='DN'
@@ -134,6 +134,9 @@ class Trx(models.Model):
     record_status = models.IntegerField(default=1)
     cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.trx_name
 
     class Meta:
         db_table = 'Trx'

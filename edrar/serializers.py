@@ -1,3 +1,4 @@
+from django.db.models import fields
 from rest_framework import serializers
 from api.serializers import DevicesSerializer, TrxSerializer
 from api import models as Api
@@ -6,6 +7,16 @@ from edrar import models as Edrar
 
 from nmsdata.serializers import NmsDevicesSerializer, NmsTrxSerializer
 from nmsdata import models as Nms
+
+class DailyActivitySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Edrar.DailyActivity
+        fields = (
+            'date_logged', 'tech', 'user', 'counterpart', 'activity', 'site_status', 'rfs_count', 'siteid', 'band', 
+            'vendor', 'homing', 'bts_id', 'device_name', 'equipment_type', 'trx_config', 'iub_type', 'bandwidth', 
+            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'omip', 's1_c', 's1_u', 'remarks'
+        )
 
 class CellsDeviceTrxSerializer(serializers.ModelSerializer):
 

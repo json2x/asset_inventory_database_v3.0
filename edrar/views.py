@@ -60,7 +60,7 @@ class AddActivity(View):
         saved_data = {'devices': [], 'cells': [], 'trxs': []}
         try:
             with transaction.atomic():
-                if devices or cells or trxs:
+                if devices:
                     rfs_counter = 0
                     if int(activity_data['activity']) == 4: #'Rollout'
                         rfs_counter = 1
@@ -119,23 +119,24 @@ class AddActivity(View):
                                 )
                                 activity_cell.save()
 
-                                for trx_data in trxs:
+                                if trxs:
+                                    for trx_data in trxs:
+                                        
+                                        create_flag = self.get_create_flag('trx', activity)
+                                        update_flag = self.get_update_flag(activity)
+                                        current_element += f"|{trx_data['trx_name']}"
 
-                                    create_flag = self.get_create_flag('trx', activity)
-                                    update_flag = self.get_update_flag(activity)
-                                    current_element += f"|{trx_data['trx_name']}"
+                                        if trx_data['ems_id'] == cell.ems_id and trx_data['parent_id'] == cell.cell_name and trx_data['homing_bts'] == device.device_id:
+                                            trx = self.get_trx_instance_by_activity(trx_data, activity, device, cell)
+                                            trx.save()
+                                            saved_data['trxs'].append(TrxSerializer(trx).data)
 
-                                    if trx_data['ems_id'] == cell.ems_id and trx_data['parent_id'] == cell.cell_name and trx_data['homing_bts'] == device.device_id:
-                                        trx = self.get_trx_instance_by_activity(trx_data, activity, device, cell)
-                                        trx.save()
-                                        saved_data['trxs'].append(TrxSerializer(trx).data)
-
-                                        activity_trx = DailyActivity_Trx(
-                                            daily_activity = activity, trx = trx,
-                                            create_flag = create_flag, #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
-                                            update_flag = update_flag #True if update False if create
-                                        )
-                                        activity_trx.save()
+                                            activity_trx = DailyActivity_Trx(
+                                                daily_activity = activity, trx = trx,
+                                                create_flag = create_flag, #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
+                                                update_flag = update_flag #True if update False if create
+                                            )
+                                            activity_trx.save()
 
         except transaction.TransactionManagementError as err:
             saved_data = {}

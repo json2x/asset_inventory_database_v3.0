@@ -305,7 +305,7 @@
                     </div>
                     <div class="col">
                         <button id="confirm-activity" class="btn btn-primary btn-lg btn-block">
-                            <img class="loading-ellipsis" src="{% static 'edrar/img/loading-ellipsis-50px.gif' %}" alt="loading">
+                            Confirm
                         </button>
                     </div>
                 </div>
@@ -340,7 +340,52 @@
     </div>
 </div>
 <!-- End of Missing Data Modal -->
-<!-- Missing Data Modal -->
+<!-- DB Error Modal -->
+<div id="db-error-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myDBErrorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="exampleModalLabel"><i class="fa fa-database" aria-hidden="true"></i> Database Error!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <p id="db-error-msg" class="text-dark"></p>
+                        <p class="text-muted">Element: <span id="db-error-element"></span></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of DB Error Modal -->
+<!-- Success Modal -->
+<div id="save-success-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySaveSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body border border-dark">
+                <div class="row">
+                    <div class="col">
+                        <div class="mx-auto py-2 overflow-auto">
+                            <h5 class="text-success"><i class="fa fa-database" aria-hidden="true"></i> Activity Saved!</h5>
+                            <p id="success-save-msg" class="text-dark"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Success Modal -->
+<!-- Fetching Data Modal -->
 <div id="fetching-data-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myFetchingDataModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -359,7 +404,7 @@
         </div>
     </div>
 </div>
-<!-- End of Missing Data Modal -->
+<!-- End of Fetching Data Modal -->
 {% endblock content %}
 {% block customJs %}
 <script src="{% static 'edrar/js/global.js' %}"></script>

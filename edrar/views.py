@@ -56,15 +56,15 @@ class AddActivity(View):
         devices = post_data['devices'] or None
         cells = post_data['cells'] or None
         trxs = post_data['trxs'] or None
-
-        saved_data = {}
+        current_element = None
+        saved_data = {'devices': [], 'cells': [], 'trxs': []}
         try:
             with transaction.atomic():
                 if devices:
                     rfs_counter = 0
-                    if activity['activity'] == 'Rollout':
+                    if int(activity['activity']) == 4: #'Rollout'
                         rfs_counter = 1
-                    elif activity['activity'] == 'Site Deletion':
+                    elif int(activity['activity']) == 17: #'Site Deletion'
                         rfs_counter = -1
                     selected_activity = Activity.objects.get(pk=int(activity['activity']))
                     selected_user = User.objects.get(pk=int(activity['user']))
@@ -82,13 +82,11 @@ class AddActivity(View):
                     )
                     activity_data.save()
                     saved_data['activity'] = DailyActivitySerializer(activity_data).data
-
-                    saved_data['devices'] = []
                     for device in devices:
                         record_status = self.get_record_status('device', activity_data)
                         create_flag = self.get_create_flag('device', activity_data)
                         update_flag = self.get_update_flag(activity_data)
-
+                        current_element = f"{activity['siteid']}|{activity['tech']}|{activity['band']}|{device['device_id']}"
                         device_data = Device(
                             dn = device['dn'], device_id = device['device_id'], ems_device_id = device['ems_device_id'], device_alias = device['device_alias'],
                             device_ip = device['device_ip'], ems_id = device['ems_id'], vendor_id = device['vendor_id'], ne_type = device['ne_type'],
@@ -111,13 +109,12 @@ class AddActivity(View):
                             update_flag = update_flag #True if update False if create
                         )
                         activity_device_data.save()
-                    
-                        saved_data['cells'] = []
+
                         for cell in cells:
                             record_status = self.get_record_status('cell', activity_data)
                             create_flag = self.get_create_flag('cell', activity_data)
                             update_flag = self.get_update_flag(activity_data)
-                                    
+                            current_element += f"|{cell['ems_id']}"
                             if cell['ems_id'] == device_data.ems_id and  cell['parent_id'] == device_data.device_id \
                             and cell['site'] == device_data.site_id and cell['subdomain'] == device_data.subdomain:
                                 cell_data = Cell(
@@ -139,55 +136,112 @@ class AddActivity(View):
                                 )
                                 activity_cell_data.save()
 
-                            saved_data['trxs'] = []
-                            for trx in trxs:
-                                record_status = self.get_record_status('trx', activity_data)
-                                create_flag = self.get_create_flag('trx', activity_data)
-                                update_flag = self.get_update_flag(activity_data)
+                                for trx in trxs:
+                                    record_status = self.get_record_status('trx', activity_data)
+                                    create_flag = self.get_create_flag('trx', activity_data)
+                                    update_flag = self.get_update_flag(activity_data)
+                                    current_element += f"|{trx['trx_name']}"
+                                    if trx['ems_id'] == cell_data.ems_id and trx['parent_id'] == cell_data.cell_name and trx['homing_bts'] == device_data.device_id:
+                                        trx_data = Trx(
+                                            ems_trx_id = trx['ems_trx_id'], ems_id = trx['ems_id'], trx_name = trx['trx_name'], dn = trx['dn'], site_id = trx['site_id'],
+                                            parent_id = trx['parent_id'], parent_dn = trx['parent_dn'], admin_state = trx['admin_state'], e1_assignment = trx['e1_assignment'],
+                                            homing_bts = trx['homing_bts'], record_status = record_status, cell = cell_data, device = device_data
+                                        )
+                                        trx_data.save()
+                                        saved_data['trxs'].append(TrxSerializer(trx_data).data)
 
-                                if trx['ems_id'] == cell_data.ems_id and trx['parent_id'] == cell_data.cell_name and trx['homing_bts'] == cell_data.parent_id:
-                                    trx_data = Trx(
-                                        ems_trx_id = trx['ems_trx_id'], ems_id = trx['ems_id'], trx_name = trx['trx_name'], dn = trx['dn'], site_id = trx['site_id'],
-                                        parent_id = trx['parent_id'], parent_dn = trx['parent_dn'], admin_state = trx['admin_state'], e1_assignment = trx['e1_assignment'],
-                                        homing_bts = trx['homing_bts'], record_status = record_status, cell = cell_data, device = device_data
-                                    )
-                                    trx_data.save()
-                                    saved_data['trxs'].append(TrxSerializer(trx_data).data)
-
-                                    activity_trx_data = DailyActivity_Trx(
-                                        daily_activity = activity_data, trx = trx_data,
-                                        create_flag = create_flag, #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
-                                        update_flag = update_flag #True if update False if create
-                                    )
-                                    activity_trx_data.save()
+                                        activity_trx_data = DailyActivity_Trx(
+                                            daily_activity = activity_data, trx = trx_data,
+                                            create_flag = create_flag, #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
+                                            update_flag = update_flag #True if update False if create
+                                        )
+                                        activity_trx_data.save()
 
         except transaction.TransactionManagementError as err:
             saved_data = {}
-            return JsonResponse({'error': err})
+            return JsonResponse({'success': False, 'message': str(err), 'element': current_element}, safe=False)
         except Error as err:
             saved_data = {}
-            return JsonResponse({'error': err})
+            return JsonResponse({'success': False, 'message': str(err), 'element': current_element}, safe=False)
         
         #return JsonResponse(activity)
-        return JsonResponse(saved_data)
+        return JsonResponse({'success': True, 'data': saved_data})
 
+    def get_device_instance_by_activity(self, device_data, activity):
+        if activity.activity.name == 'Rollout':
+            device = Device(
+                dn = device_data['dn'], device_id = device_data['device_id'], ems_device_id = device_data['ems_device_id'], device_alias = device_data['device_alias'],
+                device_ip = device_data['device_ip'], ems_id = device_data['ems_id'], vendor_id = device_data['vendor_id'], ne_type = device_data['ne_type'],
+                model = device_data['model'], hardware_description = device_data['hardware_description'], functional_description = device_data['functional_description'],
+                parent_device_id = device_data['parent_device_id'], parentdn = device_data['parentdn'], site_id = device_data['site_id'], device_state = device_data['device_state'],
+                software_version = device_data['software_version'], integration_date = device_data['integration_date'], end_of_support = device_data['end_of_support'],
+                tsa_scope = device_data['tsa_scope'], product_id = device_data['product_id'], serial_number = device_data['serial_number'], freq_tx_rx_field = device_data['freq_tx_rx_field'],
+                hardware_capacity = device_data['hardware_capacity'], domain = device_data['domain'], ne_owner = device_data['ne_owner'], tx_clusterimg = device_data['tx_clusterimg'],
+                tx_type = device_data['tx_type'], natspcode = device_data['natspcode'], admin_state = device_data['admin_state'], subdomain = device_data['subdomain'], 
+                function = device_data['function'], iubce_dl_lic = device_data['iubce_dl_lic'], iubce_ul_lic = device_data['iubce_ul_lic'], s1cu_lic = device_data['s1cu_lic'],
+                cluster_region = device_data['cluster_region'], cluster_sub_region = device_data['cluster_sub_region'], cluster_province = device_data['cluster_province'],
+                cluster_city = device_data['cluster_city'], mw_hub = device_data['mw_hub']
+            )
+        
+        if activity.activity.name == 'On-Air':
+            record_status = activity.site_status
+            device = Device.objects.get(pk=device_data['id'])
+            device.record_status = record_status
+
+        return device
+
+    def get_cell_instance_by_activity(self, cell_data, activity, device):
+        if activity.activity.name == 'Rollout':
+            cell = Cell(
+                domain = cell_data['domain'], ems_cell_id = cell_data['ems_cell_id'], ems_id = cell_data['ems_id'], cell_name = cell_data['cell_name'], dn = cell_data['dn'],
+                site = cell_data['site'], parent_id = cell_data['parent_id'], parent_dn = cell_data['parent_dn'], tech = cell_data['tech'], band = cell_data['band'], 
+                admin_state = cell_data['admin_state'], alias = cell_data['alias'], lac_tac = cell_data['lac_tac'], sac_ci_eutra = cell_data['sac_ci_eutra'], 
+                rnc_cid = cell_data['rnc_cid'], phy_cid = cell_data['phy_cid'], lcr_cid = cell_data['lcr_cid'], mcc = cell_data['mcc'], mnc = cell_data['mnc'], 
+                nodeid = cell_data['nodeid'], sector_id = cell_data['sector_id'], carrier = cell_data['carrier'], ne_type = cell_data['ne_type'], 
+                subdomain = cell_data['subdomain'], function = cell_data['function'], sdcch_cap = cell_data['sdcch_cap'], tch_cap = cell_data['tch_cap'], 
+                azimuth = cell_data['azimuth'], device = device
+            )
+
+        if activity.activity.name == 'On-Air':
+            record_status = activity.site_status
+            cell = Cell.objects.get(pk=cell_data['id'])
+            cell.record_status = record_status
+
+        return cell
+
+    def get_trx_instance_by_activity(self, trx_data, activity, device, cell):
+        if activity.activity.name == 'Rollout':
+            trx = Trx(
+                ems_trx_id = trx_data['ems_trx_id'], ems_id = trx_data['ems_id'], trx_name = trx_data['trx_name'], dn = trx_data['dn'], site_id = trx_data['site_id'],
+                parent_id = trx_data['parent_id'], parent_dn = trx_data['parent_dn'], admin_state = trx_data['admin_state'], e1_assignment = trx_data['e1_assignment'],
+                homing_bts = trx_data['homing_bts'], cell = cell, device = device
+            )
+
+        if activity.activity.name == 'On-Air':
+            record_status = activity.site_status
+            trx = Trx.objects.get(pk=trx_data['id'])
+            trx.record_status = record_status
+        
+        return trx
+
+        
     def get_record_status(self, table, activity):
         record_status = 1
         if table == 'device':
-            if activity.activity == 'On-Air':
+            if activity.activity.name == 'On-Air':
                 record_status = 2
-            elif activity.activity == 'Site Deletion':
+            elif activity.activity.name == 'Site Deletion':
                 record_status = 0
         elif table == 'cell':
-            if activity.activity == 'On-Air':
+            if activity.activity.name == 'On-Air':
                 record_status = 2
-            elif activity.activity == 'Site Deletion' or activity.activity == 'Delete Cell':
+            elif activity.activity.name == 'Site Deletion' or activity.activity.name == 'Delete Cell':
                 record_status = 0
         elif table == 'trx':
-            if activity.activity == 'On-Air':
+            if activity.activity.name == 'On-Air':
                 record_status = 2
-            elif activity.activity == 'Site Deletion' or activity.activity == 'Delete Cell' \
-            or activity.activity == 'TRX Downgrade':
+            elif activity.activity.name == 'Site Deletion' or activity.activity.name == 'Delete Cell' \
+            or activity.activity.name == 'TRX Downgrade':
                 record_status = 0
         
         return record_status
@@ -195,29 +249,29 @@ class AddActivity(View):
     def get_create_flag(self, table, activity):
         create_flag = 0
         if table == 'device':
-            if activity.activity == 'Rollout':
+            if activity.activity.name == 'Rollout':
                 create_flag = 1
-            elif activity.activity == 'Site Deletion':
+            elif activity.activity.name == 'Site Deletion':
                 create_flag = -1
         elif table == 'cell':
-            if activity.activity == 'Rollout' or activity.activity == 'Expansion':
+            if activity.activity.name == 'Rollout' or activity.activity.name == 'Expansion':
                 create_flag = 1
-            elif activity.activity == 'Site Deletion' or activity.activity == 'Delete Cell':
+            elif activity.activity.name == 'Site Deletion' or activity.activity.name == 'Delete Cell':
                 create_flag = -1
         elif table == 'trx':
-            if activity.activity == 'Rollout' or activity.activity == 'Expansion' \
-            or activity.activity == 'TRX Expansion':
+            if activity.activity.name == 'Rollout' or activity.activity.name == 'Expansion' \
+            or activity.activity.name == 'TRX Expansion':
                 create_flag = 1
-            elif activity.activity == 'Site Deletion' or activity.activity == 'Delete Cell' \
-            or activity.activity == 'TRX Downgrade':
+            elif activity.activity.name == 'Site Deletion' or activity.activity.name == 'Delete Cell' \
+            or activity.activity.name == 'TRX Downgrade':
                 create_flag = -1
         
         return create_flag
 
     def get_update_flag(self, activity):
         update_flag = True
-        if activity.activity == 'Rollout' or activity.activity == 'Expansion' \
-        or activity.activity == 'TRX Expansion':
+        if activity.activity.name == 'Rollout' or activity.activity.name == 'Expansion' \
+        or activity.activity.name == 'TRX Expansion':
             update_flag = False
 
         return update_flag
@@ -411,21 +465,6 @@ class NmsTrxDatatableView(BaseDatatableView):
         
         return qs
 
-# class ActivityLogTextFieldData(generics.ListAPIView):
-#     serializer_class = CellsDeviceTrxSerializer
-    
-#     def get_queryset(self):
-#         site = self.request.GET.get('site', None)
-#         tech = self.request.GET.get('tech', None)
-#         band = self.request.GET.get('band', None)
-#         src = self.request.GET.get('src', None)
-
-#         if src == 'nms':
-#             self.serializer_class = CellsDeviceTrxNMSDataSerializer
-#             return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
-#         else:
-#             return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
-
 class GetNEData(generics.ListAPIView):
     serializer_class = CellsDeviceTrxSerializer
     
@@ -440,6 +479,21 @@ class GetNEData(generics.ListAPIView):
             return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band).order_by('cell_name')
         else:
             return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band).order_by('cell_name')
+
+# class ActivityLogTextFieldData(generics.ListAPIView):
+#     serializer_class = CellsDeviceTrxSerializer
+    
+#     def get_queryset(self):
+#         site = self.request.GET.get('site', None)
+#         tech = self.request.GET.get('tech', None)
+#         band = self.request.GET.get('band', None)
+#         src = self.request.GET.get('src', None)
+
+#         if src == 'nms':
+#             self.serializer_class = CellsDeviceTrxNMSDataSerializer
+#             return Nms.Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
+#         else:
+#             return Cell.objects.filter(site=site).filter(subdomain=tech).filter(band=band)
 
 # class GetDeviceDataByID(generics.ListAPIView):
 #     serializer_class = DevicesSerializer

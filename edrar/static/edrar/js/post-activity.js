@@ -7,10 +7,12 @@
     var Cells = [];
     var Trxs = [];
     var LoggedActivity = null;
+    var PostData = {}
     /**********************************************************************
      * OBJECTS
     **********************************************************************/
     function Device(){
+        this.id = null;
         this.dn = null;
         this.device_id = null;
         this.ems_device_id = null;
@@ -54,6 +56,7 @@
     }
 
     function Cell(){
+        this.id = null;
         this.domain = null;
         this.ems_cell_id = null;
         this.ems_id = null;
@@ -87,6 +90,7 @@
     }
 
     function Trx(){
+        this.id = null;
         this.ems_trx_id = null;
         this.ems_id = null;
         this.trx_name = null;
@@ -136,38 +140,27 @@
     /**********************************************************************
      * Functions
     **********************************************************************/
-    Device.prototype.save = function(){
-        save_record(this, 'Device');
-    }
+    // Device.prototype.save = function(){
+    //     save_record(this, 'Device');
+    // }
 
-    Cell.prototype.save = function(){
-        save_record(this, 'Cell');
-    }
+    // Cell.prototype.save = function(){
+    //     save_record(this, 'Cell');
+    // }
 
-    Trx.prototype.save = function(){
-        save_record(this, 'Trx');
-    }
+    // Trx.prototype.save = function(){
+    //     save_record(this, 'Trx');
+    // }
 
-    Activity.prototype.save = function(){
-        save_record(this, 'DailyActivity');
-    }
+    // Activity.prototype.save = function(){
+    //     save_record(this, 'DailyActivity');
+    // }
 
-    function save_record(Obj, table){
-        console.log(Obj);
-        //for(var [key, val] of Object.entries(Obj)){
-        //    console.log(`${key}: ${val}`);
-        //}
-    }
-
-    // function instantiateObjectOLD(data, Obj, GlobalVar){
-    //     for(i in data){
-    //         GlobalVar[i] = new Obj();
-    //         for(let [key, val] of Object.entries(data[i])){
-    //             setObjectProperty(GlobalVar[i], key, val);
-    //             //GlobalVar[i][key] = val;
-    //         }
-    //     }
-    //     //console.log(Devices);
+    // function save_record(Obj, table){
+    //     console.log(Obj);
+    //     //for(var [key, val] of Object.entries(Obj)){
+    //     //    console.log(`${key}: ${val}`);
+    //     //}
     // }
 
     function instantiateObject(dataObject, Obj){
@@ -183,14 +176,6 @@
         return MyObj;
     }
 
-    // function setObjectProperty(obj, property, setValue){
-    //     if(property in obj){
-    //         if(setValue){
-    //             obj[property] = setValue;
-    //         }
-    //     }
-    // }
-
     function reset_ne_data(){
         Devices = [];
         Cells = [];
@@ -199,17 +184,16 @@
 
     function prepare_data_to_send_to_server(activityData, neData){
         reset_ne_data();
-        instantiate_undiscarded_ne_data(neData);
+        selectedActivity = $('#id_activity').val() ? $('#id_activity').find(':selected').text() : null;
         instantiate_activity_data(activityData);
-        var POST_DATA = {
+        instantiate_undiscarded_ne_data(neData);
+        let post_data = {
             'activity': LoggedActivity,
             'devices': Devices,
             'cells': Cells,
             'trxs': Trxs
         }
-
-        console.log(POST_DATA);
-        return POST_DATA;
+        return post_data;
     }
 
     function instantiate_undiscarded_ne_data(neData){
@@ -218,51 +202,56 @@
             for(let[tbl_src, neDataArray] of Object.entries(srcObjDataArray)){
                 switch(tbl_src){
                     case 'DEVICE':
-                        discard_data = neDataArray.map(device => device.id);
-                        inserted_element_id = [];
-                        for(i in CLEAN_NE_DATA[src]){
-                            if(Array.isArray(CLEAN_NE_DATA[src][i]['device'])){
-                                //nms ne device data has an array of device obj || cell,device = [{device object},...]
-                                for(j in CLEAN_NE_DATA[src][i]['device']){
-                                    let keep_data = CLEAN_NE_DATA[src][i]['device'][j];
-                                    if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id)){
+                        if(MyDataTable.table_src[tbl_src] == src){
+                            discard_data = neDataArray.map(device => device.id);
+                            inserted_element_id = [];
+                            for(i in CLEAN_NE_DATA[src]){
+                                if(Array.isArray(CLEAN_NE_DATA[src][i]['device'])){
+                                    //nms ne device data has an array of device obj || cell,device = [{device object},...]
+                                    for(j in CLEAN_NE_DATA[src][i]['device']){
+                                        let keep_data = CLEAN_NE_DATA[src][i]['device'][j];
+                                        if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id) == -1){
+                                            Devices.push(instantiateObject(keep_data, Device))
+                                            inserted_element_id.push(keep_data.id)
+                                        }
+                                    }
+                                }else{
+                                    //aid ne device data is a nested object || cell.device = {device object}
+                                    let keep_data = CLEAN_NE_DATA[src][i]['device'];
+                                    if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id) == -1){
                                         Devices.push(instantiateObject(keep_data, Device))
                                         inserted_element_id.push(keep_data.id)
-                                        
                                     }
-                                }
-                            }else{
-                                //aid ne device data is a nested object || cell.device = {device object}
-                                let keep_data = CLEAN_NE_DATA[src][i]['device'];
-                                if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id)){
-                                    Devices.push(instantiateObject(keep_data, Device))
-                                    inserted_element_id.push(keep_data.id)
                                 }
                             }
                         }
                         break;
                     case 'CELL':
-                        discard_data = neDataArray.map(cell => cell.id);
-                        inserted_element_id = [];
-                        for(i in CLEAN_NE_DATA[src]){
-                            let cell_data = CLEAN_NE_DATA[src][i];
-                            if(discard_data.indexOf(cell_data.id) == -1 && inserted_element_id.indexOf(cell_data.id)){
-                                Cells.push(instantiateObject(cell_data, Cell));
-                                inserted_element_id.push(cell_data.id)
+                        if(MyDataTable.table_src[tbl_src] == src){
+                            discard_data = neDataArray.map(cell => cell.id);
+                            inserted_element_id = [];
+                            for(i in CLEAN_NE_DATA[src]){
+                                let cell_data = CLEAN_NE_DATA[src][i];
+                                if(discard_data.indexOf(cell_data.id) == -1 && inserted_element_id.indexOf(cell_data.id) == -1){
+                                    Cells.push(instantiateObject(cell_data, Cell));
+                                    inserted_element_id.push(cell_data.id)
+                                }
                             }
                         }
                         break;
                     case 'TRX':
-                        discard_data = neDataArray.map(trx => trx.id);
-                        inserted_element_id = [];
-                        for(i in CLEAN_NE_DATA[src]){
-                            if(Array.isArray(CLEAN_NE_DATA[src][i]['trx'])){
-                                index_to_delete = [];
-                                for(j in CLEAN_NE_DATA[src][i]['trx']){
-                                    let keep_data = CLEAN_NE_DATA[src][i]['trx'][j];
-                                    if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id)){
-                                        Trxs.push(instantiateObject(keep_data, Trx));
-                                        inserted_element_id.push(keep_data.id)
+                        if(MyDataTable.table_src[tbl_src] == src){
+                            discard_data = neDataArray.map(trx => trx.id);
+                            inserted_element_id = [];
+                            for(i in CLEAN_NE_DATA[src]){
+                                if(Array.isArray(CLEAN_NE_DATA[src][i]['trx'])){
+                                    index_to_delete = [];
+                                    for(j in CLEAN_NE_DATA[src][i]['trx']){
+                                        let keep_data = CLEAN_NE_DATA[src][i]['trx'][j];
+                                        if(discard_data.indexOf(keep_data.id) == -1 && inserted_element_id.indexOf(keep_data.id) == -1){
+                                            Trxs.push(instantiateObject(keep_data, Trx));
+                                            inserted_element_id.push(keep_data.id)
+                                        }
                                     }
                                 }
                             }
@@ -389,43 +378,77 @@
     /**********************************************************************
      * Events
     **********************************************************************/
-    var loading_html = $('#confirm-activity').html();
+    var loading_gif = `<img class="loading-ellipsis" src="/static/edrar/img/loading-ellipsis-50px.gif" alt="loading">`;
+    
     $('#save-activity').click(function(e){
         $('#confirm-activity').prop('disabled', true);
         let activity_data = get_activity_form_data();
         let show_confirm_modal = verify_activity_form_data(activity_data);
         
-
         if(show_confirm_modal){
             e.preventDefault();
-            var post_data = prepare_data_to_send_to_server(activity_data, G_NE_DATA);
-            post_data_to_server(post_data, csrftoken).then(function(data){
-                console.log(data);
-            }).catch(function(e){
-                console.log(e);
-                alert('Unexpected error occured!');
-            });
-            // $('#confirm-activity').html('Confirm');
-            // $('#confirm-activity').prop('disabled', false);
-
+            PostData = prepare_data_to_send_to_server(activity_data, G_NE_DATA);
+            $('#confirm-activity').prop('disabled', false);
             $('#confirm-save-modal').modal('show');
         }
     });
 
     $('#confirm-activity').click(function(e){
         e.preventDefault();
-        $(this).html(loading_html);
-        let to_save_list = [Devices, Cells, Trxs];
-
-        for(i in to_save_list){
-            for(let j in to_save_list[i]){
-                let obj = to_save_list[i][j]
-                obj.save();
+        $(this).html(loading_gif);
+        post_data_to_server(PostData, csrftoken).then(function(data){
+            console.log(data);
+            $('#confirm-save-modal').modal('hide');
+            if(data.success){
+                activity = data.data['activity']['activity'];
+                siteid = data.data['activity']['siteid'];
+                tech = data.data['activity']['tech'];
+                band = data.data['activity']['band'];
+                html = `Activity for ${siteid}_${tech}_${band} successfully saved.`;
+                if(Array.isArray(data.data['devices']) && data.data['devices'].length > 0){
+                    str_devices = '';
+                    for(i in data.data['devices']){
+                        str_devices += ` ${data.data['devices'][i]['device_id']},`;
+                    }
+                    str_devices = str_devices.substring(0, str_devices.length-1);
+                    html += `<br>Device:${str_devices}`;
+                }
+                if(Array.isArray(data.data['cells']) && data.data['cells'].length > 0){
+                    str_cells = '';
+                    for(i in data.data['cells']){
+                        str_cells += ` ${data.data['cells'][i]['cell_name']},`;
+                    }
+                    str_cells = str_cells.substring(0, str_cells.length-1);
+                    html += `<br>Cells:${str_cells}`;
+                }
+                if(Array.isArray(data.data['trxs']) && data.data['trxs'].length > 0){
+                    str_trxs = '';
+                    for(i in data.data['trxs']){
+                        str_trxs += ` ${data.data['trxs'][i]['trx_name']},`;
+                    }
+                    str_trxs = str_trxs.substring(0, str_trxs.length-1);
+                    html += `<br>TRXs:${str_trxs}`;
+                }
+                
+                $("#success-save-msg").html(html);
+                $("#save-success-modal").modal('show');
+            }else{
+                $("#db-error-msg").html(data.message);
+                $("#db-error-element").html(data.element);
+                $('#db-error-modal').modal('show');
             }
-        }
-
-        $(this).html('Completed');
+            
+            $('#confirm-activity').html('Confirm');
+        }).catch(function(e){
+            console.log(e);
+            alert('Unexpected error occured! Please contact the system administrator.');
+            $('#confirm-activity').html('Confirm');
+        });
     });
+
+    $("#save-success-modal").on('hidden.bs.modal', function(){
+        window.location.reload();
+    })
 
 
     /**********************************************************************

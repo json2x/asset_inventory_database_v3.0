@@ -209,6 +209,57 @@ $(document).ready(function() {
         MyActivityForm.fill_general_info_fields();
     }
 
+    function update_form_fields(){
+        reset_page_ne_data();
+        let has_change_in_ne_data = false;
+        for(let[data_src, dataObjectArray] of Object.entries(G_DISCARDED_NE_DATA)){
+            for(let[tbl_src, neDataObjArray] of Object.entries(dataObjectArray)){
+                switch(tbl_src){
+                    case 'DEVICE':
+                        remove_device_id = neDataObjArray.map(device => device.id);
+                        if(remove_device_id.length > 0){
+                            has_change_in_ne_data = true;
+                        }
+                        break;
+                    case 'CELL':
+                        remove_cell_id = neDataObjArray.map(cell => cell.id);
+                        if(remove_cell_id.length > 0){
+                            has_change_in_ne_data = true;
+                        }
+                        break;
+                    case 'TRX':
+                        remove_trx_id = neDataObjArray.map(trx => trx.id);
+                        if(remove_trx_id.length > 0){
+                            has_change_in_ne_data = true;
+                        }
+                        break;
+                }
+            }
+
+            if(has_change_in_ne_data){
+                Devices[data_src] = Devices[data_src].filter(function(element){
+                    if(remove_device_id.indexOf(element.id) == -1){
+                        return element;
+                    }
+                });
+    
+                Cells[data_src] = Cells[data_src].filter(function(element){
+                    if(remove_cell_id.indexOf(element.id) == -1){
+                        return element;
+                    }
+                });
+    
+                Trxs[data_src] = Trxs[data_src].filter(function(element){
+                    if(remove_trx_id.indexOf(element.id) == -1){
+                        return element;
+                    }
+                });
+            }
+        }
+
+        draw_fill_form_fields();
+    }
+
     async function get_aid_ne_data(siteid, tech, band){
         const response = await fetch(`/edrar/data/ne/?site=${siteid}&tech=${tech}&band=${band}`, {
             method: 'GET',
@@ -251,7 +302,8 @@ $(document).ready(function() {
         hide_general_input_container();
 
         if(selectSiteid && selectTech && selectBand){
-            $('#fetching-data-modal').modal('show');
+            //$('#fetching-data-modal').modal('show');
+            $('#fetching-data-modal').modal({backdrop: 'static', keyboard: false});
             if(selectTech == G_TECH_LIST['2G']){
                 clear_table('#filtered-trx-table');
             }
@@ -313,64 +365,6 @@ $(document).ready(function() {
         selectBand = $('#id_band').val() ? $('#id_band').find(':selected').text() : null;
         render_view();
     });
-
-    // $('.dt-row-discard').click(function(e){
-    // });
-
-    // $('#save-activity').click(function(e){
-    //     e.preventDefault();
-    // });
-    function update_form_fields(){
-        reset_page_ne_data();
-        let has_change_in_ne_data = false;
-        for(let[data_src, dataObjectArray] of Object.entries(G_DISCARDED_NE_DATA)){
-            for(let[tbl_src, neDataObjArray] of Object.entries(dataObjectArray)){
-                switch(tbl_src){
-                    case 'DEVICE':
-                        remove_device_id = neDataObjArray.map(device => device.id);
-                        if(remove_device_id.length > 0){
-                            has_change_in_ne_data = true;
-                        }
-                        break;
-                    case 'CELL':
-                        remove_cell_id = neDataObjArray.map(cell => cell.id);
-                        if(remove_cell_id.length > 0){
-                            has_change_in_ne_data = true;
-                        }
-                        break;
-                    case 'TRX':
-                        remove_trx_id = neDataObjArray.map(trx => trx.id);
-                        if(remove_trx_id.length > 0){
-                            has_change_in_ne_data = true;
-                        }
-                        break;
-                }
-            }
-
-            if(has_change_in_ne_data){
-                Devices[data_src] = Devices[data_src].filter(function(element){
-                    if(remove_device_id.indexOf(element.id) == -1){
-                        return element;
-                    }
-                });
-    
-                Cells[data_src] = Cells[data_src].filter(function(element){
-                    if(remove_cell_id.indexOf(element.id) == -1){
-                        return element;
-                    }
-                });
-    
-                Trxs[data_src] = Trxs[data_src].filter(function(element){
-                    if(remove_trx_id.indexOf(element.id) == -1){
-                        return element;
-                    }
-                });
-            }
-        }
-
-        draw_fill_form_fields();
-    }
-
 
     $('#filtered-device-table tbody').on('click', 'tr td button.dt-row-discard', function(e){
         e.preventDefault();

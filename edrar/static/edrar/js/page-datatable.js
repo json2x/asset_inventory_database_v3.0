@@ -8,6 +8,7 @@ var MyDataTable = {
     'is_data_missing': false,
     'missing_data_msg': [],
     'ne_info': {},
+    'table_src': {'DEVICE': null, 'CELL': null, 'TRX': null},
     'set_info': function(activity, site, tech, band){
         this.activity = activity;
         this.site = site;
@@ -116,6 +117,7 @@ var MyDataTable = {
             this.is_data_missing = true;
             this.missing_data_msg.push(`Device for site ${this.site}_${this.tech}_${this.band} is/are not in the data source`);
         }
+        this.table_src['DEVICE'] = src;
         this.draw_table('#filtered-device-table', options);
     },
     'draw_cell_table': function(dataSrcObjArray){
@@ -183,6 +185,7 @@ var MyDataTable = {
             this.is_data_missing = true;
             this.missing_data_msg = [`Cell for site ${this.site}_${this.tech}_${this.band} is/are not in the data source`];
         }
+        this.table_src['CELL'] = src;
         options = this.table_options(options);
         this.draw_table('#filtered-cell-table', options);
     },
@@ -232,6 +235,7 @@ var MyDataTable = {
             this.is_data_missing = true;
             this.missing_data_msg.push(`TRX for site ${this.site}_${this.tech}_${this.band} is/are not in the data source`);
         }
+        this.table_src['TRX'] = src;
         this.draw_table('#filtered-trx-table', options);
     }
 };
@@ -274,9 +278,9 @@ var MyDataTableActions = {
         }
         this.data_src = data_src;
         this.tbl_src = tbl_src;
-        this.discard_related_rows_from_other_table_v2(data);
+        this.discard_related_rows_from_other_table(data, discarded);
     },
-    discard_related_rows_from_other_table_v2: function(refRowData){
+    discard_related_rows_from_other_table: function(refRowData, parentState){
         var rel_id = refRowData.rel_id;
         for(i in this.discard_tree[this.tbl_src]){
             var ref_tbl = this.discard_tree[this.tbl_src][i];
@@ -286,7 +290,7 @@ var MyDataTableActions = {
             table.rows().every(function(){
                 var row_data = this.data();
                 if(myInstance.validate_referenced_row(refRowData, row_data)){
-                    let discarded = myInstance.render_toggle_discard_table_row(this.node());
+                    let discarded = myInstance.render_toggle_discard_of_child_table_row(this.node(), parentState);
                     if(discarded){
                         G_DISCARDED_NE_DATA[myInstance.data_src][(ref_tbl).toUpperCase()].push(row_data);
                     }else{
@@ -312,46 +316,6 @@ var MyDataTableActions = {
     
         return matched;
     },
-    discard_related_rows_from_other_table_v1(){
-        var src = this.data_src;
-        var discarded_parent_ids = G_DISCARDED_NE_DATA[src][this.tbl_src].map(data => data.id);
-        var parent_tbl = (this.tbl_src).toLowerCase();
-        for(i in this.discard_tree[this.tbl_src]){
-            var ref_tbl = this.discard_tree[this.tbl_src][i];
-            var tableId = `#filtered-${ref_tbl}-table`;
-            var table = $(tableId).DataTable();
-            var myInstance = this;
-            table.rows().every(function(){
-                var row_data = this.data();
-                if(ref_tbl == 'cell'){
-                    if(Array.isArray(row_data['device'])){
-                        reference_data = Object.values(row_data['device']).map(child => child);
-                    }else{
-                        reference_data = row_data['device']
-                    }
-                    for(let i in reference_data){
-                        if(discarded_parent_ids.indexOf(reference_data[i].id) > -1){
-                            myInstance.render_toggle_discard_table_row(this.node());
-                            G_DISCARDED_NE_DATA[src][(ref_tbl).toUpperCase()].push(row_data);
-                        }
-                    }
-                }else if(ref_tbl == 'trx'){
-                    reference_data = G_NE_DATA[src].map(cell => cell);
-                    for(let i in reference_data){
-                        cell_trxs_id = Object.values(reference_data[i]['trx']).map(trx => trx.id);
-                        if(cell_trxs_id.indexOf(row_data.id) > -1){
-                            if(discarded_parent_ids.indexOf(reference_data[i].id) > -1){
-                                myInstance.render_toggle_discard_table_row(this.node());
-                                G_DISCARDED_NE_DATA[src][(ref_tbl).toUpperCase()].push(row_data);
-                            }
-                        }
-                    }
-                }
-            });
-            parent_tbl = ref_tbl;
-            discarded_parent_ids = G_DISCARDED_NE_DATA[this.data_src][(ref_tbl).toUpperCase()].map(data => data.id);
-        }
-    },
     render_toggle_discard_table_row: function(tr){
         let discarded = false;
         if($(tr).hasClass('discard')){
@@ -360,6 +324,62 @@ var MyDataTableActions = {
             discarded = true;
             $(tr).addClass('discard');
         }
+        
         return discarded;
     },
+    render_toggle_discard_of_child_table_row: function(tr, state){
+        let discarded = false;
+        if(state){
+            discarded = true;
+            if(!$(tr).hasClass('discard')){
+                $(tr).addClass('discard');
+            }
+        }else{
+            if($(tr).hasClass('discard')){
+                $(tr).removeClass('discard');
+            }
+        }
+        
+        return state;
+    },
+    // discard_related_rows_from_other_table_v1(){
+    //     var src = this.data_src;
+    //     var discarded_parent_ids = G_DISCARDED_NE_DATA[src][this.tbl_src].map(data => data.id);
+    //     var parent_tbl = (this.tbl_src).toLowerCase();
+    //     for(i in this.discard_tree[this.tbl_src]){
+    //         var ref_tbl = this.discard_tree[this.tbl_src][i];
+    //         var tableId = `#filtered-${ref_tbl}-table`;
+    //         var table = $(tableId).DataTable();
+    //         var myInstance = this;
+    //         table.rows().every(function(){
+    //             var row_data = this.data();
+    //             if(ref_tbl == 'cell'){
+    //                 if(Array.isArray(row_data['device'])){
+    //                     reference_data = Object.values(row_data['device']).map(child => child);
+    //                 }else{
+    //                     reference_data = row_data['device']
+    //                 }
+    //                 for(let i in reference_data){
+    //                     if(discarded_parent_ids.indexOf(reference_data[i].id) > -1){
+    //                         myInstance.render_toggle_discard_table_row(this.node());
+    //                         G_DISCARDED_NE_DATA[src][(ref_tbl).toUpperCase()].push(row_data);
+    //                     }
+    //                 }
+    //             }else if(ref_tbl == 'trx'){
+    //                 reference_data = G_NE_DATA[src].map(cell => cell);
+    //                 for(let i in reference_data){
+    //                     cell_trxs_id = Object.values(reference_data[i]['trx']).map(trx => trx.id);
+    //                     if(cell_trxs_id.indexOf(row_data.id) > -1){
+    //                         if(discarded_parent_ids.indexOf(reference_data[i].id) > -1){
+    //                             myInstance.render_toggle_discard_table_row(this.node());
+    //                             G_DISCARDED_NE_DATA[src][(ref_tbl).toUpperCase()].push(row_data);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //         parent_tbl = ref_tbl;
+    //         discarded_parent_ids = G_DISCARDED_NE_DATA[this.data_src][(ref_tbl).toUpperCase()].map(data => data.id);
+    //     }
+    // },
 }

@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <h3 class="mx-4 my-2">Add activity</h3>
+<input type="hidden" id="pre-load-activity" data-activity="{{activity}}" value="{{daily_activity}}"/>
 <form id="activity-logger-form" action="{% url 'edrar_log' %}" method="POST">
     {% csrf_token %}
 

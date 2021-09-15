@@ -70,3 +70,38 @@ tr.aid-data{
 tr.nms-data{
     color: #d47f35;
 }
+
+td.row-controls > i.fa-plus:hover{
+    color: #4ca644;
+    cursor: pointer;
+}
+
+td.row-controls > i.fa-plus:active{
+    color: #1b6e2d;
+    cursor: pointer;
+}
+
+td.row-controls > i.fa-minus:hover{
+    color: #a62d2d;
+    cursor: pointer;
+}
+
+td.row-controls > i.fa-minus:active{
+    color: #781616;
+    cursor: pointer;
+}
+
+td.row-controls > i.edit:hover{
+    color: #2967c4;
+    cursor: pointer;
+}
+
+td.row-controls > i.edit:active{
+    color: #1f42b5;
+    cursor: pointer;
+}
+
+label.dt-child{
+    font-weight: bold;
+}
+

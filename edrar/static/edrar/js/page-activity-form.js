@@ -62,6 +62,13 @@ var MyActivityForm = {
                 return $(this).text() == 'On-air';
             }).prop('selected', true);
         }
+
+        if(this.activity == 'Site Deletion' || this.activity == 'Delete Cell' || this.activity == 'TRX Downgrade'){
+            $("#id_site_status option").filter(function() {
+                //may want to use $.trim in here
+                return $(this).text() == 'Deleted';
+            }).prop('selected', true);
+        }
         $("#id_site_status").prop('required', true);
 
         $('#id_user option').filter(function(){

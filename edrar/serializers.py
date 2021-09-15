@@ -1,7 +1,11 @@
 from django.db.models import fields
 from rest_framework import serializers
+from django.db.models import Q
+import datetime
+
 from api.serializers import DevicesSerializer, TrxSerializer
 from api import models as Api
+
 
 from edrar import models as Edrar
 
@@ -9,6 +13,12 @@ from nmsdata.serializers import NmsDevicesSerializer, NmsTrxSerializer
 from nmsdata import models as Nms
 
 class DailyActivitySerializer(serializers.ModelSerializer):
+
+    activity = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+    site_status = serializers.SerializerMethodField()
+    siteid = serializers.SerializerMethodField()
+    date_logged = serializers.SerializerMethodField()
 
     class Meta:
         model = Edrar.DailyActivity
@@ -18,10 +28,27 @@ class DailyActivitySerializer(serializers.ModelSerializer):
             'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'omip', 's1_c', 's1_u', 'remarks'
         )
 
+    def get_activity(self, activity):
+        return activity.activity.name
+
+    def get_user(self, activity):
+        return activity.user.username
+
+    def get_site_status(self, activity):
+        return activity.site_status.name
+
+    def get_siteid(self, activity):
+        return activity.siteid.siteid
+
+    def get_date_logged(self, activity):
+        return activity.date_logged.strftime("%Y-%m-%d %H:%M:%S")
+
 class CellsDeviceTrxSerializer(serializers.ModelSerializer):
 
-    device = DevicesSerializer(many=False)
-    trx = TrxSerializer(many=True)
+    # device = DevicesSerializer(many=False)
+    # trx = TrxSerializer(many=True)
+    device = serializers.SerializerMethodField()
+    trx = serializers.SerializerMethodField()
     
     class Meta:
         model = Api.Cell
@@ -31,6 +58,18 @@ class CellsDeviceTrxSerializer(serializers.ModelSerializer):
             'lcr_cid', 'mcc', 'mnc', 'nodeid', 'sector_id', 'carrier', 'ne_type', 'subdomain', 'function', 
             'sdcch_cap', 'tch_cap', 'azimuth', 'record_status', 'trx', 'device'
         )
+
+    def get_device(self, cell):
+        result = Api.Device.objects.filter(~Q(record_status=3)).get(id=cell.device.id)
+
+        return NmsDevicesSerializer(result, many=False).data
+
+    def get_trx(self, cell):
+        result = Api.Trx.objects.filter(~Q(record_status=3)).filter(cell__id=cell.id)
+
+        return TrxSerializer(result, many=True).data
+
+
 
 class CellsDeviceTrxNMSDataSerializer(serializers.ModelSerializer):
 
@@ -48,25 +87,22 @@ class CellsDeviceTrxNMSDataSerializer(serializers.ModelSerializer):
             'rac', 'ncc', 'bcc', 'nnode_id', 'nbscid', 'psc', 'bcchno', 'record_status', 'device', 'trx'
         )
 
-    def get_domain(self, obj):
-        result = Edrar.MobileTechnology.objects.filter(name=obj.subdomain)
+    def get_domain(self, cell):
+        result = Edrar.MobileTechnology.objects.filter(name=cell.subdomain)
         if result:
             return 'RAN'
         else:
             return None
 
-    def get_device(self, obj):
-        result = Nms.Device.objects.filter(ems_id=obj.ems_id)\
-            .filter(device_id=obj.parent_id)\
-            .filter(subdomain=obj.subdomain)\
-            .filter(parent_device_id=obj.homing_id)
+    def get_device(self, cell):
+        result = Nms.Device.objects.filter(ems_id=cell.ems_id).filter(device_id=cell.parent_id)\
+        .filter(subdomain=cell.subdomain).filter(parent_device_id=cell.homing_id)
 
         return NmsDevicesSerializer(result, many=True).data
 
-    def get_trx(self, obj):
-        result = Nms.Trx.objects.filter(ems_id=obj.ems_id)\
-            .filter(parent_id=obj.cell_name)\
-            .filter(homing_bts=obj.parent_id)\
-            .filter(homing_id=obj.homing_id)
+    def get_trx(self, cell):
+        result = Nms.Trx.objects.filter(ems_id=cell.ems_id)\
+            .filter(parent_id=cell.cell_name).filter(homing_bts=cell.parent_id)\
+            .filter(homing_id=cell.homing_id)
 
         return NmsTrxSerializer(result, many=True).data

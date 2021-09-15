@@ -216,7 +216,15 @@ var MyDataTable = {
             ],
             columnDefs: [
                 {name: 'ems_id', searchable: true, visible: false, targets: [0]},
-                {name: 'trx_name', searchable: true, targets: [1]},
+                {name: 'trx_name', searchable: true, targets: [1], render: 
+                    function ( data, type, row ) {
+                        if(data.length > 30){
+                            return `${data.substr(0,24)}.....${data.substr(-20)}`;
+                        }else{
+                            return data;
+                        }
+                    }
+                },
                 {name: 'parent_id', searchable: true, targets: [2]},
                 {name: 'homing_bts', searchable: true, targets: [3]},
                 {name: 'admin_state', searchable: true, targets: [4]},

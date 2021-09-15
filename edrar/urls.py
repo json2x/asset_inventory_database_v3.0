@@ -18,6 +18,8 @@ urlpatterns = [
     url('edrar/data/select2/mobiletech-autocomplete/', views.MobileTechAutocomplete.as_view(), name='mobiletech-autocomplete'),
     url('edrar/data/select2/mobilefreqband-autocomplete/', views.MobileFreqBandAutocomplete.as_view(), name='mobilefreqband-autocomplete'),
     
+    path('edrar/data/datatable/activity/', views.DailyActivityDatatableView.as_view(), name='activity-datatable'),
+
     path('edrar/data/datatable/device/aid/', views.DeviceDatatableView.as_view(), name='aid-device-datatable'),
     path('edrar/data/datatable/cell/aid/', views.CellDatatableView.as_view(), name='aid-cell-datatable'),
     path('edrar/data/datatable/trx/aid/', views.TrxDatatableView.as_view(), name='aid-trx-datatable'),
@@ -28,6 +30,8 @@ urlpatterns = [
     
     #path('edrar/data/tfdata/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
     path('edrar/data/ne/', authentication_classes([])(permission_classes([AllowAny])(views.GetNEData)).as_view(), name='ne-lookup'),
+    path('edrar/data/activity/<int:pk>/', authentication_classes([])(permission_classes([AllowAny])(views.GetActivityData)).as_view(), name='activity-lookup'),
+    
     #path('edrar/data/tfdata/nms/', authentication_classes([])(permission_classes([AllowAny])(views.ActivityLogTextFieldData)).as_view(), name='tfdata-lookup'),
 
     # url('edrar/data/device/', authentication_classes([])(permission_classes([AllowAny])(views.GetDeviceDataByID)).as_view(), name='device-lookup'),

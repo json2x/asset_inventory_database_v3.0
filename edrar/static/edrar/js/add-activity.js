@@ -83,8 +83,6 @@ $(document).ready(function() {
     //     }
     // }
 
-    
-
     // function show_general_input_container(){
     //     if(selectActivity == 'Rollout'){
     //         $("#id_site_status option").filter(function() {
@@ -248,12 +246,14 @@ $(document).ready(function() {
                         return element;
                     }
                 });
-    
-                Trxs[data_src] = Trxs[data_src].filter(function(element){
-                    if(remove_trx_id.indexOf(element.id) == -1){
-                        return element;
-                    }
-                });
+                
+                if(selectTech == G_TECH_LIST['2G']){
+                    Trxs[data_src] = Trxs[data_src].filter(function(element){
+                        if(remove_trx_id.indexOf(element.id) == -1){
+                            return element;
+                        }
+                    });
+                }
             }
         }
 
@@ -293,7 +293,6 @@ $(document).ready(function() {
             .then(data => {
                 G_NE_DATA['nms'] = data.results
             }).catch(e => console.log(e));
-        
     }
     
     function render_view(){

@@ -64,6 +64,8 @@ var MyDataTable = {
         //dataArray = G_NMS_SRC_ACTIVITY['DEVICE'].indexOf(this.activity) > -1? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
         src = G_NMS_SRC_ACTIVITY['DEVICE'].indexOf(this.activity) > -1? 'nms':'aid';
         dataArray = (src == 'nms')? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
+        discard_dom = `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="device" data-src="${src}"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+        //table_dom_ctrl = (this.activity == 'Correction')? '<i class="fa fa-times text-muted" aria-hidden="true"></i>':discard_dom;
         var options = {
             data: dataArray,
             processing: true,
@@ -86,9 +88,7 @@ var MyDataTable = {
                     data: null,
                     className: 'dt-row-option text-right',
                     orderable: false,
-                    defaultContent: `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="device" data-src="${src}">\
-                        <i class="fa fa-times" aria-hidden="true"></i>\
-                    </button>`,
+                    defaultContent: discard_dom,
                 },
             ],
             columnDefs: [
@@ -124,6 +124,8 @@ var MyDataTable = {
         //dataArray = G_NMS_SRC_ACTIVITY['CELL'].indexOf(this.activity) > -1? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
         src = G_NMS_SRC_ACTIVITY['CELL'].indexOf(this.activity) > -1? 'nms':'aid';
         dataArray = (src == 'nms')? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
+        discard_dom = `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="cell" data-src="${src}"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+        //table_dom_ctrl = (this.activity == 'Correction')? '<i class="fa fa-times text-muted" aria-hidden="true"></i>':discard_dom;
         var options = {
             data: dataArray,
             processing: true,
@@ -150,9 +152,7 @@ var MyDataTable = {
                     data: null,
                     className: 'dt-row-option text-right',
                     orderable: false,
-                    defaultContent: `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="cell" data-src="${src}">\
-                        <i class="fa fa-times" aria-hidden="true"></i>\
-                    </button>`,
+                    defaultContent: discard_dom,
                 },
             ],
             columnDefs: [
@@ -192,6 +192,8 @@ var MyDataTable = {
     'draw_trx_table': function(dataSrcObjArray){
         src = G_NMS_SRC_ACTIVITY['TRX'].indexOf(this.activity) > -1? 'nms':'aid';
         dataArray = (src == 'nms')? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
+        discard_dom = `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="trx" data-src="${src}"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+        //table_dom_ctrl = (this.activity == 'Correction')? '<i class="fa fa-times text-muted" aria-hidden="true"></i>':discard_dom;
         var options = {
             data: dataArray,
             processing: true,
@@ -209,9 +211,7 @@ var MyDataTable = {
                     data: null,
                     className: 'dt-row-option text-right',
                     orderable: false,
-                    defaultContent: `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="trx" data-src="${src}">\
-                        <i class="fa fa-times" aria-hidden="true"></i>\
-                    </button>`,
+                    defaultContent: discard_dom,
                 },
             ],
             columnDefs: [

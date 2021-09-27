@@ -31,5 +31,5 @@ const G_FIELD_MAP = {
 const G_NMS_SRC_ACTIVITY = {
     'DEVICE': ['Rollout', 'BTS Swap'],
     'CELL': ['Rollout', 'Expansion', 'BTS Swap'],
-    'TRX': ['Rollout', 'Expansion', 'TRX Expansion', 'BTS Swap']
+    'TRX': ['Rollout', 'Expansion', 'TRX Expansion', 'BTS Swap', 'Site Reconfig']
 }

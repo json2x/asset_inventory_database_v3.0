@@ -20,12 +20,32 @@ var MyActivityForm = {
         //let input_field_map = {'device_name': 'device_id', 'vendor': 'vendor_id', 'homing': 'parent_device_id', 'equipment_type': 'model'};
         fieldMap = (this.tech in inputFieldMap)? inputFieldMap[this.tech] : inputFieldMap;
         data = activityDataSrc.indexOf(this.activity) > -1? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
-
+        formInstance = this;
         if(data.length == 1){
-            Object.keys(fieldMap).map(field => $(`#id_${field}`).val(data[0][fieldMap[field]]));
+            //Object.keys(fieldMap).map(field => $(`#id_${field}`).val(data[0][fieldMap[field]]));
+            Object.keys(fieldMap).map(function(field){
+                if(data[0][fieldMap[field]]){
+                    $(`#id_${field}`).val(data[0][fieldMap[field]]);
+                }else{
+                    if(Object.keys(G_LOGGED_ACTIVITY).indexOf(field) > -1){
+                        $(`#id_${field}`).val(G_LOGGED_ACTIVITY[field]);
+                    }
+                }
+            });
         }else if(data.length > 1){
-            Object.keys(fieldMap).map(field => $(`#id_${field}`)
-                .val(this.concat_unique_multiple_values(data.map(row => row[fieldMap[field]]))));
+            // Object.keys(fieldMap).map(field => $(`#id_${field}`)
+            //     .val(this.concat_unique_multiple_values(data.map(row => row[fieldMap[field]]))));
+            Object.keys(fieldMap).map(function(field){
+                concat_values = formInstance.concat_unique_multiple_values(data.map(row => row[fieldMap[field]]));
+                if(concat_values){
+                    $(`#id_${field}`).val(concat_values);
+                }else{
+                    if(Object.keys(G_LOGGED_ACTIVITY).indexOf(field) > -1){
+                        $(`#id_${field}`).val(G_LOGGED_ACTIVITY[field]);
+                    }
+                }
+                
+            });
         }else{
             Object.keys(fieldMap).map(field => $(`#id_${field}`).val(''));
         }
@@ -70,6 +90,12 @@ var MyActivityForm = {
             }).prop('selected', true);
         }
         $("#id_site_status").prop('required', true);
+
+        if(this.activity == 'Correction'){
+            if(Object.keys(G_LOGGED_ACTIVITY).indexOf('site_status') > -1){
+                $("#id_site_status").val(G_LOGGED_ACTIVITY['site_status']).trigger('change');
+            }
+        }
 
         $('#id_user option').filter(function(){
             return $(this).text() == Cookies.get('aid-user');

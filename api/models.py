@@ -214,10 +214,11 @@ class SmartNe(models.Model):
 
 
 class SiteNeAsset(models.Model):
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
     cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
+    trx = models.ForeignKey(Trx, blank=True, null=True, on_delete=models.CASCADE)
     smartsite = models.ForeignKey('SmartSite', on_delete=models.CASCADE)
     smartne = models.ForeignKey('SmartNe', on_delete=models.CASCADE)
-    device = models.ForeignKey(Device, on_delete=models.CASCADE)
     update_at = models.DateTimeField(auto_now=True)
 
     class Meta:

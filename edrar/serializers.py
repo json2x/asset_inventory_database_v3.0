@@ -12,6 +12,30 @@ from edrar import models as Edrar
 from nmsdata.serializers import NmsDevicesSerializer, NmsTrxSerializer
 from nmsdata import models as Nms
 
+class UpdateLogDailyActivitySerializer(serializers.ModelSerializer):
+
+    tech = serializers.SerializerMethodField()
+    band = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Edrar.DailyActivity
+        fields = (
+            'date_logged', 'tech', 'user', 'counterpart', 'activity', 'site_status', 'rfs_count', 'siteid', 'band', 
+            'vendor', 'homing', 'bts_id', 'device_name', 'equipment_type', 'trx_config', 'iub_type', 'bandwidth', 
+            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'omip', 's1_c', 's1_u', 'remarks'
+        )
+
+    def get_tech(self, activity):
+        tech = Edrar.MobileTechnology.objects.get(name=activity.tech)
+        return tech.id
+
+    def get_band(self, activity):
+        band = Edrar.MobileFrequencyBand.objects.get(band=activity.band)
+        return band.id
+
+    def get_date_logged(self, activity):
+        return activity.date_logged.strftime("%Y-%m-%d %H:%M:%S")
+
 class DailyActivitySerializer(serializers.ModelSerializer):
 
     activity = serializers.SerializerMethodField()
@@ -106,3 +130,9 @@ class CellsDeviceTrxNMSDataSerializer(serializers.ModelSerializer):
             .filter(homing_id=cell.homing_id)
 
         return NmsTrxSerializer(result, many=True).data
+    
+class SiteTechBandSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Api.Cell
+        fields = ('site', 'tech', 'band')

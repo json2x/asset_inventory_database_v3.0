@@ -191,7 +191,11 @@
             'activity': LoggedActivity,
             'devices': Devices,
             'cells': Cells,
-            'trxs': Trxs
+            'trxs': Trxs,
+            'rehome': null
+        }
+        if(selectedActivity == 'BTS Rehoming'){
+            post_data['rehome'] = {'homing': activityData['to_bsc_rnc'], 'nes': activityData['to']}
         }
         return post_data;
     }
@@ -271,8 +275,13 @@
         $('#activity-logger-form *').filter(':input[required]').each(function(){
             let propertyName = $(this).attr('name');
             if( $(this).is('select') && 
-            (propertyName != 'user' && propertyName != 'site_status' && propertyName != 'activity') ){
+            (propertyName != 'user' && propertyName != 'site_status' && propertyName != 'activity' && propertyName != 'to') ){
                 activityData[propertyName] = $(this).find(':selected').text();
+            }else if($(this).is('select') && propertyName == 'to'){
+                activityData[propertyName] = []
+                $(this).children('option').each(function(){
+                    activityData[propertyName].push($(this).text());
+                });
             }else{
                 activityData[propertyName] = $(this).val();
             }
@@ -404,14 +413,17 @@
                 siteid = data.data['activity']['siteid'];
                 tech = data.data['activity']['tech'];
                 band = data.data['activity']['band'];
-                html = `Activity for ${siteid}_${tech}_${band} successfully saved.`;
+                html = (activity == 10)? 'BTS Rehoming activity successfully updated devices.':`${activity} activity for ${siteid}_${tech}_${band} successfully saved.`;
                 if(Array.isArray(data.data['devices']) && data.data['devices'].length > 0){
                     str_devices = '';
+                    separator = (activity == 10)? '<br>':','; // Newline if activity == 10 (BTS Rehoming)
                     for(i in data.data['devices']){
-                        str_devices += ` ${data.data['devices'][i]['device_id']},`;
+                        str_devices += ` ${data.data['devices'][i]['device_id']}${separator}`;
                     }
-                    str_devices = str_devices.substring(0, str_devices.length-1);
-                    html += `<br>Device:${str_devices}`;
+                    if(activity != 10){
+                        str_devices = str_devices.substring(0, str_devices.length-1);
+                    }
+                    html += (activity == 10)? `<br>Device(s):<br>${str_devices}`:`<br>Device:${str_devices}`;
                 }
                 if(Array.isArray(data.data['cells']) && data.data['cells'].length > 0){
                     str_cells = '';
@@ -431,7 +443,7 @@
                 }
                 
                 $("#success-save-msg").html(html);
-                $("#save-success-modal").modal('show');
+                $("#save-success-modal").modal({backdrop: 'static', keyboard: false});
             }else{
                 $("#db-error-msg").html(data.message);
                 $("#db-error-element").html(data.element);

@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 <h3 class="mx-4 my-2">Add activity</h3>
-<input type="hidden" id="pre-load-activity" data-activity="{{activity}}" value="{{daily_activity}}"/>
 <form id="activity-logger-form" action="{% url 'edrar_log' %}" method="POST">
     {% csrf_token %}
 
@@ -14,26 +13,29 @@
             </div>
         </div>
     </div>
-    <div class="row mx-3 mt-1">
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="siteid">Site</label>
-                {{form.siteid}}
+    <div id="stb-input-fields" class="">
+        <div class="row mx-3 mt-1">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="siteid">Site</label>
+                    {{form.siteid}}
+                </div>
             </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="tech">Tech</label>
-                {{form.tech}}
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="tech">Tech</label>
+                    {{form.tech}}
+                </div>
             </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label for="band">Band</label>
-                {{form.band}}
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="band">Band</label>
+                    {{form.band}}
+                </div>
             </div>
         </div>
     </div>
+    
 
     <hr>
 
@@ -237,6 +239,46 @@
         </div>
     </div>
 
+    <div id="rehoming-input-fields" class="d-none">
+        <div class="row mx-3 mt-1 mb-2">
+            <div class="col px-2">
+                <label for="from_bsc_rnc">From</label>
+                <select name="from_bsc_rnc" id="from_bsc_rnc" class="form-control"></select>
+            </div>
+            <div class="col-xs-2 px-4">
+                &nbsp;
+            </div>
+            <div class="col px-2">
+                <label for="to_bsc_rnc">To</label>
+                <select name="to_bsc_rnc" id="to_bsc_rnc" class="form-control"></select>
+            </div>
+        </div>
+        <div class="row mx-3 mt-1">
+            <div class="col px-2">
+                <select name="from" id="multiselect" class="form-control" size="8" multiple="multiple">
+                </select>
+            </div>
+            <div class="col-xs-2 px-2">
+                <button type="button" id="multiselect_rightAll" class="btn btn-block btn-outline-dark"><i class="fas fa-angle-double-right"></i></button>
+                <button type="button" id="multiselect_rightSelected" class="btn btn-block btn-outline-dark"><i class="fas fa-angle-right"></i></button>
+                <button type="button" id="multiselect_leftSelected" class="btn btn-block btn-outline-dark"><i class="fas fa-angle-left"></i></button>
+                <button type="button" id="multiselect_leftAll" class="btn btn-block btn-outline-dark"><i class="fas fa-angle-double-left"></i></button>
+            </div>
+            <div class="col px-2">
+                <select name="to" id="multiselect_to" class="form-control" size="8" multiple="multiple">
+                </select>
+            </div>
+        </div>
+        <!-- <div class="row mx-3 mt-1">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="rehoming_lac">LAC</label>
+                    <input type="text" name="rehoming_lac" maxlength="250" class="form-control" id="id_rehoming_lac">
+                </div>
+            </div>
+        </div>-->
+    </div>
+
     <div class="row mx-3 mt-1 general-input-container">
         <div class="col-sm-3">
             <div class="form-group">
@@ -381,6 +423,12 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <a href="{% url 'edrar_home' %}" class="btn btn-outline-dark mt-2 ml-1">Go to home page</a>
+                        <a href="{% url 'edrar_log' %}" class="btn btn-outline-dark mt-2 ml-1">Log another activity</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -413,4 +461,5 @@
 <script src="{% static 'edrar/js/page-activity-form.js' %}"></script>
 <script src="{% static 'edrar/js/add-activity.js' %}"></script>
 <script src="{% static 'edrar/js/post-activity.js' %}"></script>
+<script src="{% static 'edrar/js/multiselect.js' %}"></script>
 {% endblock customJs %}

@@ -7,16 +7,17 @@ $(document).ready(function() {
     /**********************************************************************
      * CONSTANTS
     **********************************************************************/
-    var selectActivity = null;
-    var selectSiteid = null;
-    var selectTech = null;
-    var selectBand = null;
-
     var Devices = null;
     var Cells = null;
     var Trxs = null;
-    
-    
+
+    var selectSiteid = null;
+    var selectTech = null;
+    var selectBand = null;
+    var selectActivity = null;
+
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const url_params = Object.fromEntries(urlSearchParams.entries());
     /**********************************************************************
      * Functions
     **********************************************************************/
@@ -121,7 +122,9 @@ $(document).ready(function() {
         dataArray = [];
         for(i in obj){
             for(j in obj[i][key]){
-                dataArray.push(obj[i][key][j]);
+                if(obj[i][key][j]['record_status'] < 3){
+                    dataArray.push(obj[i][key][j]);
+                }
             }
         }
         
@@ -135,12 +138,16 @@ $(document).ready(function() {
                 'nms': get_data_array_in_obj(G_NE_DATA['nms'], 'trx')
             }
         }
+        
         Devices = {
             'aid': remove_duplicate_objects_in_array( ['id'], Object.values(G_NE_DATA['aid']).map(cell => cell.device) ),
             'nms': remove_duplicate_objects_in_array( ['id'], get_data_array_in_obj(G_NE_DATA['nms'], 'device') )
         }
+        Devices['aid'] = Object.values(Devices['aid']).filter(device => device.record_status < 3);
+
         Cells = {
-            'aid': Object.values(G_NE_DATA['aid']).map(cell => cell),
+            // 'aid': Object.values(G_NE_DATA['aid']).map(cell => cell),
+            'aid': Object.values(G_NE_DATA['aid']).filter(cell => cell.record_status < 3),
             'nms': Object.values(G_NE_DATA['nms']).map(cell => cell)
         }
         //reset G_DISCARD_NE_DATA
@@ -284,6 +291,30 @@ $(document).ready(function() {
         return response.json();
     }
 
+    async function get_activity_data(url){
+        const response = await fetch(url, {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.json();
+    }
+
+    async function get_bscrnc_nes(device){
+        const response = await fetch(`/edrar/data/bscrnc/nes/?device_id=${device}`, {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.json();
+    }
+
     async function get_ne_data(){
         await get_aid_ne_data(selectSiteid, selectTech, selectBand)
             .then(data => {
@@ -344,9 +375,33 @@ $(document).ready(function() {
         selectActivity = $('#id_activity').val() ? $('#id_activity').find(':selected').text() : null;
 
         if(selectActivity){
-            $('select.select2').prop("disabled", false);
-            $("#save-activity").prop("disabled", false);
-            render_view();
+            if(selectActivity == 'BTS Rehoming'){
+                $("#stb-input-fields").addClass('d-none');
+                $(".input-grp-container").addClass('d-none');
+                $("#rehoming-input-fields").removeClass('d-none');
+                
+                $("#save-activity").prop("disabled", false);
+                $("#id_siteid").prop('required', false)
+                $("#id_tech").prop('required', false)
+                $("#id_band").prop('required', false)
+                
+                $("#to_bsc_rnc").prop('required', true);
+                $("#multiselect_to").prop('required', true);
+            }else{
+                $("#stb-input-fields").removeClass('d-none');
+                $(".input-grp-container").removeClass('d-none');
+                $("#rehoming-input-fields").addClass('d-none');
+
+                $('select.select2').prop("disabled", false);
+                $("#save-activity").prop("disabled", false);
+                $("#id_siteid").prop('required', true);
+                $("#id_tech").prop('required', true);
+                $("#id_band").prop('required', true);
+
+                $("#to_bsc_rnc").prop('required', false);
+                $("#multiselect_to").prop('required', false);
+                render_view();
+            }
         }
     });
 
@@ -386,6 +441,22 @@ $(document).ready(function() {
         update_form_fields();
     });
 
+    $('#from_bsc_rnc').on('change', function(){
+        device = $('#from_bsc_rnc').val() ? $('#from_bsc_rnc').find(':selected').text() : null;
+        get_bscrnc_nes(device).then(function(data){
+            two_sides_multiselect_left = $('#multiselect');
+            two_sides_multiselect_right = $('#multiselect_to');
+            two_sides_multiselect_right.html('');
+            if(data['count'] > 0){
+                two_sides_multiselect_left.html('');
+                for(i in data['results']){
+                    item = data['results'][i];
+                    two_sides_multiselect_left.append(`<option value="${item['site']}_${item['band']}_${item['tech']}">${item['site']}_${item['band']}_${item['tech']}</option>`);
+                }
+            }
+        }).catch(e => console.log(e));
+    });
+
     $('#missing-data-modal').on('hidden.bs.modal', function(){
         $('#missing-data-msg').html('');
     })
@@ -396,8 +467,8 @@ $(document).ready(function() {
     $('#id_activity').select2({
         placeholder: 'Select Activity',
         ajax: {
-        url: "/edrar/data/select2/activity-autocomplete/",
-        dataType: 'json',
+            url: "/edrar/data/select2/activity-autocomplete/",
+            dataType: 'json',
         }
     });
     
@@ -425,9 +496,84 @@ $(document).ready(function() {
         }
     });
 
+    $('#from_bsc_rnc').select2({
+        placeholder: 'Select BSC/RNC',
+        ajax: {
+            url: "/edrar/data/select2/bscrnc/",
+            dataType: 'json',
+        }
+    });
+
+    $('#to_bsc_rnc').select2({
+        placeholder: 'Select BSC/RNC',
+        ajax: {
+            url: "/edrar/data/select2/bscrnc/",
+            dataType: 'json',
+        }
+    });
+
+    
+    // function set_activity_select(activity){
+    //     let activity_selected = false;
+    //     $('#id_activity option').filter(function(){
+    //         if( $(this).text() == activity){
+    //             $(this).prop('selected', true).trigger("change");
+    //             activity_selected = true;
+    //         }
+    //     });
+
+    //     if(activity_selected){
+    //         $('select.select2').prop("disabled", false);
+    //         $("#save-activity").prop("disabled", false);
+    //         render_view();
+    //     }
+    // }
+
+    // function set_site_id_select(siteid){
+    //     $('#id_activity option').filter(function(){
+    //         if( $(this).text() == siteid){
+    //             $(this).prop('selected', true).trigger("change");
+    //         }
+    //     });
+    // }
+
+    // function set_tech_select(tech){
+    //     $('#id_activity option').filter(function(){
+    //         if( $(this).text() == tech){
+    //             $(this).prop('selected', true).trigger("change");
+    //         }
+    //     });
+    // }
+
+    // function set_band_select(band){
+    //     $('#id_activity option').filter(function(){
+    //         if( $(this).text() == band){
+    //             $(this).prop('selected', true).trigger("change");
+    //         }
+    //     });
+    // }
+
 
     disable_stb_select_fields();
     clear_tables();
     hide_text_field_containers();
     hide_general_input_container();
+
+    $('#multiselect').multiselect();
+
+    if(url_params.hasOwnProperty('edit')){
+        url = `/edrar/data/activity/${url_params['activity']}/?edit=${url_params['edit']}`;
+        get_activity_data(url).then(function(data){
+            activity_id = data.activity;
+            if(url_params['edit']){
+                //Setting activity_id to 7 = Correction, for edit action.
+                activity_id = 7;
+            }
+            $('#id_activity').val(activity_id).trigger('change');
+            $('#id_siteid').val(data.siteid).trigger('change');
+            $('#id_tech').val(data.tech).trigger('change');
+            $('#id_band').val(data.band).trigger('change');
+            G_LOGGED_ACTIVITY = data;
+        }).catch(e => console.log(e));
+    }
 });

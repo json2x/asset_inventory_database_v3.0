@@ -93,7 +93,7 @@ $(document).ready(function() {
         var tr = $(this).closest('tr');
         var row = HOME_DT.table.row( tr );
         var data = row.data();
-        window.location.href = `/edrar/activity/log?daily_activity=${data.id}&activity=Correction`;
+        window.location.href = `/edrar/activity/log?edit=true&activity=${data.id}`;
     } );
 
 

@@ -177,7 +177,7 @@ class AddActivity(View):
             device.save()
 
         elif activity.activity.name == 'Expansion' or activity.activity.name == 'TRX Expansion' or activity.activity.name == 'Delete Cell'\
-        or activity.activity.name == 'TRX Downgrade' or activity.activity.name == 'Site Reconfig':
+        or activity.activity.name == 'TRX Downgrade' or activity.activity.name == 'Site Reconfig' or activity.activity.name == 'TX Migration':
             device = Device.objects.get(pk=device_data['id'])
 
         elif activity.activity.name == 'BTS Swap':
@@ -221,7 +221,7 @@ class AddActivity(View):
         #     cell.record_status = record_status
         #     cell.save()
 
-        elif activity.activity.name == 'TRX Expansion' or activity.activity.name == 'TRX Downgrade':
+        elif activity.activity.name == 'TRX Expansion' or activity.activity.name == 'TRX Downgrade' or activity.activity.name == 'TX Migration':
             cell = Cell.objects.get(pk=cell_data['id'])
 
         elif activity.activity.name == 'BTS Swap':
@@ -287,6 +287,9 @@ class AddActivity(View):
         elif activity.activity.name == 'Site Reconfig':
             trx = self.InstantiateTrx(trx_data, cell, device)
             trx.save()
+
+        elif activity.activity.name == 'TX Migration':
+            trx = Trx.objects.get(pk=trx_data['id'])
             
         return trx
 
@@ -302,8 +305,8 @@ class AddActivity(View):
             band = activity_data['band'], vendor = activity_data['vendor'], homing = activity_data['homing'], bts_id = activity_data['bts_id'], 
             device_name = activity_data['device_name'], equipment_type = activity_data['equipment_type'], trx_config = activity_data['trx_config'], 
             iub_type = activity_data['iub_type'], bandwidth = activity_data['bandwidth'], sac = activity_data['sac'], cell_id = activity_data['cell_id'], 
-            cell_name = activity_data['cell_name'], lac = activity_data['lac'], pci = activity_data['pci'],  omip = activity_data['omip'], 
-            s1_c = activity_data['s1_c'], s1_u = activity_data['s1_u'], remarks = activity_data['remarks']
+            cell_name = activity_data['cell_name'], lac = activity_data['lac'], pci = activity_data['pci'], abis = activity_data['abis'], iubip = activity_data['iubip'],
+            s1_c = activity_data['s1_c'], s1_u = activity_data['s1_u'], omip = activity_data['omip'], remarks = activity_data['remarks']
         )
 
         return activity

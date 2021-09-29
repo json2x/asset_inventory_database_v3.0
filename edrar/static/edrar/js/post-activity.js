@@ -130,6 +130,8 @@
         this.lac = null;
         this.pci = null;
         this.omip = null;
+        this.abis = null;
+        this.iubip = null;
         this.s1_c = null;
         this.s1_u = null;
         this.remarks = null;

@@ -22,7 +22,7 @@ class UpdateLogDailyActivitySerializer(serializers.ModelSerializer):
         fields = (
             'date_logged', 'tech', 'user', 'counterpart', 'activity', 'site_status', 'rfs_count', 'siteid', 'band', 
             'vendor', 'homing', 'bts_id', 'device_name', 'equipment_type', 'trx_config', 'iub_type', 'bandwidth', 
-            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'omip', 's1_c', 's1_u', 'remarks'
+            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'abis', 'iubip', 's1_c', 's1_u', 'omip', 'remarks'
         )
 
     def get_tech(self, activity):
@@ -49,7 +49,7 @@ class DailyActivitySerializer(serializers.ModelSerializer):
         fields = (
             'date_logged', 'tech', 'user', 'counterpart', 'activity', 'site_status', 'rfs_count', 'siteid', 'band', 
             'vendor', 'homing', 'bts_id', 'device_name', 'equipment_type', 'trx_config', 'iub_type', 'bandwidth', 
-            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'omip', 's1_c', 's1_u', 'remarks'
+            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'abis', 'iubip', 's1_c', 's1_u', 'omip', 'remarks'
         )
 
     def get_activity(self, activity):

@@ -45,6 +45,8 @@ class DailyActivityForm(forms.Form):
     trx_config = forms.CharField(max_length=250)
     bandwidth = forms.IntegerField()
     omip = forms.CharField(max_length=250)
+    abis = forms.CharField(max_length=250)
+    iubip = forms.CharField(max_length=250)
     s1_c = forms.CharField(max_length=250)
     s1_u = forms.CharField(max_length=250)
     

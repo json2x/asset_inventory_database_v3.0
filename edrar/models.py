@@ -67,6 +67,8 @@ class DailyActivity(models.Model):
     lac = models.CharField(max_length=250, blank=True, null=True)
     pci = models.CharField(max_length=250, blank=True, null=True)
     omip = models.CharField(max_length=250, blank=True, null=True)
+    abis = models.CharField(max_length=250, blank=True, null=True)
+    iubip = models.CharField(max_length=250, blank=True, null=True)
     s1_c = models.CharField(max_length=250, blank=True, null=True)
     s1_u = models.CharField(max_length=250, blank=True, null=True)
     remarks = models.CharField(max_length=250, blank=True, null=True)

@@ -287,7 +287,7 @@ $(document).ready(function() {
                 'Content-Type': 'application/json'
             }
         });
-
+        
         return response.json();
     }
 

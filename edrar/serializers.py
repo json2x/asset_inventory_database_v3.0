@@ -84,13 +84,13 @@ class CellsDeviceTrxSerializer(serializers.ModelSerializer):
         )
 
     def get_device(self, cell):
-        result = Api.Device.objects.filter(~Q(record_status=3)).get(id=cell.device.id)
-
+        #result = Api.Device.objects.filter(~Q(record_status=3)).get(id=cell.device.id)
+        result = Api.Device.objects.get(id=cell.device.id)
         return NmsDevicesSerializer(result, many=False).data
 
     def get_trx(self, cell):
-        result = Api.Trx.objects.filter(~Q(record_status=3)).filter(cell__id=cell.id)
-
+        #result = Api.Trx.objects.filter(~Q(record_status=3)).filter(cell__id=cell.id)
+        result = Api.Trx.objects.filter(cell__id=cell.id)
         return TrxSerializer(result, many=True).data
 
 

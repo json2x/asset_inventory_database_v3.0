@@ -105,3 +105,17 @@ label.dt-child{
     font-weight: bold;
 }
 
+.upper-right{
+    position: relative;
+    right: -15px;
+    top: 3px;
+    cursor: pointer;
+}
+
+.upper-right:hover{
+    color: #343cb3;
+}
+
+.upper-right:active{
+    color: #2967c4;
+}

@@ -66,6 +66,7 @@ var MyDataTable = {
         dataArray = (src == 'nms')? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
         discard_dom = `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="device" data-src="${src}"><i class="fa fa-times" aria-hidden="true"></i></button>`;
         //table_dom_ctrl = (this.activity == 'Correction')? '<i class="fa fa-times text-muted" aria-hidden="true"></i>':discard_dom;
+        src == 'nms'? $("#add-device").removeClass('d-none'):$("#add-device").addClass('d-none');
         var options = {
             data: dataArray,
             processing: true,
@@ -126,6 +127,7 @@ var MyDataTable = {
         dataArray = (src == 'nms')? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
         discard_dom = `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="cell" data-src="${src}"><i class="fa fa-times" aria-hidden="true"></i></button>`;
         //table_dom_ctrl = (this.activity == 'Correction')? '<i class="fa fa-times text-muted" aria-hidden="true"></i>':discard_dom;
+        src == 'nms'? $("#add-cell").removeClass('d-none'):$("#add-cell").addClass('d-none');
         var options = {
             data: dataArray,
             processing: true,
@@ -194,6 +196,7 @@ var MyDataTable = {
         dataArray = (src == 'nms')? dataSrcObjArray['nms']: dataSrcObjArray['aid'];
         discard_dom = `<button class="btn btn-sm btn-light py-0 dt-row-discard text-primary" data-tbl="trx" data-src="${src}"><i class="fa fa-times" aria-hidden="true"></i></button>`;
         //table_dom_ctrl = (this.activity == 'Correction')? '<i class="fa fa-times text-muted" aria-hidden="true"></i>':discard_dom;
+        src == 'nms'? $("#add-trx").removeClass('d-none'):$("#add-trx").addClass('d-none');
         var options = {
             data: dataArray,
             processing: true,

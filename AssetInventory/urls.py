@@ -31,4 +31,5 @@ urlpatterns = [
     path('register/', user_view.register, name='register'),
 
     path('', include('edrar.urls')),
+    path('', include('nmsdata.urls')),
 ]

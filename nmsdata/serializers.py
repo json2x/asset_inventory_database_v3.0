@@ -23,7 +23,7 @@ class NmsCellsSerializer(serializers.ModelSerializer):
             'tech', 'band', 'admin_state', 'alias', 'lac_tac', 'sac_ci_eutra', 'rnc_cid', 'phy_cid', 
             'lcr_cid', 'mcc', 'mnc', 'nodeid', 'sector_id', 'carrier', 'ne_type', 'subdomain', 'function', 
             'sdcch_cap', 'tch_cap', 'homing_id', 'dlear_fcn', 'ulear_dcn', 'dlc_hbw', 'ulc_hbw',
-            'rac', 'ncc', 'bcc', 'nnode_id', 'nbscid', 'azimuth', 'psc', 'bcchno', 'record_status'
+            'rac', 'ncc', 'bcc', 'nnode_id', 'nbscid', 'psc', 'bcchno', 'record_status'
         )
     
 class NmsTrxSerializer(serializers.ModelSerializer):

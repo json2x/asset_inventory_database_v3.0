@@ -33,6 +33,12 @@
                     {{form.band}}
                 </div>
             </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <p style="margin-bottom: 5px; padding: 0;">&nbsp;</p>
+                    <button id="redo-query" type="button" class="btn btn-sm btn-dark"><i class="fas fa-redo"></i></button>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -469,6 +475,225 @@
     </div>
 </div>
 <!-- End of Fetching Data Modal -->
+
+<!-- Add Device Data Modal -->
+<div id="add-device-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body border border-dark">
+                <form name="add-device-form" id="id-add-device-form">
+                    <h5>Add Device</h5>
+                    <div class="row">
+                        <div id="device-alert-container" class="col px-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="site_id">Site ID</label>
+                                <input class="form-control" type="text" name="site_id" id="nms_site_id">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="subdomain">Tech</label>
+                                <input class="form-control" type="text" name="subdomain" id="nms_subdomain">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ems_id">EMS ID</label>
+                        <input class="form-control" type="text" name="ems_id" id="nms_ems_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="device_id">Device Name</label>
+                        <input class="form-control" type="text" name="device_id" id="nms_device_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="parent_device_id">Parent Device</label>
+                        <input class="form-control" type="text" name="parent_device_id" id="nms_parent_device_id">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="vendor_id">Vendor ID</label>
+                                <input class="form-control" type="text" name="vendor_id" id="nms_vendor_id">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="ne_type">NE Type</label>
+                                <input class="form-control" type="text" name="ne_type" id="nms_ne_type">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button id="cancel-add-device" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col">
+                            <button id="save-add-device" class="btn btn-primary btn-lg btn-block">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Add Device Data Modal -->
+<!-- Add Cell Data Modal -->
+<div id="add-cell-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addCellModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body border border-dark">
+                <form name="add-cell-form" id="id-add-cell-form">
+                    <h5>Add Cell</h5>
+                    <div class="row">
+                        <div id="cell-alert-container" class="col px-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="site">Site ID</label>
+                                <input class="form-control" type="text" name="site" id="nms_site">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="band">Band</label>
+                                <input class="form-control" type="text" name="band" id="nms_band">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="subdomain">Tech</label>
+                                <input class="form-control" type="text" name="subdomain" id="nms_subdomain">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ems_id">EMS ID</label>
+                        <input class="form-control" type="text" name="ems_id" id="nms_ems_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="cell_name">Cell Name</label>
+                        <input class="form-control" type="text" name="cell_name" id="nms_cell_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="parent_id">Device Name</label>
+                        <input class="form-control" type="text" name="parent_id" id="nms_parent_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="homing_id">Homing (BSC/RNC)</label>
+                        <input class="form-control" type="text" name="homing_id" id="nms_homing_id">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="nodeid">Node ID</label>
+                                <input class="form-control" type="text" name="nodeid" id="nms_nodeid">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="lac_tac">LAC/TAC</label>
+                                <input class="form-control" type="text" name="lac_tac" id="nms_lac_tac">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="sac_ci_eutra">SAC/CI/EUTRA</label>
+                                <input class="form-control" type="text" name="sac_ci_eutra" id="nms_sac_ci_eutra">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="rnc_cid">RNC CID</label>
+                                <input class="form-control" type="text" name="rnc_cid" id="nms_rnc_cid">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="phy_cid">PHY CID</label>
+                                <input class="form-control" type="text" name="phy_cid" id="nms_phy_cid">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="lcr_cid">LCR CID</label>
+                                <input class="form-control" type="text" name="lcr_cid" id="nms_lcr_cid">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ne_type">NE Type</label>
+                        <input class="form-control" type="text" name="ne_type" id="nms_ne_type">
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button id="cancel-add-cell" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col">
+                            <button id="save-add-cell" class="btn btn-primary btn-lg btn-block">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Add Cell Data Modal -->
+<!-- Add TRX Data Modal -->
+<div id="add-trx-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addTrxModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body border border-dark">
+                <form name="add-trx-form" id="id-add-trx-form">
+                    <h5>Add TRX</h5>
+                    <div class="row">
+                        <div id="trx-alert-container" class="col px-2"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="site_id">Site ID</label>
+                        <input class="form-control" type="text" name="site_id" id="nms_site_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="ems_id">EMS ID</label>
+                        <input class="form-control" type="text" name="ems_id" id="nms_ems_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="trx_name">TRX Name</label>
+                        <input class="form-control" type="text" name="trx_name" id="nms_trx_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="parent_id">Cell Name</label>
+                        <input class="form-control" type="text" name="parent_id" id="nms_parent_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="homing_bts">Device Name</label>
+                        <input class="form-control" type="text" name="homing_bts" id="nms_homing_bts">
+                    </div>
+                    <div class="form-group">
+                        <label for="homing_id">BSC Name</label>
+                        <input class="form-control" type="text" name="homing_id" id="nms_homing_id">
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <button id="cancel-add-trx" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col">
+                            <button id="save-add-trx" class="btn btn-primary btn-lg btn-block">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Add TRX Data Modal -->
+
 {% endblock content %}
 {% block customJs %}
 <script src="{% static 'edrar/js/global.js' %}"></script>
@@ -476,5 +701,6 @@
 <script src="{% static 'edrar/js/page-activity-form.js' %}"></script>
 <script src="{% static 'edrar/js/add-activity.js' %}"></script>
 <script src="{% static 'edrar/js/post-activity.js' %}"></script>
+<script src="{% static 'edrar/js/add-missing-nms-data.js' %}"></script>
 <script src="{% static 'edrar/js/multiselect.js' %}"></script>
 {% endblock customJs %}

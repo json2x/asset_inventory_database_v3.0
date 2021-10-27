@@ -142,28 +142,6 @@
     /**********************************************************************
      * Functions
     **********************************************************************/
-    // Device.prototype.save = function(){
-    //     save_record(this, 'Device');
-    // }
-
-    // Cell.prototype.save = function(){
-    //     save_record(this, 'Cell');
-    // }
-
-    // Trx.prototype.save = function(){
-    //     save_record(this, 'Trx');
-    // }
-
-    // Activity.prototype.save = function(){
-    //     save_record(this, 'DailyActivity');
-    // }
-
-    // function save_record(Obj, table){
-    //     console.log(Obj);
-    //     //for(var [key, val] of Object.entries(Obj)){
-    //     //    console.log(`${key}: ${val}`);
-    //     //}
-    // }
 
     function instantiateObject(dataObject, Obj){
         let MyObj = new Obj();
@@ -316,74 +294,24 @@
 
         return response.json();
     }
-
-    // async function get_device_data_by_id(){
-    //     const device_data = $('#filtered-device-table').DataTable().rows().data();
-    //     const ids = device_data.map(item => item.id).join(';');
-    //     const response = await fetch(`/edrar/data/device/?id=${ids}`, {
-    //         method: 'GET',
-    //         cache: 'no-cache',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-
-    //     return device = response.json();
+    
+    // async function get_jwt_token(){
+    //     const token = await fetch('/api/user/token/');
+    //     return token.json();
     // }
 
-    // async function get_cell_data_by_id(){
-    //     const device_data = $('#filtered-cell-table').DataTable().rows().data();
-    //     const ids = device_data.map(item => item.id).join(';');
-    //     const response = await fetch(`/edrar/data/cell/?id=${ids}`, {
-    //         method: 'GET',
-    //         cache: 'no-cache',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-
-    //     return device = response.json();
-    // }
-
-    // async function get_trx_data_by_id(){
-    //     const device_data = $('#filtered-trx-table').DataTable().rows().data();
-    //     const ids = device_data.map(item => item.id).join(';');
-    //     const response = await fetch(`/edrar/data/trx/?id=${ids}`, {
-    //         method: 'GET',
-    //         cache: 'no-cache',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-
-    //     return device = response.json();
-    // }
-
-    // async function get_datatables_data(){
-    //     await get_device_data_by_id().then(data => instantiateObject(data.results, Device, Devices)).catch(e => console.log(e));
-    //     await get_cell_data_by_id().then(data => instantiateObject(data.results, Cell, Cells)).catch(e => console.log(e));
-    //     if($.fn.dataTable.isDataTable('#filtered-trx-table')){
-    //         await get_trx_data_by_id().then(data => instantiateObject(data.results, Trx, Trxs)).catch(e => console.log(e));
-    //     }
-    // }
-
-    async function get_jwt_token(){
-        const token = await fetch('/api/user/token/');
-        return token.json();
-    }
-
-    function set_jwt_token_cookie(){
-        get_jwt_token().then(function(result){
-            Cookies.set('aid-user-id', result.user_id,  {expires: 1});
-            Cookies.set('aid-user', result.user,  {expires: 1});
-            Cookies.set('aid-token-access', result.access,  {expires: 1});
-            Cookies.set('aid-token-refresh', result.refresh,  {expires: 1});
+    // function set_jwt_token_cookie(){
+    //     get_jwt_token().then(function(result){
+    //         Cookies.set('aid-user-id', result.user_id,  {expires: 1});
+    //         Cookies.set('aid-user', result.user,  {expires: 1});
+    //         Cookies.set('aid-token-access', result.access,  {expires: 1});
+    //         Cookies.set('aid-token-refresh', result.refresh,  {expires: 1});
             
-            console.log(Cookies.get('aid-user'));
-            console.log(Cookies.get('aid-token-access'));
-            console.log(Cookies.get('aid-token-refresh'));
-        }).catch((e) => console.log(e));
-    }
+    //         console.log(Cookies.get('aid-user'));
+    //         console.log(Cookies.get('aid-token-access'));
+    //         console.log(Cookies.get('aid-token-refresh'));
+    //     }).catch((e) => console.log(e));
+    // }
 
 
     /**********************************************************************
@@ -469,14 +397,14 @@
      * ON PAGE LOAD TRIGGERS
     **********************************************************************/
     var csrftoken = $("#activity-logger-form > input[name='csrfmiddlewaretoken']").val() || null;
-    if (!Cookies.get('aid-token-access') && !Cookies.get('aid-token-refresh')) {
-        set_jwt_token_cookie();
-    }else{
-        let logged_user = $('#user-name').attr('data-id') || null;
-        if(Cookies.get('aid-user-id') != logged_user){
-            set_jwt_token_cookie();
-        }
-    }
+    // if (!Cookies.get('aid-token-access') && !Cookies.get('aid-token-refresh')) {
+    //     set_jwt_token_cookie();
+    // }else{
+    //     let logged_user = $('#user-name').attr('data-id') || null;
+    //     if(Cookies.get('aid-user-id') != logged_user){
+    //         set_jwt_token_cookie();
+    //     }
+    // }
     
 
     /**********************************************************************

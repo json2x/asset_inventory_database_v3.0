@@ -420,6 +420,11 @@ $(document).ready(function() {
         render_view();
     });
 
+    $("#redo-query").click(function(e){
+        e.preventDefault();
+        render_view();
+    });
+
     $('#filtered-device-table tbody').on('click', 'tr td button.dt-row-discard', function(e){
         e.preventDefault();
         MyDataTableActions.set_info(selectActivity, selectSiteid, selectTech, selectBand)
@@ -459,7 +464,7 @@ $(document).ready(function() {
 
     $('#missing-data-modal').on('hidden.bs.modal', function(){
         $('#missing-data-msg').html('');
-    })
+    });
 
     /**********************************************************************
      * ON PAGE LOAD TRIGGERS
@@ -511,48 +516,6 @@ $(document).ready(function() {
             dataType: 'json',
         }
     });
-
-    
-    // function set_activity_select(activity){
-    //     let activity_selected = false;
-    //     $('#id_activity option').filter(function(){
-    //         if( $(this).text() == activity){
-    //             $(this).prop('selected', true).trigger("change");
-    //             activity_selected = true;
-    //         }
-    //     });
-
-    //     if(activity_selected){
-    //         $('select.select2').prop("disabled", false);
-    //         $("#save-activity").prop("disabled", false);
-    //         render_view();
-    //     }
-    // }
-
-    // function set_site_id_select(siteid){
-    //     $('#id_activity option').filter(function(){
-    //         if( $(this).text() == siteid){
-    //             $(this).prop('selected', true).trigger("change");
-    //         }
-    //     });
-    // }
-
-    // function set_tech_select(tech){
-    //     $('#id_activity option').filter(function(){
-    //         if( $(this).text() == tech){
-    //             $(this).prop('selected', true).trigger("change");
-    //         }
-    //     });
-    // }
-
-    // function set_band_select(band){
-    //     $('#id_activity option').filter(function(){
-    //         if( $(this).text() == band){
-    //             $(this).prop('selected', true).trigger("change");
-    //         }
-    //     });
-    // }
-
 
     disable_stb_select_fields();
     clear_tables();

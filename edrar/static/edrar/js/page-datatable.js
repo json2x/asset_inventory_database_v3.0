@@ -353,44 +353,5 @@ var MyDataTableActions = {
         
         return state;
     },
-    // discard_related_rows_from_other_table_v1(){
-    //     var src = this.data_src;
-    //     var discarded_parent_ids = G_DISCARDED_NE_DATA[src][this.tbl_src].map(data => data.id);
-    //     var parent_tbl = (this.tbl_src).toLowerCase();
-    //     for(i in this.discard_tree[this.tbl_src]){
-    //         var ref_tbl = this.discard_tree[this.tbl_src][i];
-    //         var tableId = `#filtered-${ref_tbl}-table`;
-    //         var table = $(tableId).DataTable();
-    //         var myInstance = this;
-    //         table.rows().every(function(){
-    //             var row_data = this.data();
-    //             if(ref_tbl == 'cell'){
-    //                 if(Array.isArray(row_data['device'])){
-    //                     reference_data = Object.values(row_data['device']).map(child => child);
-    //                 }else{
-    //                     reference_data = row_data['device']
-    //                 }
-    //                 for(let i in reference_data){
-    //                     if(discarded_parent_ids.indexOf(reference_data[i].id) > -1){
-    //                         myInstance.render_toggle_discard_table_row(this.node());
-    //                         G_DISCARDED_NE_DATA[src][(ref_tbl).toUpperCase()].push(row_data);
-    //                     }
-    //                 }
-    //             }else if(ref_tbl == 'trx'){
-    //                 reference_data = G_NE_DATA[src].map(cell => cell);
-    //                 for(let i in reference_data){
-    //                     cell_trxs_id = Object.values(reference_data[i]['trx']).map(trx => trx.id);
-    //                     if(cell_trxs_id.indexOf(row_data.id) > -1){
-    //                         if(discarded_parent_ids.indexOf(reference_data[i].id) > -1){
-    //                             myInstance.render_toggle_discard_table_row(this.node());
-    //                             G_DISCARDED_NE_DATA[src][(ref_tbl).toUpperCase()].push(row_data);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         });
-    //         parent_tbl = ref_tbl;
-    //         discarded_parent_ids = G_DISCARDED_NE_DATA[this.data_src][(ref_tbl).toUpperCase()].map(data => data.id);
-    //     }
-    // },
+
 }

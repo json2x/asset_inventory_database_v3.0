@@ -1,8 +1,10 @@
 #NMS DATA LOADER
-#import django
-#import os
-#os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AssetInventory.settings')
-#django.setup()
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AssetInventory.settings')
+django.setup()
+
 from nmsdata.models import Device, Cell, Trx
 from django.db import connection
 import pandas as pd

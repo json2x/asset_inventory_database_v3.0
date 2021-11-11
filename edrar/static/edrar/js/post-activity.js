@@ -8,6 +8,7 @@
     var Trxs = [];
     var LoggedActivity = null;
     var PostData = {}
+    
     /**********************************************************************
      * OBJECTS
     **********************************************************************/
@@ -134,6 +135,7 @@
         this.iubip = null;
         this.s1_c = null;
         this.s1_u = null;
+        this.project_name = null;
         this.remarks = null;
         this.modified = null;
     }
@@ -252,7 +254,8 @@
 
     function get_activity_form_data(){
         var activityData = {};
-        $('#activity-logger-form *').filter(':input[required]').each(function(){
+        // $('#activity-logger-form *').filter(':input[required]').each(function(){
+        $('#activity-logger-form *').filter(':input').each(function(){
             let propertyName = $(this).attr('name');
             if( $(this).is('select') && 
             (propertyName != 'user' && propertyName != 'site_status' && propertyName != 'activity' && propertyName != 'to') ){
@@ -272,8 +275,19 @@
 
     function verify_activity_form_data(activityData){
         all_required_filled = true;
+        selectedActivity = $('#id_activity').val() ? $('#id_activity').find(':selected').text() : null;
+        if( selectedActivity == 'BTS Rehoming'){
+            list_of_required_fields = MANDATORY_TECH_FIELDS['BTS Rehoming'];
+        }else{
+            if(selectedActivity == 'TX Migration'){
+                list_of_required_fields = MANDATORY_TECH_FIELDS[activityData['tech']]['TX Migration'];
+            }else{
+                list_of_required_fields = MANDATORY_TECH_FIELDS[activityData['tech']]['Default'];
+            }
+        }
+        
         for(let[key, val] of Object.entries(activityData)){
-            if(!val){
+            if(list_of_required_fields.includes(key) && !val){
                 all_required_filled = false;
             }
         }

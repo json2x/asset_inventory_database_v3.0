@@ -54,6 +54,7 @@ class DailyActivityForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all())
     counterpart = forms.CharField(max_length=250)
     rfs_count = forms.IntegerField()
+    project_name = forms.CharField(max_length=250)
     remarks = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):

@@ -3,7 +3,7 @@ from django.views import generic
 from django.db.models import Q
 from django.utils.html import escape
 
-from .models import Cell, Device, Location, SiteNeAsset, SmartNe, SmartSite, TocAor
+from .models import Cell, Device, Trx, Location, SiteNeAsset, SmartNe, SmartSite, TocAor
 from .serializers import CellsSerializer, DevicesSerializer, SmartSiteSerializer, SmartNeSerializer, SiteNeAssetSerializer, \
 TocAorSerializer, LocationSerializer, DeviceAndCellsSerializer, SmartSiteAndNEsSerializer, SmartSiteCreateUpdateSerializer
 
@@ -49,6 +49,11 @@ def datatable_device(request):
 def datatable_cell(request):
 
     return render(request, 'api/datatable_cell.html')
+
+#-------------------------------------
+def datatable_trx(request):
+
+    return render(request, 'api/datatable_trx.html')
 
 #-------------------------------------
 def datatable_smartsite(request):
@@ -122,6 +127,19 @@ class datatableview_cell(BaseDatatableView):
         if search:
             qs = qs.filter(Q(domain__istartswith=search) | Q(ems_id__icontains=search) | Q(cell_name__icontains=search) | Q(site__istartswith=search)
             | Q(band__icontains=search) | Q(subdomain__icontains=search) | Q(ne_type__istartswith=search) | Q(device__device_id__icontains=search))
+        return qs
+
+#-------------------------------------
+class datatableview_trx(BaseDatatableView):
+    model = Trx
+    columns = ['id', 'ems_id', 'trx_name', 'site_id', 'parent_id', 'homing_bts', 'record_status']
+    max_display_length = 500
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(Q(ems_id__icontains=search) | Q(trx_name__icontains=search) | Q(site_id__istartswith=search)
+            | Q(parent_id__icontains=search) | Q(homing_bts__icontains=search) | Q(homing_id__icontains=search))
         return qs
 
 #-------------------------------------

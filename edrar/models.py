@@ -71,6 +71,7 @@ class DailyActivity(models.Model):
     iubip = models.CharField(max_length=250, blank=True, null=True)
     s1_c = models.CharField(max_length=250, blank=True, null=True)
     s1_u = models.CharField(max_length=250, blank=True, null=True)
+    project_name = models.CharField(max_length=250, blank=True, null=True)
     remarks = models.CharField(max_length=250, blank=True, null=True)
 
     def __str__(self):

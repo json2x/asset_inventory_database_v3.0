@@ -33,18 +33,6 @@ def home(request):
     return render(request, 'edrar/home.html')
     #return HttpResponse("eDRAR Home Page.")
 
-# def activity_add(request):
-
-#     if request.method == 'POST':
-#         pass
-
-#     context= {'form': DailyActivityForm}
-
-#     if request.user.is_authenticated:
-#         context['user'] = request.user
-
-#     return render(request, 'edrar/activity_add.html', context)
-
 class AddActivity(View):
     template_name = 'edrar/activity_add.html'
     form_class = DailyActivityForm
@@ -300,13 +288,16 @@ class AddActivity(View):
         selected_site_id = SmartSite.objects.get(siteid=activity_data['siteid'])
 
         activity = DailyActivity(
-            date_logged = datetime.datetime.now(), tech = activity_data['tech'], user = selected_user, counterpart = activity_data['counterpart'],
-            activity = selected_activity, site_status = selected_site_status, rfs_count = rfs_counter, siteid = selected_site_id,
-            band = activity_data['band'], vendor = activity_data['vendor'], homing = activity_data['homing'], bts_id = activity_data['bts_id'], 
-            device_name = activity_data['device_name'], equipment_type = activity_data['equipment_type'], trx_config = activity_data['trx_config'], 
-            iub_type = activity_data['iub_type'], bandwidth = activity_data['bandwidth'], sac = activity_data['sac'], cell_id = activity_data['cell_id'], 
-            cell_name = activity_data['cell_name'], lac = activity_data['lac'], pci = activity_data['pci'], abis = activity_data['abis'], iubip = activity_data['iubip'],
-            s1_c = activity_data['s1_c'], s1_u = activity_data['s1_u'], omip = activity_data['omip'], remarks = activity_data['remarks']
+            date_logged = datetime.datetime.now(), tech = activity_data['tech'], user = selected_user, 
+            counterpart = activity_data['counterpart'], activity = selected_activity, site_status = selected_site_status, 
+            rfs_count = rfs_counter, siteid = selected_site_id, band = activity_data['band'], vendor = activity_data['vendor'], 
+            homing = activity_data['homing'], bts_id = activity_data['bts_id'], device_name = activity_data['device_name'], 
+            equipment_type = activity_data['equipment_type'], trx_config = activity_data['trx_config'], 
+            iub_type = activity_data['iub_type'], bandwidth = activity_data['bandwidth'], sac = activity_data['sac'], 
+            cell_id = activity_data['cell_id'], cell_name = activity_data['cell_name'], lac = activity_data['lac'], 
+            pci = activity_data['pci'], abis = activity_data['abis'], iubip = activity_data['iubip'], 
+            s1_c = activity_data['s1_c'], s1_u = activity_data['s1_u'], omip = activity_data['omip'], 
+            project_name = activity_data['project_name'], remarks = activity_data['remarks']
         )
 
         return activity
@@ -352,33 +343,37 @@ class AddActivity(View):
         nes = rehome_data['nes']
         updated_devices = []
         for ne in nes:
+            logged_activity = True
             ne = ne.split('_')
             cells = Cell.objects.filter(site=ne[0]).filter(band=ne[1]).filter(subdomain=ne[2])
             for cell in cells:
-                logged_activity = True
+                device_upadte = False
                 device = Device.objects.get(pk=cell.device.id)
                 if device.parent_device_id != new_homing:
                     device.parent_device_id = new_homing
                     device.save()
+                    device_upadte = True
                     updated_devices.append(DevicesSerializer(device).data)
-                    
-                    if logged_activity: # Log only one activity per NE.
-                        activity_data['user'] = self.request.user.id
-                        activity_data['siteid'] = device.site_id
-                        activity_data['band'] = cell.band
-                        activity_data['tech'] = device.subdomain
-                        activity_data['vendor'] = device.vendor_id
-                        activity_data['site_status'] = device.record_status
-                        activity = self.InstantiateDailyActivity(activity_data, 0)
-                        activity.save()
+                
+                if logged_activity: # Log only one activity per NE.
+                    activity_data['user'] = self.request.user.id
+                    activity_data['siteid'] = device.site_id
+                    activity_data['band'] = cell.band
+                    activity_data['tech'] = device.subdomain
+                    activity_data['vendor'] = device.vendor_id
+                    activity_data['homing'] = device.parent_device_id
+                    activity_data['site_status'] = device.record_status
+                    activity = self.InstantiateDailyActivity(activity_data, 0)
+                    activity.save()
+                    logged_activity = False
 
-                        activity_device = DailyActivity_Device(
-                            daily_activity = activity, device = device,
-                            create_flag = 0, #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
-                            update_flag = 1 #True if update False if create
-                        )
-                        activity_device.save()
-                        logged_activity = False
+                if device_upadte or logged_activity:
+                    activity_device = DailyActivity_Device(
+                        daily_activity = activity, device = device,
+                        create_flag = 0, #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
+                        update_flag = 1 #True if update False if create
+                    )
+                    activity_device.save()
         return updated_devices
 
 

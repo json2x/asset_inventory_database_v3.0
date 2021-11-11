@@ -85,12 +85,17 @@ WSGI_APPLICATION = 'AssetInventory.wsgi.application'
 DATABASES = {
 	'default': {
         'ENGINE': 'django.db.backends.mysql',
-        #'NAME': 'ovim_assetinventory',
+
+        #'NAME': 'asset_inventory_database',
+		#'USER': 'ovim',
+		#'PASSWORD': '0vimadmin!',
+		#'HOST': '10.165.119.194',
+
         'NAME': 'AssetInventory',
 		'USER': 'root',
-		#'PASSWORD': 'P@ssw0rd123',
         'PASSWORD': 'root',
 		'HOST': 'localhost',
+
 		'PORT': '3306',
     }
 }
@@ -139,7 +144,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'datatable_device'
+LOGIN_REDIRECT_URL = 'user_router'
+#LOGIN_REDIRECT_URL = 'datatable_device'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),

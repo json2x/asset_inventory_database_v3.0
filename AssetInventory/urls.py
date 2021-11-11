@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='obtainToken'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='refreshToken'),
     path('register/', user_view.register, name='register'),
+    path('user_router/', user_view.user_router, name='user_router'),
 
     path('', include('edrar.urls')),
     path('', include('nmsdata.urls')),

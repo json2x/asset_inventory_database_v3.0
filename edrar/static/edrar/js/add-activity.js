@@ -68,44 +68,6 @@ $(document).ready(function() {
          $('.general-input-container :input').prop('required', false).val('');
     }
 
-    // function hide_text_fields(fieldMap){
-    //     if(!textFieldsHidden){
-    //         for(item in fieldMap){
-    //             if(fieldMap[item].constructor == Object){
-    //                 for(field in fieldMap[item]){
-    //                     $(`#${field}_field_container`).hide();
-    //                     $(`#id_${field}`).val('');
-    //                 }
-    //             }else{
-    //                 $(`#${item}_field_container`).hide();
-    //                 $(`#id_${item}`).val('');
-    //             }
-    //         }
-    //     }
-    // }
-
-    // function show_general_input_container(){
-    //     if(selectActivity == 'Rollout'){
-    //         $("#id_site_status option").filter(function() {
-    //             //may want to use $.trim in here
-    //             return $(this).text() == 'Unlocked';
-    //         }).prop('selected', true);
-    //     }
-
-    //     if(selectActivity == 'On-Air'){
-    //         $("#id_site_status option").filter(function() {
-    //             //may want to use $.trim in here
-    //             return $(this).text() == 'On-air';
-    //         }).prop('selected', true);
-    //     }
-
-    //     $('#id_user option').filter(function(){
-    //         return $(this).text() == Cookies.get('aid-user');
-    //     }).prop('selected', true);
-
-    //     $('.general-input-container').show();
-    // }
-
     function remove_duplicate_objects_in_array(refKeysArray, obj){
         filtered = obj.filter(
             (s => o => 
@@ -376,6 +338,10 @@ $(document).ready(function() {
 
         if(selectActivity){
             if(selectActivity == 'BTS Rehoming'){
+                clear_tables();
+                hide_text_field_containers();
+                hide_general_input_container();
+                
                 $("#stb-input-fields").addClass('d-none');
                 $(".input-grp-container").addClass('d-none');
                 $("#rehoming-input-fields").removeClass('d-none');

@@ -33,3 +33,27 @@ const G_NMS_SRC_ACTIVITY = {
     'CELL': ['Rollout', 'Expansion', 'BTS Swap'],
     'TRX': ['Rollout', 'Expansion', 'TRX Expansion', 'BTS Swap', 'Site Reconfig']
 }
+
+var MANDATORY_TECH_FIELDS = {
+    'BTS Rehoming': ['to', 'to_bsc_rnc'],
+    '2G': {
+        'TX Migration': ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'homing', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'trx_config', 'bandwidth', 'omip', 'abis'],
+        'Default':      ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'homing', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'trx_config', 'bandwidth']
+    },
+    '3G': {
+        'TX Migration': ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'homing', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'sac', 'iub_type', 'bandwidth', 'omip', 'iubip'],
+        'Default':      ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'homing', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'sac', 'iub_type', 'bandwidth']
+    },
+    'FD-LTE': {
+        'TX Migration': ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'pci', 'bandwidth', 'omip', 's1_c', 's1_u'],
+        'Default':      ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'pci', 'bandwidth']
+    },
+    'TD-LTE': {
+        'TX Migration': ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'pci', 'bandwidth', 'omip', 's1_c', 's1_u'],
+        'Default':      ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'pci', 'bandwidth']
+    },
+    '5G': {
+        'TX Migration': ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'pci', 'bandwidth', 'omip', 's1_c', 's1_u'],
+        'Default':      ['activity', 'siteid', 'tech', 'band', 'device_name','vendor', 'equipment_type', 'bts_id', 'cell_name', 'cell_id', 'lac', 'pci', 'bandwidth']
+    }
+};

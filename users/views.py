@@ -17,6 +17,21 @@ def register(request):
         
     return render(request, 'users/register.html', {'form': form})
 
+
+def user_router(request):
+    print(request.user.groups)
+    groups_list = []
+    for g in request.user.groups.all():
+        groups_list.append(g.name)
+
+    if not request.GET.get('next'):
+        if 'AID_USER_GROUP' in groups_list:
+            return redirect('edrar_home')
+        else:
+            return redirect('datatable_device')
+    else:
+        return redirect(request.GET.get('next'))
+
     
 
 

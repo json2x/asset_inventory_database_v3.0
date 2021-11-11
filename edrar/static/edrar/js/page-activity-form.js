@@ -49,7 +49,8 @@ var MyActivityForm = {
         }else{
             Object.keys(fieldMap).map(field => $(`#id_${field}`).val(''));
         }
-        Object.keys(fieldMap).map(field => $(`#${field}_field_container :input`).prop('required', true));
+        //Object.keys(fieldMap).map(field => $(`#${field}_field_container :input`).prop('required', true));
+        Object.keys(fieldMap).map(field => this.assign_required_field(this.tech, this.activity, field));
         Object.keys(fieldMap).map(field => $(`#${field}_field_container`).show());
     },
     fill_trx_config_field: function(dataSrcObjArray, activityDataSrc){
@@ -103,5 +104,22 @@ var MyActivityForm = {
         $("#id_user").prop('required', true);
 
         $('.general-input-container').show();
+    },
+    assign_required_field: function(tech, activity, field){
+        if(activity == 'BTS Rehoming'){
+            if(MANDATORY_TECH_FIELDS[activity].includes(field)){
+                $(`#${field}_field_container :input`).prop('required', true);
+            }
+        }else{
+            if(activity == 'TX Migration'){
+                if(MANDATORY_TECH_FIELDS[tech][activity].includes(field)){
+                    $(`#${field}_field_container :input`).prop('required', true);
+                }
+            }else{
+                if(MANDATORY_TECH_FIELDS[tech]['Default'].includes(field)){
+                    $(`#${field}_field_container :input`).prop('required', true);
+                }
+            }
+        }
     }
 }

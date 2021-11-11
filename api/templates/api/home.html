@@ -1,8 +1,9 @@
 {% extends 'api/base_template.html'%}
 {% block content %}
-<h1 class="cover-heading">OVIM Asset Inventory API.</h1>
-<p class="lead">To learn more about the API, click the button below for the documentation and how to's of this API.</p>
+<h1 class="cover-heading">Asset Inventory Database 2.0</h1>
+<p class="lead">Select AID Application below.</p>
 <p class="lead">
-  <a class="btn btn-lg btn-secondary" href="{% url 'apiDocs' %}">Learn more</a>
+  <a class="btn btn-lg btn-secondary" href="{% url 'apiDocs' %}">AID API</a>
+  <a class="btn btn-lg btn-secondary" href="{% url 'edrar_home' %}">EDAR</a>
 </p>
 {% endblock content %}

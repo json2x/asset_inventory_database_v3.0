@@ -4,15 +4,15 @@
 
 $(document).ready(function() {
     // ==== Global Variables ====
-    MANUAL_NMS_DATA = {};
-    JWT_ACCESS = Cookies.get('aid-token-access');
-    JWT_REFRESH = Cookies.get('aid-token-refresh');
-    MANDATORY_FIELDS = {
+    var MANUAL_NMS_DATA = {};
+    var JWT_ACCESS = Cookies.get('aid-token-access');
+    var JWT_REFRESH = Cookies.get('aid-token-refresh');
+    var MANDATORY_FIELDS = {
         'DEVICE':   ['site_id', 'subdomain', 'ems_id', 'device_id'],
         'CELL':     ['site', 'subdomain', 'band', 'ems_id', 'cell_name', 'parent_id'],
         'TRX':      ['ems_id', 'trx_name', 'parent_id', 'homing_bts', 'homing_id']
     };
-    NMS_DATA_FORMS = {
+    var NMS_DATA_FORMS = {
         'DEVICE': $("#id-add-device-form"),
         'CELL': $("#id-add-cell-form"),
         'TRX': $("#id-add-trx-form")

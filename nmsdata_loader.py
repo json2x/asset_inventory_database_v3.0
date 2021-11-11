@@ -25,10 +25,9 @@ sys.path.append('/home/jdortaliz/ovim_asset_inventory_database')
 def getLatestFile(filePath):
     print("Getting Latest File from",filePath)
     list_of_files = glob.glob(filePath)
-    print(list_of_files)
     latest_file = max(list_of_files, key=os.path.getctime)
     print("Latest file:",latest_file)
-
+    
     return latest_file
 
 

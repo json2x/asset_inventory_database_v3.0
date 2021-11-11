@@ -97,7 +97,7 @@ def insertDevice(df):
                 hardware_capacity=row["HW_CAP"],
                 domain=row["DOMAIN"],
                 ne_owner=row["NE_OWNER"],
-                tx_clustering=row["TX_CLUSTER"],
+                tx_clusterimg=row["TX_CLUSTER"],
                 tx_type=row["TX_TYPE"],
                 natspcode=row["NAT_SP_CODE"],
                 admin_state=row["ADMIN_STATE"],

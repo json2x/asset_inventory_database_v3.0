@@ -1,0 +1,23 @@
+/******** Generate Report Custom CSS ********/
+
+.ui-draggable, .ui-droppable {
+	background-position: top;
+}
+
+.my-form-control{
+    display: block;
+    padding: 3px 4px;
+    width: 100%;
+    color: #444;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.generate-report-btns{
+    display: block;
+    width: 100%;
+}
+
+#activity-datatable-container{
+    overflow-x: auto;
+}

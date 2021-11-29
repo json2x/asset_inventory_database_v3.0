@@ -1,20 +1,28 @@
 from django.db import models, transaction, Error
+from django.http import response
 from django.http.response import JsonResponse
 from django.core import serializers
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, request
 from django.views import View
+from django.views.generic.base import TemplateView
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from rest_framework import generics, status
 from rest_framework.response import Response
 from dal import autocomplete
+import pandas as pd
+import xlsxwriter
 import datetime
 import json
+import os, io
 
-from .forms import DailyActivityForm
+from .forms import DailyActivityForm, DailyActivityReportGeneratorForm, PasswordResetFormExtra
 from .models import Activity, MobileTechnology, MobileFrequencyBand, SiteStatus
 from .models import DailyActivity, DailyActivity_Device, DailyActivity_Cell, DailyActivity_Trx
 from .serializers import CellsDeviceTrxSerializer, CellsDeviceTrxNMSDataSerializer, DailyActivitySerializer, UpdateLogDailyActivitySerializer, SiteTechBandSerializer
@@ -24,7 +32,6 @@ from api.serializers import DevicesSerializer, CellsSerializer, TrxSerializer
 
 from nmsdata import models as Nms
 from nmsdata.serializers import NmsDevicesSerializer, NmsCellsSerializer, NmsTrxSerializer
-
 
 # Create your views here.
 #-------------------------------------
@@ -407,6 +414,140 @@ class AddActivity(View):
 
         return update_flag
 
+class GenerateReport(View):
+    template_name = 'edrar/generate_report.html'
+    form_class = DailyActivityReportGeneratorForm
+
+    def get(self, request):
+        context = {'form': self.form_class}
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        response = {'success': False}
+        report_param = json.loads(request.body.decode('utf-8'))
+        date_param_range_str = '{}_{}'.format(report_param['start'], report_param['end'])
+        date_param_range_str = date_param_range_str.replace('/', '-')
+        daily_activity = self.get_queried_data(report_param)
+
+        if daily_activity:
+            #Generate report file
+            saved_file = self.save_report_file(request, daily_activity, date_param_range_str)
+            response['success'] = True
+            response['report_file'] = saved_file
+            response['daily_activities'] = []
+            for activity in daily_activity:
+                response['daily_activities'].append(DailyActivitySerializer(activity).data)
+
+        return JsonResponse(response)
+
+    def save_report_file(self, request, daily_activity, date_param_range_str=None):
+        try:
+            date_str = date_param_range_str or datetime.datetime.today().strftime('%Y-%m-%d')
+            file_name = 'daily_ran_activities_{}_{}.xlsx'.format(request.user.username, date_str)
+            writer = pd.ExcelWriter(settings.MEDIA_ROOT + 'edrar/reports/' + file_name, engine='xlsxwriter')
+
+            print('Converting Object to Dataframe...', end='', flush=True)
+            drar_df = daily_activity.to_dataframe()
+            print('[OK]', flush=True)
+            print(drar_df)
+
+            print('Writing Dataframe to file...', end='', flush=True)
+            drar_df = drar_df.drop(columns=['id'])
+            drar_df.to_excel(writer, index=False, sheet_name=date_str)
+            writer.save()
+            print('[OK]', flush=True)
+
+            return file_name
+        except Exception as e:
+            print('Export report file error: %s: %s *' % (e.__class__, e))
+
+    def get_queried_data(self, report_param):
+        selected_activities = report_param['activity']
+        start_date = self.format_report_param_date_for_query(report_param['start'])
+        end_date = self.format_report_param_date_for_query(report_param['end'])
+        project_name = report_param['project_name']
+        # daily_activity = DailyActivity.objects.filter(date_logged__gte=start_date)\
+        #     .filter(date_logged__lte=end_date
+        date_proj_query = Q(date_logged__gte=start_date) & Q(date_logged__lte=end_date)
+        if project_name:
+            query &= Q(project_name=project_name)
+        
+        for i, activity in enumerate(selected_activities):
+            if not i:
+                activity_query = Q(activity=activity['id'])
+            else:
+                activity_query |= Q(activity=activity['id'])
+
+        daily_activity = DailyActivity.objects.filter(date_proj_query).filter(activity_query)
+        return daily_activity
+
+    def format_report_param_date_for_query(self, strDate):
+        #date_array = strDate.split('/')
+        return datetime.datetime.strptime(strDate, '%m/%d/%Y')
+        #return datetime.date(int(date_array[2]), int(date_array[0]), int(date_array[1]))
+
+def export_report_file(request):
+    try:
+        grv = GenerateReport() #grv -> generate report view obj
+        report_param = json.loads(request.body.decode('utf-8'))
+        daily_activity = grv.get_queried_data(report_param)
+        
+        if daily_activity:
+            output = io.BytesIO()
+            data_str = datetime.datetime.today().strftime('%Y-%m-%d')
+            file_name = 'daily_ran_activities_{}_{}.xlsx'.format(request.user.username, data_str)
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+
+            print('Converting Object to Dataframe...', end='', flush=True)
+            drar_df = daily_activity.to_dataframe()
+            print('[OK]', flush=True)
+            print('Writing Dataframe to file in memory...', end='', flush=True)
+            drar_df.to_excel(writer, sheet_name=data_str)
+            writer.save()
+            print('[OK]', flush=True)
+
+            response = HttpResponse(
+                output.getvalue(),
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename=%s' % file_name
+            return response
+
+    except Exception as e:
+        print('Export report file error: %s: %s *' % (e.__class__, e))
+
+class UserProfile(TemplateView):
+    template_name = "edrar/user_profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['ip'] = self.request.META.get('REMOTE_ADDR')
+        return context
+
+class ChangePassword(View):
+    template_name = 'edrar/change_password.html'
+
+    def get(self, request):
+        context = {
+            'form': PasswordResetFormExtra(request.user),
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = PasswordResetFormExtra(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('edrar_user_change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+            context = {
+                'form': PasswordResetFormExtra(request.user),
+                'form_errors': form.errors
+            }
+            return render(request, self.template_name, context)
 
 
 class ActivityAutocomplete(autocomplete.Select2QuerySetView):

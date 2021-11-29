@@ -1,0 +1,34 @@
+{% extends 'edrar/edrar_base_template.html'%}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h3 class="my-2">User Profile</h3>
+<div class="card mb-2" style="width: 30rem;">
+    <div class="card-body">
+        <table class="table table-striped">
+            <tbody>
+                <tr><td>ID:</td><td>{{ user.id }}</td></tr>
+                <tr><td>Username:</td><td>{{ user.username }}</td></tr>
+                <tr><td>First name:</td><td>{{ user.first_name }}</td></tr>
+                <tr><td>Last name:</td><td>{{ user.last_name }}</td></tr>
+                <tr><td>IP Address:</td><td>{{ ip }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<a href="{% url 'edrar_home' %}" class="btn btn-success">
+    <i class="fa fa-home" aria-hidden="true"></i>
+    Home
+</a>
+<a href="{% url 'edrar_home' %}" class="btn btn-info">
+    <i class="fa fa-database" aria-hidden="true"></i>
+    AID
+</a>
+<a href="{% url 'edrar_home' %}" class="btn btn-primary">
+    <i class="fa fa-list-alt" aria-hidden="true"></i>
+    eDRAR
+</a>
+
+{% endblock content %}
+{% block customJs %}
+{% endblock customJs %}

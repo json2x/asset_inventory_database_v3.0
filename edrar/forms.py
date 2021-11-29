@@ -2,26 +2,11 @@
 from django import forms
 from django.conf.urls import url
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from .models import DailyActivity, Activity, SiteStatus, MobileTechnology, MobileFrequencyBand
 from api.models import SmartSite
-
-from dal import autocomplete
-
-class DailyActivityModelForm(forms.ModelForm):
-    siteid = forms.ModelChoiceField(
-        queryset=SmartSite.objects.all(),
-        widget=autocomplete.ModelSelect2(url='siteid-autocomplete', attrs={'id': 'test2', 'class': 'form-control'})
-    )
-
-    class Meta:
-        model = DailyActivity
-        fields = [
-            'activity', 'siteid', 'device_name', 'tech', 'band', 'vendor', 'homing', 'bts_id', 
-            'equipment_type', 'trx_config', 'iub_type',  'bandwidth', 'sac', 'cell_id',
-            'cell_name', 'lac', 'pci', 'omip', 's1_c', 's1_u', 
-            'site_status', 'user', 'counterpart', 'rfs_count', 'remarks'
-        ]
-
 
 class DailyActivityForm(forms.Form):
     activity = forms.ModelChoiceField(label='activity', queryset=Activity.objects.all())
@@ -65,3 +50,24 @@ class DailyActivityForm(forms.Form):
                 or visible.field.label == 'tech' or visible.field.label == 'band':
                 visible.field.widget.attrs['class'] = 'form-control select2'
 
+class DailyActivityReportGeneratorForm(forms.Form):
+    activity = forms.ChoiceField()
+    project_name = forms.CharField(max_length=250)
+    start = forms.DateField()
+    end = forms.DateField()
+
+    def __init__(self, *args, **kwargs):
+        super(DailyActivityReportGeneratorForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'my-form-control'
+            if visible.field.label == 'activity':
+                visible.field.widget.attrs['class'] = 'my-form-control select2'
+
+class PasswordResetFormExtra(PasswordChangeForm):
+    def __init__(self, *args, **kw):
+        super(PasswordResetFormExtra, self).__init__(*args, **kw)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'edrar_user_change_password'
+        self.helper.add_input(Submit('submit', 'Submit'))

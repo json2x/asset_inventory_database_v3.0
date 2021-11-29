@@ -42,14 +42,22 @@ class DailyActivitySerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     site_status = serializers.SerializerMethodField()
     siteid = serializers.SerializerMethodField()
+    site_name = serializers.SerializerMethodField()
     date_logged = serializers.SerializerMethodField()
+
+    city = serializers.SerializerMethodField()
+    province = serializers.SerializerMethodField()
+    region = serializers.SerializerMethodField()
+    area = serializers.SerializerMethodField()
+    aor = serializers.SerializerMethodField()
 
     class Meta:
         model = Edrar.DailyActivity
         fields = (
-            'date_logged', 'tech', 'user', 'counterpart', 'activity', 'site_status', 'rfs_count', 'siteid', 'band', 
-            'vendor', 'homing', 'bts_id', 'device_name', 'equipment_type', 'trx_config', 'iub_type', 'bandwidth', 
-            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'abis', 'iubip', 's1_c', 's1_u', 'omip', 'remarks'
+            'date_logged', 'tech', 'user', 'counterpart', 'activity', 'site_status', 'rfs_count', 'siteid', 'site_name', 
+            'band', 'vendor', 'homing', 'bts_id', 'device_name', 'equipment_type', 'trx_config', 'iub_type', 'bandwidth', 
+            'sac', 'cell_id', 'cell_name', 'lac', 'pci', 'abis', 'iubip', 's1_c', 's1_u', 'omip', 'remarks', 
+            'city', 'province', 'region', 'area', 'aor'
         )
 
     def get_activity(self, activity):
@@ -64,8 +72,26 @@ class DailyActivitySerializer(serializers.ModelSerializer):
     def get_siteid(self, activity):
         return activity.siteid.siteid
 
+    def get_site_name(self, activity):
+        return activity.siteid.sitename
+
     def get_date_logged(self, activity):
         return activity.date_logged.strftime("%Y-%m-%d %H:%M:%S")
+
+    def get_city(self, activity):
+        return activity.siteid.location.city
+
+    def get_province(self, activity):
+        return activity.siteid.location.province
+
+    def get_region(self, activity):
+        return activity.siteid.location.region
+
+    def get_area(self, activity):
+        return activity.siteid.toc_aor.area
+
+    def get_aor(self, activity):
+        return activity.siteid.toc_aor.cluster
 
 class CellsDeviceTrxSerializer(serializers.ModelSerializer):
 

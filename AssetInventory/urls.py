@@ -20,6 +20,9 @@ from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from users import views as user_view
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     #path('api/api-auth/', include('rest_framework.urls')),
     path('', include('api.urls')),
@@ -34,3 +37,5 @@ urlpatterns = [
     path('', include('edrar.urls')),
     path('', include('nmsdata.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

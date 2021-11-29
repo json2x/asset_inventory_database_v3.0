@@ -1,0 +1,87 @@
+{% extends 'edrar/edrar_base_template.html'%}
+{% load static %}
+
+{% block customCSS %}
+<link href="{% static 'edrar/css/generate-report-custom.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+{% endblock customCSS %}
+
+{% block content %}
+<h3 class="mx-4 my-2">Generate Report</h3>
+<hr>
+<form id="activity-data-filter-form">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="activity">Activity*</label>
+                {{ form.activity }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="project_name">Project Name</label>
+                {{ form.project_name }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="start">Start*</label>
+                {{ form.start }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="end">End*</label>
+                {{ form.end }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <button id="generate-report" class="btn btn-primary mt-4 py-2 generate-report-btns" type="button">Generate Report</button>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <a href="#" id="download-report" class="btn btn-secondary mt-4 py-2 generate-report-btns disabled">Download</a>
+            </div>
+        </div>
+    </div>   
+</form>
+<div id="activity-datatable-container" class="mt-2">
+    <table id="activity-datatable" class="table table-hover small d-none" style="width:100%">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Activity</th>
+                <th>Site ID</th>
+                <th>Site Name</th>
+                <th>Band</th>
+                <th>Tech</th>
+                <th>Vendor</th>
+                <th>Homing</th>
+                <th>Device</th>
+                <th>BTS ID</th>
+                <th>Cell ID</th>
+                <th>Cell Name</th>
+                <th>SAC</th>
+                <th>LAC</th>
+                <th>City</th>
+                <th>Province</th>
+                <th>Region</th>
+                <th>Area</th>
+                <th>AOR</th>
+                <th>Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr></tr>
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
+{% block customJs %}
+<script src="{% static 'edrar/js/my-datatable.js' %}"></script>
+<script src="{% static 'edrar/js/generate-report.js' %}"></script>
+{% endblock customJs %}

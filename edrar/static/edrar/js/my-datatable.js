@@ -14,8 +14,9 @@ var dt = {
             }
         });
 
-        this.data = response.json();
-        return this;
+        //this.data = response.json();
+        //return this;
+        return response.json();
     },
     post_server_data: async function(url, data, csrftoken){
         fetch_server_data = 'POST';
@@ -29,12 +30,13 @@ var dt = {
             body: JSON.stringify(data)
         });
 
-        this.data = response.json();
-        return this;
+        //this.data = response.json();
+        //return this;
+        return response.json();
     },
     table_options: function(options){
         this.options = options;
-
+        this.data = options.data;
         return this;
     },
     clear_table: function(tableId){

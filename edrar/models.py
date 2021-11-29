@@ -2,11 +2,14 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from api.models import SmartSite, Device, Cell, Trx
 
+from django_pandas.managers import DataFrameManager
 # Create your models here.
 User = get_user_model()
 
 class Activity(models.Model):
     name = models.CharField(max_length=250)
+
+    objects = DataFrameManager()
 
     def __str__(self):
         return self.name
@@ -18,6 +21,8 @@ class MobileTechnology(models.Model):
     name = models.CharField(max_length=250)
     alias = models.CharField(max_length=250, blank=True, null=True)
 
+    objects = DataFrameManager()
+
     def __str__(self):
         return self.name
 
@@ -28,6 +33,8 @@ class MobileFrequencyBand(models.Model):
     band = models.IntegerField()
     alias = models.CharField(max_length=250, blank=True, null=True)
 
+    objects = DataFrameManager()
+
     def __str__(self):
         return str(self.band)
 
@@ -36,6 +43,8 @@ class MobileFrequencyBand(models.Model):
 
 class SiteStatus(models.Model):
     name = models.CharField(max_length=250)
+
+    objects = DataFrameManager()
 
     def __str__(self):
         return self.name
@@ -74,6 +83,8 @@ class DailyActivity(models.Model):
     project_name = models.CharField(max_length=250, blank=True, null=True)
     remarks = models.CharField(max_length=250, blank=True, null=True)
 
+    objects = DataFrameManager()
+
     def __str__(self):
         return self.activity.name
 
@@ -88,12 +99,16 @@ class DailyActivityModified(models.Model):
     old_value = models.CharField(max_length=250, blank=True, null=True)
     new_value = models.CharField(max_length=250, blank=True, null=True)
 
+    objects = DataFrameManager()
+
 class DailyActivity_SmartSite(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     daily_activity = models.ForeignKey(DailyActivity, on_delete=models.CASCADE)
     site = models.ForeignKey(SmartSite, on_delete=models.CASCADE)
     create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
     update_flag = models.BooleanField()
+
+    objects = DataFrameManager()
 
 class DailyActivity_Device(models.Model):
     date = models.DateTimeField(auto_now_add=True)
@@ -102,6 +117,8 @@ class DailyActivity_Device(models.Model):
     create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
     update_flag = models.BooleanField()
 
+    objects = DataFrameManager()
+
 class DailyActivity_Cell(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     daily_activity = models.ForeignKey(DailyActivity, on_delete=models.CASCADE)
@@ -109,9 +126,13 @@ class DailyActivity_Cell(models.Model):
     create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
     update_flag = models.BooleanField()
 
+    objects = DataFrameManager()
+
 class DailyActivity_Trx(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     daily_activity = models.ForeignKey(DailyActivity, on_delete=models.CASCADE)
     trx = models.ForeignKey(Trx, on_delete=models.CASCADE)
     create_flag = models.IntegerField(blank=True, null=True) #Values can be -1, 0, 1 for deleted, no-addition, new rollout respectively
     update_flag = models.BooleanField()
+
+    objects = DataFrameManager()

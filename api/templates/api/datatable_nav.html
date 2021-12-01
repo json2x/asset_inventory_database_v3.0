@@ -1,4 +1,5 @@
 {% extends 'api/base_template_logged_user.html'%}
+{% load users_extra %}
 {% block nav %}
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
   <div class="sidebar-sticky">
@@ -62,6 +63,7 @@
       </li>
     </ul>
 
+    {% if request.user|has_group:"ADMINS" %}
     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
       <span>Documentation</span>
     </h6>
@@ -109,6 +111,8 @@
         </a>
       </li>
     </ul>
+    {% endif %}
+
   </div>
 </nav>
 {% endblock nav %}

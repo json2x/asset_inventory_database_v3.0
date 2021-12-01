@@ -1,9 +1,12 @@
 {% extends 'api/base_template.html'%}
+{% load users_extra %}
 {% block content %}
 <h1 class="cover-heading">Asset Inventory Database 2.0</h1>
 <p class="lead">Select AID Application below.</p>
 <p class="lead">
+  {% if request.user|has_group:"ADMINS" %}
   <a class="btn btn-lg btn-secondary" href="{% url 'apiDocs' %}">AID API</a>
+  {% endif %}
   <a class="btn btn-lg btn-secondary" href="{% url 'edrar_home' %}">EDAR</a>
 </p>
 {% endblock content %}

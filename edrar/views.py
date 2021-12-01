@@ -460,6 +460,7 @@ class GenerateReport(View):
             return file_name
         except Exception as e:
             print('Export report file error: %s: %s *' % (e.__class__, e))
+            
 
     def get_queried_data(self, report_param):
         selected_activities = report_param['activity']
@@ -470,7 +471,7 @@ class GenerateReport(View):
         #     .filter(date_logged__lte=end_date
         date_proj_query = Q(date_logged__gte=start_date) & Q(date_logged__lte=end_date)
         if project_name:
-            query &= Q(project_name=project_name)
+            date_proj_query &= Q(project_name=project_name)
         
         for i, activity in enumerate(selected_activities):
             if not i:

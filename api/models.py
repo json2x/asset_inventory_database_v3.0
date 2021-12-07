@@ -56,6 +56,11 @@ class Device(models.Model):
     mw_hub = models.CharField(max_length=10, blank=True, null=True)  # db_column='MW HUB'
     record_status = models.IntegerField(default=1)
 
+    #hw_capacity
+    '''
+    additional fields
+    '''
+
     def __str__(self):
         return self.device_id
 
@@ -404,7 +409,7 @@ class LR_IP_POOLINV(models.Model):
     totalips = models.CharField(max_length=5, blank=True, null=True) # db_column='TOTALIPS'
     usableips = models.CharField(max_length=5, blank=True, null=True) # db_column='USABLEIPS'
     remarks = models.CharField(max_length=250, blank=True, null=True) # db_column='REMARKS'
-
+    
     class Meta:
         db_table = 'lr_ip_polinv'
 

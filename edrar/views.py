@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.db import connection
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -444,10 +445,21 @@ class GenerateReport(View):
         try:
             date_str = date_param_range_str or datetime.datetime.today().strftime('%Y-%m-%d')
             file_name = 'daily_ran_activities_{}_{}.xlsx'.format(request.user.username, date_str)
+            site_info_query = '''
+            SELECT 
+            a.siteid, b.city, b.province, b.regionname, 
+            b.area as geo_area, c.cluster as wfs, c.area as wfs_area
+            FROM
+            smart_site a
+            LEFT JOIN location b on b.id = a.location_id
+            LEFT JOIN toc_aor c on c.id = a.toc_aor_id
+            '''
+            site_info_df = pd.read_sql_query(site_info_query, connection)
             writer = pd.ExcelWriter(settings.MEDIA_ROOT + 'edrar/reports/' + file_name, engine='xlsxwriter')
 
             print('Converting Object to Dataframe...', end='', flush=True)
             drar_df = daily_activity.to_dataframe()
+            drar_df = drar_df.merge(site_info_df, how='left', on='siteid')
             print('[OK]', flush=True)
             print(drar_df)
 

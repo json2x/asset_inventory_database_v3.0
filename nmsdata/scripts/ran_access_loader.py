@@ -10,277 +10,197 @@ from django.db import connection
 import pandas as pd
 import re
 
-
 #Update or insert rows - Device table.
 #---------------------------
 def insertDevice(df):
-    #--Set record status back to '0' before insert or update
-    Device.objects.filter(record_status=1).update(record_status=0)
+    Device.objects.filter(record_status = 1).update(record_status = 0)
+
+    #--Rename device column name to match nms data model
+    #--update_or_create method requires matching column names
+    device_column_name = {
+        'DN': 'dn',
+        'DEVICE_ID': 'device_id',
+        'EMS_DEVICE_ID': 'ems_device_id',
+        'DEVICE_ALIAS': 'device_alias',
+        'DEVICE_IP': 'device_ip',
+        'EMS_ID': 'ems_id',
+        'VENDOR_ID': 'vendor_id',
+        'NE_TYPE': 'ne_type',
+        'MODEL': 'model',
+        'HW_DESC': 'hardware_description',
+        'FNC_DESC': 'functional_description',
+        'PARENT_ID': 'parent_device_id',
+        'PARENT_DN': 'parentdn',
+        'SITE_ID': 'site_id',
+        'DEVICE_STATE': 'device_state',
+        'SW_VER': 'software_version',
+        'INT_DATE': 'integration_date',
+        'EOS': 'end_of_support',
+        'TSA_SCOPE': 'tsa_scope',
+        'PROD_ID': 'product_id',
+        'SERIAL_NO': 'serial_number',
+        'FREQ_TXRX': 'freq_tx_rx_field',
+        'HW_CAP': 'hardware_capacity',
+        'DOMAIN': 'domain',
+        'NE_OWNER': 'ne_owner',
+        'TX_CLUSTER': 'tx_clusterimg',
+        'TX_TYPE': 'tx_type',
+        'NAT_SP_CODE': 'natspcode',
+        'ADMIN_STATE': 'admin_state',
+        'SUBDOMAIN': 'subdomain',
+        'FUNCTION': 'function',
+        'IUBCE_DL_LIC': 'iubce_dl_lic',
+        'IUBCE_UL_LIC': 'iubce_ul_lic',
+        'S1CU_LIC': 's1cu_lic'
+    }
+    df.rename(columns = device_column_name, inplace = True)
 
     #--Read nmsdata_device table
-    sql = pd.read_sql('SELECT id, ems_id, dn, device_id, subdomain FROM nmsdata_device', connection)
+    dict_logs = {}
     for i, row in df.iterrows():
-        search=sql[(sql.ems_id==row["EMS_ID"]) & (sql.dn==row["DN"]) & (sql.device_id==row["DEVICE_ID"])
-         & (sql.subdomain==row["SUBDOMAIN"])]
-        if not search.empty:
-            if len(search.index) > 1:
-                # if greater than 1 == log
-                print('Match more than 1 record. Devices wont be updated.')
-                print(search)
-            else:
-                # update
-                updateDevice = Device.objects.get(id=search.iloc[0]['id'])
-                updateDevice.dn=row["DN"]
-                updateDevice.device_id=row["DEVICE_ID"]
-                updateDevice.ems_device_id=row["EMS_DEVICE_ID"]
-                updateDevice.device_alias=row["DEVICE_ALIAS"]
-                updateDevice.device_ip=row["DEVICE_IP"]
-                updateDevice.ems_id=row["EMS_ID"]
-                updateDevice.vendor_id=row["VENDOR_ID"]
-                updateDevice.ne_type=row["NE_TYPE"]
-                updateDevice.model=row["MODEL"]
-                updateDevice.hardware_description=row["HW_DESC"]
-                updateDevice.functional_description=row["FNC_DESC"]
-                updateDevice.parent_device_id=row["PARENT_ID"]
-                updateDevice.parentdn=row["PARENT_DN"]
-                updateDevice.site_id=row["SITE_ID"]
-                updateDevice.device_state=row["DEVICE_STATE"]
-                updateDevice.software_version=row["SW_VER"]
-                updateDevice.integration_date=row["INT_DATE"]
-                updateDevice.end_of_support=row["EOS"]
-                updateDevice.tsa_scope=row["TSA_SCOPE"]
-                updateDevice.product_id=row["PROD_ID"]
-                updateDevice.serial_number=row["SERIAL_NO"]
-                updateDevice.freq_tx_rx_field=row["FREQ_TXRX"]
-                updateDevice.hardware_capacity=row["HW_CAP"]
-                updateDevice.domain=row["DOMAIN"]
-                updateDevice.ne_owner=row["NE_OWNER"]
-                updateDevice.tx_clustering=row["TX_CLUSTER"]
-                updateDevice.tx_type=row["TX_TYPE"]
-                updateDevice.natspcode=row["NAT_SP_CODE"]
-                updateDevice.admin_state=row["ADMIN_STATE"]
-                updateDevice.subdomain=row["SUBDOMAIN"]
-                updateDevice.function=row["FUNCTION"]
-                updateDevice.iubce_dl_lic=row["IUBCE_DL_LIC"]
-                updateDevice.iubce_ul_lic=row["IUBCE_UL_LIC"]
-                updateDevice.s1cu_lic=row["S1CU_LIC"]
-                updateDevice.record_status=1
+        update_device = row.to_dict()
+        update_device["record_status"] = 1
 
-                updateDevice.save()
-                print("Updated {} {} {}".format(updateDevice.ems_id,updateDevice.device_id,updateDevice.subdomain))
-
-        else:
-            # insert
-            insertDevice = Device(
-                dn=row["DN"],
-                device_id=row["DEVICE_ID"],
-                ems_device_id=row["EMS_DEVICE_ID"],
-                device_alias=row["DEVICE_ALIAS"],
-                device_ip=row["DEVICE_IP"],
-                ems_id=row["EMS_ID"],
-                vendor_id=row["VENDOR_ID"],
-                ne_type=row["NE_TYPE"],
-                model=row["MODEL"],
-                hardware_description=row["HW_DESC"],
-                functional_description=row["FNC_DESC"],
-                parent_device_id=row["PARENT_ID"],
-                parentdn=row["PARENT_DN"],
-                site_id=row["SITE_ID"],
-                device_state=row["DEVICE_STATE"],
-                software_version=row["SW_VER"],
-                integration_date=row["INT_DATE"],
-                end_of_support=row["EOS"],
-                tsa_scope=row["TSA_SCOPE"],
-                product_id=row["PROD_ID"],
-                serial_number=row["SERIAL_NO"],
-                freq_tx_rx_field=row["FREQ_TXRX"],
-                hardware_capacity=row["HW_CAP"],
-                domain=row["DOMAIN"],
-                ne_owner=row["NE_OWNER"],
-                tx_clusterimg=row["TX_CLUSTER"],
-                tx_type=row["TX_TYPE"],
-                natspcode=row["NAT_SP_CODE"],
-                admin_state=row["ADMIN_STATE"],
-                subdomain=row["SUBDOMAIN"],
-                function=row["FUNCTION"],
-                iubce_dl_lic=row["IUBCE_DL_LIC"],
-                iubce_ul_lic=row["IUBCE_UL_LIC"],
-                s1cu_lic=row["S1CU_LIC"],
-                record_status=1
+        try:
+            device, created = Device.objects.update_or_create(
+                dn = row["dn"],
+                device_id = row["device_id"],
+                ems_id = row["ems_id"],
+                subdomain = row["subdomain"],
+                defaults = update_device,
             )
-            insertDevice.save()
-            print("Inserted {} {} {}".format(insertDevice.ems_id,insertDevice.device_id,insertDevice.subdomain))
+            str_create_update = "Inserted" if created else "Updated"
+            print("{} {} {} {}".format(str_create_update, device.ems_id, device.device_id, device.subdomain), flush=True)
 
+        except Exception as e:
+             dict_logs[i] = update_device.values()
+
+    #append logs
+    #print(dict_logs, flush=True)
+    return dict_logs
+    # df_logs = pd.DataFrame.from_dict(dict_logs, orient = 'index', columns = update_device.keys())
+    # df_logs.to_csv("failed_update_or_create_device.csv", index = False)
 
 #Update or insert rows - Cell table.
 #---------------------------
 def insertCell(df):
-    #--Set record status back to '0' before insert or update
-    Cell.objects.filter(record_status=1).update(record_status=0)
-    
+    Cell.objects.filter(record_status = 1).update(record_status = 0)
+
+    #--Rename cell column name to match nmsdata_cell model
+    #--update_or_create method requires matching column names
+    cell_column_name = {
+        'EMS_CELL_ID': 'ems_cell_id',
+        'EMS_ID': 'ems_id',
+        'CELL_NAME': 'cell_name',
+        'DN': 'dn',
+        'SITE_ID': 'site',
+        'PARENT_ID': 'parent_id',
+        'PARENT_DN': 'parent_dn',
+        'TECH': 'tech',
+        'BAND': 'band',
+        'ADMIN_STATE': 'admin_state',
+        'ALIAS': 'alias',
+        'LAC_TAC': 'lac_tac',
+        'SAC_CI_EUTRA': 'sac_ci_eutra',
+        'RNC_CID': 'rnc_cid',
+        'PHY_CID': 'phy_cid',
+        'LCR_CID': 'lcr_cid',
+        'MCC': 'mcc',
+        'MNC': 'mnc',
+        'NODEID': 'nodeid',
+        'SECTOR_ID': 'sector_id',
+        'CARRIER': 'carrier',
+        'NE_TYPE': 'ne_type',
+        'SUBDOMAIN': 'subdomain',
+        'FUNCTION': 'function',
+        'SDCCH_CAP': 'sdcch_cap',
+        'TCH_CAP': 'tch_cap',
+        'HOMING_ID': 'homing_id',
+        'DLEARFCN': 'dlear_fcn',
+        'ULEARFCN': 'ulear_dcn',
+        'DLCHBW': 'dlc_hbw',
+        'ULCHBW': 'ulc_hbw',
+        'RAC': 'rac',
+        'NCC': 'ncc',
+        'BCC': 'bcc',
+        'NNODEID': 'nnode_id',
+        'NBSCID': 'nbscid',
+        'PSC': 'psc',
+        'BCCHNO': 'bcchno'
+    }
+    df.rename(columns = cell_column_name, inplace = True)
+
     #--Read nmsdata_cell table
-    sql = pd.read_sql('SELECT id, ems_id, dn, cell_name, parent_id, band, subdomain FROM nmsdata_cell', connection)
+    dict_logs = {}
     for i, row in df.iterrows():
-        search=sql[(sql.ems_id==row["EMS_ID"]) & (sql.dn==row["DN"]) & (sql.cell_name==row["CELL_NAME"])
-         & (sql.parent_id==row["PARENT_ID"]) & (sql.subdomain==row["SUBDOMAIN"])]
-         
-        band_formatted = re.search(r'\d+',str(row["BAND"]))
-        band_formatted = band_formatted.group()
-        if band_formatted == '':
-            band_formatted = str(row["BAND"])
+        update_cell = row.to_dict()
+        update_cell["record_status"] = 1
 
-        if not search.empty:
-            if len(search.index) > 1:
-                # if greater than 1 == log
-                print('Match more than 1 record. Cell wont be updated.')
-                print(search)
-            else:
-                # update
-                updateCell = Cell.objects.get(id=search.iloc[0]['id'])
-                updateCell.ems_cell_id=row["EMS_CELL_ID"]
-                updateCell.ems_id=row["EMS_ID"]
-                updateCell.cell_name=row["CELL_NAME"]
-                updateCell.dn=row["DN"]
-                updateCell.site=row["SITE_ID"]
-                updateCell.parent_id=row["PARENT_ID"]
-                updateCell.parent_dn=row["PARENT_DN"]
-                updateCell.tech=row["TECH"]
-                updateCell.band=band_formatted
-                updateCell.admin_state=row["ADMIN_STATE"]
-                updateCell.alias=row["ALIAS"]
-                updateCell.lac_tac=row["LAC_TAC"]
-                updateCell.sac_ci_eutra=row["SAC_CI_EUTRA"]
-                updateCell.rnc_cid=row["RNC_CID"]
-                updateCell.phy_cid=row["PHY_CID"]
-                updateCell.lcr_cid=row["LCR_CID"]
-                updateCell.mcc=row["MCC"]
-                updateCell.mnc=row["MNC"]
-                updateCell.nodeid=row["NODEID"]
-                updateCell.sector_id=row["SECTOR_ID"]
-                updateCell.carrier=row["CARRIER"]
-                updateCell.ne_type=row["NE_TYPE"]
-                updateCell.subdomain=row["SUBDOMAIN"]
-                updateCell.function=row["FUNCTION"]
-                updateCell.sdcch_cap=row["SDCCH_CAP"]
-                updateCell.tch_cap=row["TCH_CAP"]
-                updateCell.homing_id=row["HOMING_ID"]
-                updateCell.dlear_fcn=row["DLEARFCN"]
-                updateCell.ulear_dcn=row["ULEARFCN"]
-                updateCell.dlc_hbw=row["DLCHBW"]
-                updateCell.ulc_hbw=row["ULCHBW"]
-                updateCell.rac=row["RAC"]
-                updateCell.ncc=row["NCC"]
-                updateCell.bcc=row["BCC"]
-                updateCell.nnode_id=row["NNODEID"]
-                updateCell.nbscid=row["NBSCID"]
-                updateCell.psc=row["PSC"]
-                updateCell.bcchno=row["BCCHNO"]
-                updateCell.record_status=1
-
-                updateCell.save()
-                print("Updated {} {} {} {} {}".format(updateCell.ems_id,updateCell.cell_name, \
-                    updateCell.parent_id, updateCell.band,updateCell.subdomain))
-
-        else:
-            # insert
-            insertCell = Cell(
-                ems_cell_id=row["EMS_CELL_ID"],
-                ems_id=row["EMS_ID"],
-                cell_name=row["CELL_NAME"],
-                dn=row["DN"],
-                site=row["SITE_ID"],
-                parent_id=row["PARENT_ID"],
-                parent_dn=row["PARENT_DN"],
-                tech=row["TECH"],
-                band=band_formatted,
-                admin_state=row["ADMIN_STATE"],
-                alias=row["ALIAS"],
-                lac_tac=row["LAC_TAC"],
-                sac_ci_eutra=row["SAC_CI_EUTRA"],
-                rnc_cid=row["RNC_CID"],
-                phy_cid=row["PHY_CID"],
-                lcr_cid=row["LCR_CID"],
-                mcc=row["MCC"],
-                mnc=row["MNC"],
-                nodeid=row["NODEID"],
-                sector_id=row["SECTOR_ID"],
-                carrier=row["CARRIER"],
-                ne_type=row["NE_TYPE"],
-                subdomain=row["SUBDOMAIN"],
-                function=row["FUNCTION"],
-                sdcch_cap=row["SDCCH_CAP"],
-                tch_cap=row["TCH_CAP"],
-                homing_id=row["HOMING_ID"],
-                dlear_fcn=row["DLEARFCN"],
-                ulear_dcn=row["ULEARFCN"],
-                dlc_hbw=row["DLCHBW"],
-                ulc_hbw=row["ULCHBW"],
-                rac=row["RAC"],
-                ncc=row["NCC"],
-                bcc=row["BCC"],
-                nnode_id=row["NNODEID"],
-                nbscid=row["NBSCID"],
-                psc=row["PSC"],
-                bcchno=row["BCCHNO"],
-                record_status=1
+        try:
+            cell, created = Cell.objects.update_or_create(
+                ems_id = row["ems_id"],
+                cell_name = row["cell_name"],
+                parent_id = row["parent_id"],
+                band = row["band"],
+                subdomain = row["subdomain"],
+                defaults = update_cell,
             )
-            insertCell.save()
-            print("Inserted {} {} {} {} {}".format(insertCell.ems_id, insertCell.cell_name, \
-                insertCell.parent_id, insertCell.band,insertCell.subdomain))
+            str_create_update = "Inserted" if created else "Updated"
+            print("{} {} {} {} {} {}".format(str_create_update, cell.ems_id, cell.cell_name, cell.parent_id, cell.band,cell.subdomain), flush=True)
+
+        except Exception as e:
+             dict_logs[i] = update_cell.values()
+
+    #append logs
+    #print(dict_logs, flush=True)
+    return dict_logs
+    # df_logs = pd.DataFrame.from_dict(dict_logs, orient = 'index', columns = update_cells.keys())
+    # df_logs.to_csv("failed_update_or_create_cell.csv", index = False)
 
 #Update or insert rows - Trx table.
 #---------------------------
 def insertTrx(df):
-    #--Set record status back to '0' before insert or update
-    Trx.objects.filter(record_status=1).update(record_status=0)
-    
+    Trx.objects.filter(record_status = 1).update(record_status = 0)
+
+    #--Rename trx column name to match nmsdata_trx model
+    #--update_or_create method requires matching column names
+    trx_column_name = {
+        'EMS_TRX_ID': 'ems_trx_id',
+        'EMS_ID': 'ems_id',
+        'TRX_NAME': 'trx_name',
+        'DN': 'dn',
+        'SITE_ID': 'site_id',
+        'PARENT_ID': 'parent_id',
+        'PARENT_DN': 'parent_dn',
+        'ADMIN_STATE': 'admin_state',
+        'E1_ASSIGNMENT': 'e1_assignment',
+        'HOMING_BTS': 'homing_bts',
+        'HOMING_ID': 'homing_id',
+        'TRXFREQ': 'trxfreq'
+    }
+    df.rename(columns = trx_column_name, inplace = True)
+
     #--Read nmsdata_trx table
-    sql = pd.read_sql('SELECT id, ems_id, trx_name, parent_id, homing_bts, homing_id FROM nmsdata_trx', connection)
+    dict_logs = {}
     for i, row in df.iterrows():
-        search=sql[(sql.ems_id==row["EMS_ID"]) & (sql.trx_name==row["TRX_NAME"]) & (sql.parent_id==row["PARENT_ID"])
-         & (sql.homing_bts==row["HOMING_BTS"]) & (sql.homing_id==row["HOMING_ID"])]
-        if not search.empty:
-            if len(search.index) > 1:
-                # if greater than 1 == log
-                print('Match more than 1 record. Trx wont be updated.')
-                print(search)
-            else:
-                # update
-                updateTrx = Trx.objects.get(id=search.iloc[0]['id'])
-                updateTrx.ems_trx_id=row["EMS_TRX_ID"]
-                updateTrx.ems_id=row["EMS_ID"]
-                updateTrx.trx_name=row["TRX_NAME"]
-                updateTrx.dn=row["DN"]
-                updateTrx.site_id=row["SITE_ID"]
-                updateTrx.parent_id=row["PARENT_ID"]
-                updateTrx.parent_dn=row["PARENT_DN"]
-                updateTrx.admin_state=row["ADMIN_STATE"]
-                updateTrx.e1_assignment=row["E1_ASSIGNMENT"]
-                updateTrx.homing_bts=row["HOMING_BTS"]
-                updateTrx.homing_id=row["HOMING_ID"]
-                updateTrx.trxfreq=row["TRXFREQ"]
-                updateTrx.record_status=1
+        update_trx = row.to_dict()
+        update_trx["record_status"] = 1
 
-                updateTrx.save()
-                print("Updated {} {} {}".format(updateTrx.ems_id, updateTrx.trx_name, updateTrx.parent_id))
-        else:
-            # insert
-            insertTrx = Trx(
-                ems_trx_id=row["EMS_TRX_ID"],
-                ems_id=row["EMS_ID"],
-                trx_name=row["TRX_NAME"],
-                dn=row["DN"],
-                site_id=row["SITE_ID"],
-                parent_id=row["PARENT_ID"],
-                parent_dn=row["PARENT_DN"],
-                admin_state=row["ADMIN_STATE"],
-                e1_assignment=row["E1_ASSIGNMENT"],
-                homing_bts=row["HOMING_BTS"],
-                homing_id=row["HOMING_ID"],
-                trxfreq=row["TRXFREQ"],
-                record_status=1
+        try:
+            trx, created = Trx.objects.update_or_create(
+                ems_id = row["ems_id"],
+                trx_name = row["trx_name"],
+                parent_id = row["parent_id"],
+                defaults = update_trx,
             )
-            insertTrx.save()
-            print("Inserted {} {} {}".format(insertTrx.ems_id, insertTrx.trx_name, insertTrx.parent_id))
+            str_create_update = "Inserted" if created else "Updated"
+            print("{} {} {} {}".format(str_create_update, trx.ems_id, trx.trx_name, trx.parent_id), flush=True)
 
+        except Exception as e:
+             dict_logs[i] = update_trx.values()
 
+    #append logs
+    #print(dict_logs, flush=True)
+    return dict_logs
+    # df_logs = pd.DataFrame.from_dict(dict_logs, orient = 'index', columns = update_trx.keys(), flush=True)
+    # df_logs.to_csv("failed_update_or_create_trx.csv", index = False)

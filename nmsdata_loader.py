@@ -54,10 +54,10 @@ def MultiprocessTableUpdate(chunksize, nmspath, functionName):
     print('Df chunk size:', df_range)
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
         dfs = []
-        failed_rows = {}
+        #failed_rows = {}
         processes = [ 
-            executor.submit(functionName, df.iloc[i*df_range:], failed_rows) if i == chunksize-1 \
-            else executor.submit(functionName,  df.iloc[i*df_range:(i*df_range)+df_range], failed_rows) \
+            executor.submit(functionName, df.iloc[i*df_range:]) if i == chunksize-1 \
+            else executor.submit(functionName,  df.iloc[i*df_range:(i*df_range)+df_range]) \
             for i in range(chunksize)
         ]
 
@@ -75,6 +75,9 @@ def MultiprocessTableUpdate(chunksize, nmspath, functionName):
         #     print(failed_rows)
         for process in concurrent.futures.as_completed(processes):
             process.result()
+        # for process in concurrent.futures.as_completed(processes):
+        #     failed_rows.update(process.result())
+        # print(failed_rows)
 
 #Obtain filepath of the latest csv.
 #---------------------------

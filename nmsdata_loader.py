@@ -6,8 +6,6 @@ import glob
 import re
 import datetime
 import concurrent.futures
-#from concurrent.futures import ThreadPoolExecutor
-from multiprocessing.pool import ThreadPool as Pool
 
 from nmsdata.scripts.ran_access_loader import insertDevice, insertCell, insertTrx
 
@@ -61,23 +59,8 @@ def MultiprocessTableUpdate(chunksize, nmspath, functionName):
             for i in range(chunksize)
         ]
 
-        # for i in range(chunksize):
-        #     if i == chunksize-1:
-        #         dfs.append(df.iloc[i*df_range:])
-        #     else:
-        #         start = i*df_range
-        #         end = start + df_range
-        #         dfs.append(df.iloc[start:end])
-        
-        # processes = executor.map(functionName, dfs)
-
-        # if concurrent.futures.wait(processes):
-        #     print(failed_rows)
         for process in concurrent.futures.as_completed(processes):
             process.result()
-        # for process in concurrent.futures.as_completed(processes):
-        #     failed_rows.update(process.result())
-        # print(failed_rows)
 
 #Obtain filepath of the latest csv.
 #---------------------------

@@ -1,7 +1,3 @@
-from django.db import models
-from django.contrib.auth import get_user_model
-
-
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order

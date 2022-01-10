@@ -1,3 +1,4 @@
-ovim_asset_inventory.sql
 *.pyc
+*.log
+ovim_asset_inventory.sql
 edrar/static/edrar/dumps/*

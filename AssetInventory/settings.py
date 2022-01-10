@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'edrar.apps.EdrarConfig',
     'nmsdata.apps.NmsdataConfig',
     'users.apps.UsersConfig',
+    'aid.apps.AidConfig',
     'rest_framework',
     'crispy_forms',
 ]

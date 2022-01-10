@@ -661,3 +661,87 @@ class LinkTunnel(models.Model):
         return '{} | {}'.format(self.link_type, self.name)
 
 ###################################################################################################################
+
+class MIAndBBGrouping(models.Model):
+    apn_designation = models.CharField(max_length=250)
+    apn = models.CharField(max_length=250)
+
+    record_status = models.IntegerField(default=1)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.apn
+
+###################################################################################################################
+
+class GTMRankGroup(models.Model):
+    place = models.CharField(max_length=250)
+    gtm_rank = models.CharField(max_length=250)
+    gtm_group = models.CharField(max_length=250)
+    area = models.CharField(max_length=250)
+    year = models.IntegerField(max_length=4)
+
+    record_status = models.IntegerField(default=1)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.place, self.gtm_group)
+
+###################################################################################################################
+
+class BCAPolygonMapping(models.Model):
+    polygon_id = models.CharField(max_length=250)
+    geozone_province = models.CharField(max_length=250)
+    polygon_name_new = models.CharField(max_length=250, blank=True, null=True)
+    polygon_name_old = models.CharField(max_length=250, blank=True, null=True)
+    siteno = models.CharField(max_length=250, blank=True, null=True)
+    date = models.CharField(max_length=250, blank=True, null=True)
+
+    record_status = models.IntegerField(default=1)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.polygon_id, self.geozone_province)
+
+###################################################################################################################
+
+class POINetworkTagging(models.Model):
+    trunk_group = models.CharField(max_length=250)
+    network = models.CharField(max_length=250, blank=True, null=True)
+    vendor = models.CharField(max_length=250, blank=True, null=True)
+
+    record_status = models.IntegerField(default=1)
+
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.polygon_id, self.geozone_province)
+
+###################################################################################################################
+
+
+
+###################################################################################################################
+
+
+
+###################################################################################################################
+
+
+
+###################################################################################################################
+
+
+
+###################################################################################################################
+
+
+
+###################################################################################################################
+
+
+
+###################################################################################################################

@@ -93,8 +93,8 @@ DATABASES = {
 		#'HOST': '10.165.119.194',
 
         'NAME': 'AssetInventory',
-		'USER': 'root',
-        'PASSWORD': 'root',
+		'USER': 'djangouser',
+        'PASSWORD': 'Dj@ng0user',
 		'HOST': 'localhost',
 
 		'PORT': '3306',

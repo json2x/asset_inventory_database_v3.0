@@ -627,31 +627,31 @@ class Link(models.Model):
 ###################################################################################################################
 
 class LinkTunnel(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)                  # db_column='NAME'
-    link_type = models.CharField(max_length=10, blank=True, null=True)              # db_column='LINK TYPE'
-    capacity = models.CharField(max_length=250, blank=True, null=True)              # db_column='CAPACITY'
-    tunnel_id = models.CharField(max_length=15, blank=True, null=True)              # db_column='TUNNEL ID'
-    tunnel_bandwidth = models.CharField(max_length=250, blank=True, null=True)      # db_column='TUNNEL BANDWIDTH'
-    aendnode_sitecodes = models.CharField(max_length=5, blank=True, null=True)      # db_column='AENDNODE SITECODES'
-    aend_node = models.CharField(max_length=20, blank=True, null=True)              # db_column='AENDNODE'
-    aend_tp = models.CharField(max_length=35, blank=True, null=True)                # db_column='AEND TP'
-    aend_tp_child = models.CharField(max_length=250, blank=True, null=True)         # db_column='AEND TP (CHILD)'
-    aend_ip = models.CharField(max_length=250, blank=True, null=True)               # db_column='AEND IP'
-    aend_equipment = models.CharField(max_length=10, blank=True, null=True)         # db_column='AEND EQUIPMENT'
-    zend_node_sitecodes = models.CharField(max_length=5, blank=True, null=True)     # db_column='ZENDNODE SITECODES'
-    zend_node = models.CharField(max_length=20, blank=True, null=True)              # db_column='ZENDNODE'
-    zend_tp = models.CharField(max_length=35, blank=True, null=True)                # db_column='ZEND TP'
-    zend_tp_child = models.CharField(max_length=250, blank=True, null=True)         # db_column='ZEND TP (CHILD)'
-    zend_ip = models.CharField(max_length=250, blank=True, null=True)               # db_column='ZEND IP'
-    zend_equipment = models.CharField(max_length=10, blank=True, null=True)         # db_column='ZEND EQUIPMENT'
-    description = models.CharField(max_length=30, blank=True, null=True)            # db_column='DESCRIPTION'
-    domain = models.CharField(max_length=250, blank=True, null=True)                # db_column='DOMAIN'
-    cluster = models.CharField(max_length=250, blank=True, null=True)               # db_column='CLUSTER'
-    cao_wo = models.CharField(max_length=250, blank=True, null=True)                # db_column='CAO/WO'
-    band_service = models.CharField(max_length=250, blank=True, null=True)          # db_column='BAND/SERVICE'
-    direction = models.CharField(max_length=250, blank=True, null=True)             # db_column='DIRECTION'
-    remarks = models.CharField(max_length=60, blank=True, null=True)                # db_column='REMARKS'
-    rnc_bsc = models.CharField(max_length=10, blank=True, null=True)                # db_column='RNC/BSC
+    name = models.CharField(max_length=100, blank=True, null=True)                  # src file col='NAME'
+    link_type = models.CharField(max_length=10, blank=True, null=True)              # src file col='LINK TYPE'
+    capacity = models.CharField(max_length=250, blank=True, null=True)              # src file col='CAPACITY'
+    tunnel_id = models.CharField(max_length=15, blank=True, null=True)              # src file col='TUNNEL ID'
+    tunnel_bandwidth = models.CharField(max_length=250, blank=True, null=True)      # src file col='TUNNEL BANDWIDTH'
+    aendnode_sitecodes = models.CharField(max_length=5, blank=True, null=True)      # src file col='AENDNODE SITECODES'
+    aend_node = models.CharField(max_length=20, blank=True, null=True)              # src file col='AENDNODE'
+    aend_tp = models.CharField(max_length=35, blank=True, null=True)                # src file col='AEND TP'
+    aend_tp_child = models.CharField(max_length=250, blank=True, null=True)         # src file col='AEND TP (CHILD)'
+    aend_ip = models.CharField(max_length=250, blank=True, null=True)               # src file col='AEND IP'
+    aend_equipment = models.CharField(max_length=10, blank=True, null=True)         # src file col='AEND EQUIPMENT'
+    zend_node_sitecodes = models.CharField(max_length=5, blank=True, null=True)     # src file col='ZENDNODE SITECODES'
+    zend_node = models.CharField(max_length=20, blank=True, null=True)              # src file col='ZENDNODE'
+    zend_tp = models.CharField(max_length=35, blank=True, null=True)                # src file col='ZEND TP'
+    zend_tp_child = models.CharField(max_length=250, blank=True, null=True)         # src file col='ZEND TP (CHILD)'
+    zend_ip = models.CharField(max_length=250, blank=True, null=True)               # src file col='ZEND IP'
+    zend_equipment = models.CharField(max_length=10, blank=True, null=True)         # src file col='ZEND EQUIPMENT'
+    description = models.CharField(max_length=30, blank=True, null=True)            # src file col='DESCRIPTION'
+    domain = models.CharField(max_length=250, blank=True, null=True)                # src file col='DOMAIN'
+    cluster = models.CharField(max_length=250, blank=True, null=True)               # src file col='CLUSTER'
+    cao_wo = models.CharField(max_length=250, blank=True, null=True)                # src file col='CAO/WO'
+    band_service = models.CharField(max_length=250, blank=True, null=True)          # src file col='BAND/SERVICE'
+    direction = models.CharField(max_length=250, blank=True, null=True)             # src file col='DIRECTION'
+    remarks = models.CharField(max_length=60, blank=True, null=True)                # src file col='REMARKS'
+    rnc_bsc = models.CharField(max_length=10, blank=True, null=True)                # src file col='RNC/BSC
 
     record_status = models.IntegerField(default=1)
 
@@ -722,7 +722,16 @@ class POINetworkTagging(models.Model):
 
 ###################################################################################################################
 
-
+class AccessConstraint(models.Model):
+    area = models.CharField(max_length=250)                     # src file col='DN',
+    site_id = models.CharField(max_length=250)                  # src file col='Site ID',
+    exact_date = models.CharField(max_length=250)               # src file col='Exact Date',
+    day_of_month = models.CharField(max_length=250)             # src file col='Day of Month',
+    day_of_week = models.CharField(max_length=250)              # src file col='Day of Week',
+    start_time = models.CharField(max_length=250)               # src file col='Start Time',
+    end_time = models.CharField(max_length=250)                 # src file col='End Time',
+    restricted_time = models.CharField(max_length=250)          # src file col='Restricted Time',
+    site_name = models.CharField(max_length=250)                # src file col='Site Name',
 
 ###################################################################################################################
 

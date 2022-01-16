@@ -13,29 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from users import views as user_view
+#from users import views as user_view
+#from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    #path('api/api-auth/', include('rest_framework.urls')),
-    path('', include('api.urls')),
     path('admin/', admin.site.urls),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
-    path('api/token/', TokenObtainPairView.as_view(), name='obtainToken'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='refreshToken'),
-    path('register/', user_view.register, name='register'),
-    path('user_router/', user_view.user_router, name='user_router'),
 
-    path('', include('edrar.urls')),
-    path('', include('nmsdata.urls')),
+    path('', include('aid.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

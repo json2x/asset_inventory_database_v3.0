@@ -92,10 +92,15 @@ DATABASES = {
 		#'PASSWORD': '0vimadmin!',
 		#'HOST': '10.165.119.194',
 
+        #'NAME': 'AssetInventory',
+		#'USER': 'djangouser',
+        #'PASSWORD': 'Dj@ng0user',
+		#'HOST': 'localhost',
+
         'NAME': 'AssetInventory',
-		'USER': 'djangouser',
-        'PASSWORD': 'Dj@ng0user',
-		'HOST': 'localhost',
+		'USER': 'devuser',
+        'PASSWORD': 'd3vus3r',
+		'HOST': '127.0.0.1',
 
 		'PORT': '3306',
     }

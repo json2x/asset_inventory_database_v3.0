@@ -1,0 +1,8 @@
+
+
+Additional model columns for counting non updating records and tracking of data creation and update dates
+    no_update = models.SmallIntegerField()                  # increment count if current record_status == 0; if no_update >= 3, 
+                                                            # do not include record in reporting; consider deleting record
+    create_date = models.DateField(auto_now_add=True)       # creates time stamp when record is created in table
+    update_date = models.Datefield()                        # manually update this field every time the record is updated
+    sync_date = models.Datefield()                          # manually update this field every time the record is synced

@@ -911,7 +911,7 @@ class SiteListReport(models.Model):
         area = models.CharField(max_length=250, blank=True, null=True)
 
 
-    class BCAPolygonMapping(models.Model):
+    class (models.Model):
         polygon_id = models.CharField(max_length=250, blank=True, null=True)
         geozone_province = models.CharField(max_length=250, blank=True, null=True)
         polygon_name_new = models.CharField(max_length=250, blank=True, null=True)

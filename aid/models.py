@@ -50,6 +50,10 @@ class Site(models.Model):                                                       
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_record_sync_date = models.DateField()                                    # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -197,6 +201,10 @@ class Device(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -225,107 +233,111 @@ class Device(models.Model):
 ###################################################################################################################
 
 class Cell(models.Model):
-    domain = models.CharField(max_length=250)  		                        # db_column='Domain'
-    ems_id = models.CharField(max_length=250)  		                        # db_column='EMS ID'
-    ems_cell_id = models.CharField(max_length=250, blank=True, null=True)  	# db_column='EMS Cell ID'
-    cell_name = models.CharField(max_length=250)  							# db_column='Cell Name'
-    dn = models.CharField(max_length=250, blank=True, null=True)  			# db_column='DN'
-    site_id = models.CharField(max_length=250)  							# db_column='Site'
-    parent_id = models.CharField( max_length=250)  							# db_column='Parent ID
-    parent_dn = models.CharField(max_length=250, blank=True, null=True)  	# db_column='Parent DN'
-    tech = models.CharField(max_length=250, blank=True, null=True)  		# db_column='Tech'
-    band = models.CharField(max_length=250)  								# db_column='Band'
-    admin_state = models.CharField(max_length=250, blank=True, null=True)  	# db_column='Admin State'
-    alias = models.CharField(max_length=250, blank=True, null=True)  		# db_column='Alias'             #no output
-    lac_tac = models.CharField(max_length=250, blank=True, null=True)  		# db_column='LAC TAC'
-    sac_ci_eutra = models.CharField(max_length=250, blank=True, null=True)  # db_column='SAC CI EUTRA'
-    rnc_cid = models.CharField(max_length=250, blank=True, null=True)  		# db_column='RNC CID'
-    phy_cid = models.CharField(max_length=250, blank=True, null=True)  		# db_column='PHY CID'
-    lcr_cid = models.CharField(max_length=250, blank=True, null=True)  		# db_column='LCR CID
-    mcc = models.CharField(max_length=250, blank=True, null=True)  			# db_column='MCC'
-    mnc = models.CharField(max_length=250, blank=True, null=True)  			# db_column='MNC'
-    nodeid = models.CharField(max_length=250, blank=True, null=True)  		# db_column='NODEID'
-    sector_id = models.CharField(max_length=250, blank=True, null=True)  	# db_column='SECTOR ID
-    carrier = models.CharField(max_length=250, blank=True, null=True)  		# db_column='CARRIER
-    ne_type = models.CharField(max_length=250, blank=True, null=True)  		# db_column='NE TYPE'
-    subdomain = models.CharField(max_length=250)  							# db_column='SUBDOMAIN
-    function = models.CharField(max_length=250, blank=True, null=True)  	# db_column='FUNCTION'
-    sdcch_cap = models.CharField(max_length=250, blank=True, null=True)  	# db_column='SDCCH CAP'
-    tch_cap = models.CharField(max_length=250, blank=True, null=True)  		# db_column='TCH CAP'
-    azimuth = models.CharField(max_length=250, blank=True, null=True)  		# db_column='Azimut             #no output
+    domain = models.CharField(max_length=250)  		                                # db_column='Domain'
+    ems_id = models.CharField(max_length=250)  		                                # db_column='EMS ID'
+    ems_cell_id = models.CharField(max_length=250, blank=True, null=True)  	        # db_column='EMS Cell ID'
+    cell_name = models.CharField(max_length=250)  							        # db_column='Cell Name'
+    dn = models.CharField(max_length=250, blank=True, null=True)  			        # db_column='DN'
+    site_id = models.CharField(max_length=250)  							        # db_column='Site'
+    parent_id = models.CharField( max_length=250)  							        # db_column='Parent ID
+    parent_dn = models.CharField(max_length=250, blank=True, null=True)  	        # db_column='Parent DN'
+    tech = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='Tech'
+    band = models.CharField(max_length=250)  								        # db_column='Band'
+    admin_state = models.CharField(max_length=250, blank=True, null=True)  	        # db_column='Admin State'
+    alias = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='Alias'             #no output
+    lac_tac = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='LAC TAC'
+    sac_ci_eutra = models.CharField(max_length=250, blank=True, null=True)          # db_column='SAC CI EUTRA'
+    rnc_cid = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='RNC CID'
+    phy_cid = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='PHY CID'
+    lcr_cid = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='LCR CID
+    mcc = models.CharField(max_length=250, blank=True, null=True)  			        # db_column='MCC'
+    mnc = models.CharField(max_length=250, blank=True, null=True)  			        # db_column='MNC'
+    nodeid = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='NODEID'
+    sector_id = models.CharField(max_length=250, blank=True, null=True)  	        # db_column='SECTOR ID
+    carrier = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='CARRIER
+    ne_type = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='NE TYPE'
+    subdomain = models.CharField(max_length=250)  							        # db_column='SUBDOMAIN
+    function = models.CharField(max_length=250, blank=True, null=True)  	        # db_column='FUNCTION'
+    sdcch_cap = models.CharField(max_length=250, blank=True, null=True)  	        # db_column='SDCCH CAP'
+    tch_cap = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='TCH CAP'
+    azimuth = models.CharField(max_length=250, blank=True, null=True)  		        # db_column='Azimut             #no output
 	
-    bcc = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA
-    bspwr = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    bspwrb = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    bspwrt = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    bstxpwr = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    cell_active_state = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    cell_admin_state = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    cell_id = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    cell_index = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA
+    bcc = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA
+    bspwr = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    bspwrb = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    bspwrt = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    bstxpwr = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    cell_active_state = models.CharField(max_length=250, blank=True, null=True)     # Added for ESA
+    cell_admin_state = models.CharField(max_length=250, blank=True, null=True)      # Added for ESA
+    cell_id = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    cell_index = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA
     configured_maxtxpower = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    crs_gain = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    downlink_bandwidth = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    downlink_earfcn = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    local_cell_id = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
+    crs_gain = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    downlink_bandwidth = models.CharField(max_length=250, blank=True, null=True)    # Added for ESA
+    downlink_earfcn = models.CharField(max_length=250, blank=True, null=True)       # Added for ESA
+    local_cell_id = models.CharField(max_length=250, blank=True, null=True)         # Added for ESA
     max_transmission_power = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    mbcch = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    mimo = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA           		#none for now; will clarify pa
-    ncc = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA
+    mbcch = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    mimo = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA           		#none for now; will clarify pa
+    ncc = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA
     pa_for_even_power_distribution = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    pb = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA
-    pcpichpower = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA
-    pdschtypebgain = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    powl_mbcch_trx = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    powl_tch_trxs = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    powt_mbcch_trx = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    powt_tch_trxs = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    pscrambcode = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA
-    ra = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA
-    rac = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA
-    ref_signal_power = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    rnc_id = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    rnc_name = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    root_sequence_index = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    server = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA                 	#Derived value based on where the dump was taken. but ERI gave the attr so may value ito but for 4G lang
-    tch = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA
-    uarfcndownlink = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    uarfcnuplink = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA
-    uplink_bandwidth = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    uplink_earfcn = models.CharField(max_length=250, blank=True, null=True) # Added for ESA
-    uraids = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA
-    ant_gain = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA              	#Derived value based on Antenna Model Reference file.
-    ant_hbw = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA                	#Derived value based on Antenna Model Reference file. but ERI gave the attr so may value ito but for 4G lang
-    ant_model = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA             		#Input value from engineers.
-    ant_type = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA              	#Derived value based on Antenna Model Reference file.
-    ant_vbw = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA               	#Derived value based on Antenna Model Reference file.
-    antenna_output_power = models.CharField(max_length=250, blank=True, null=True) # Added for ESA   
-    cell_application = models.CharField(max_length=250, blank=True, null=True) # Added for ESA      			#Input value from engineers.
-    cell_last_update = models.CharField(max_length=250, blank=True, null=True) # Added for ESA       		#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang 
-    cell_remarks = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA          		#Input value from engineers.
-    cell_status = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA            		#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
-    cell_type = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA              	#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
-    cell_updated_by = models.CharField(max_length=250, blank=True, null=True) # Added for ESA       			#Input value from engineers.
-    height = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA                	#Input value from engineers.
-    latitude = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA               	#Input value from engineers. but ERI gave the attr so may value ito but for 3G, 4G lang
-    longitude = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA              	#Input value from engineers. but ERI gave the attr so may value ito but for 3G, 4G lang
-    m_tilt = models.CharField(max_length=250, blank=True, null=True) 		# Added for ESA                	#Input value from engineers.
-    map_beamwidth = models.CharField(max_length=250, blank=True, null=True) # Added for ESA          		#Derived value based on Frequency Reference file. but ERI gave the attr so may value ito but for 4G lang
-    map_radius = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA            		#Derived value based on Frequency Reference file.
-    mobile_fixed = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA          		#Derived value from DL EARFCN and Carrier Reference Table.
-    ret = models.CharField(max_length=250, blank=True, null=True) 			# Added for ESA                  #no output as of now, will clarify pa
-    rru_location = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA          		#Input value from engineers.
-    sector_no = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA              	#Derived value from Cellname and planning convention file but ERI gave the attr so may value ito but for 4G lang
-    site_last_update = models.CharField(max_length=250, blank=True, null=True) # Added for ESA       		#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
-    site_name = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA              	#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
-    trx_count = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA              	#Derived value from cellname count in GTRXDEV. no output as of now, will clarify pa
-    integration_datetime = models.CharField(max_length=250, blank=True, null=True) # Added for ESA  			#no output
-    onair_datetime = models.CharField(max_length=250, blank=True, null=True) # Added for ESA        			#no output
-    user_label = models.CharField(max_length=250, blank=True, null=True) 	# Added for ESA            		#no output
+    pb = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA
+    pcpichpower = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA
+    pdschtypebgain = models.CharField(max_length=250, blank=True, null=True)        # Added for ESA
+    powl_mbcch_trx = models.CharField(max_length=250, blank=True, null=True)        # Added for ESA
+    powl_tch_trxs = models.CharField(max_length=250, blank=True, null=True)         # Added for ESA
+    powt_mbcch_trx = models.CharField(max_length=250, blank=True, null=True)        # Added for ESA
+    powt_tch_trxs = models.CharField(max_length=250, blank=True, null=True)         # Added for ESA
+    pscrambcode = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA
+    ra = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA
+    rac = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA
+    ref_signal_power = models.CharField(max_length=250, blank=True, null=True)      # Added for ESA
+    rnc_id = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    rnc_name = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    root_sequence_index = models.CharField(max_length=250, blank=True, null=True)   # Added for ESA
+    server = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA                 	#Derived value based on where the dump was taken. but ERI gave the attr so may value ito but for 4G lang
+    tch = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA
+    uarfcndownlink = models.CharField(max_length=250, blank=True, null=True)        # Added for ESA
+    uarfcnuplink = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA
+    uplink_bandwidth = models.CharField(max_length=250, blank=True, null=True)      # Added for ESA
+    uplink_earfcn = models.CharField(max_length=250, blank=True, null=True)         # Added for ESA
+    uraids = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA
+    ant_gain = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA              	#Derived value based on Antenna Model Reference file.
+    ant_hbw = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA                	#Derived value based on Antenna Model Reference file. but ERI gave the attr so may value ito but for 4G lang
+    ant_model = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA             		#Input value from engineers.
+    ant_type = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA              	#Derived value based on Antenna Model Reference file.
+    ant_vbw = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA               	#Derived value based on Antenna Model Reference file.
+    antenna_output_power = models.CharField(max_length=250, blank=True, null=True)  # Added for ESA   
+    cell_application = models.CharField(max_length=250, blank=True, null=True)      # Added for ESA      			#Input value from engineers.
+    cell_last_update = models.CharField(max_length=250, blank=True, null=True)      # Added for ESA       		    #Input value from engineers. but ERI gave the attr so may value ito but for 4G lang 
+    cell_remarks = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA          		#Input value from engineers.
+    cell_status = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA            		#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
+    cell_type = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA              	#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
+    cell_updated_by = models.CharField(max_length=250, blank=True, null=True)       # Added for ESA       			#Input value from engineers.
+    height = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA                	#Input value from engineers.
+    latitude = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA               	#Input value from engineers. but ERI gave the attr so may value ito but for 3G, 4G lang
+    longitude = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA              	#Input value from engineers. but ERI gave the attr so may value ito but for 3G, 4G lang
+    m_tilt = models.CharField(max_length=250, blank=True, null=True) 		        # Added for ESA                	#Input value from engineers.
+    map_beamwidth = models.CharField(max_length=250, blank=True, null=True)         # Added for ESA          		#Derived value based on Frequency Reference file. but ERI gave the attr so may value ito but for 4G lang
+    map_radius = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA            		#Derived value based on Frequency Reference file.
+    mobile_fixed = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA          		#Derived value from DL EARFCN and Carrier Reference Table.
+    ret = models.CharField(max_length=250, blank=True, null=True) 			        # Added for ESA                 #no output as of now, will clarify pa
+    rru_location = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA          		#Input value from engineers.
+    sector_no = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA              	#Derived value from Cellname and planning convention file but ERI gave the attr so may value ito but for 4G lang
+    site_last_update = models.CharField(max_length=250, blank=True, null=True)      # Added for ESA       		    #Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
+    site_name = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA              	#Input value from engineers. but ERI gave the attr so may value ito but for 4G lang
+    trx_count = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA              	#Derived value from cellname count in GTRXDEV. no output as of now, will clarify pa
+    integration_datetime = models.CharField(max_length=250, blank=True, null=True)  # Added for ESA  			    #no output
+    onair_datetime = models.CharField(max_length=250, blank=True, null=True)        # Added for ESA        			#no output
+    user_label = models.CharField(max_length=250, blank=True, null=True) 	        # Added for ESA            		#no output
 	
     record_status = models.IntegerField(default=1)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -341,16 +353,16 @@ class Cell(models.Model):
 ###################################################################################################################
 
 class Trx(models.Model):
-    ems_id = models.CharField(max_length=250, blank=True, null=True)            # db_column='EMS ID'
-    ems_trx_id = models.CharField(max_length=250, blank=True, null=True)        # db_column='EMS TRX ID'
-    trx_name = models.CharField(max_length=250, blank=True, null=True)          # db_column='TRX Name'
-    dn = models.CharField(max_length=250, blank=True, null=True)                # db_column='DN'
-    site_id = models.CharField(max_length=250, blank=True, null=True)           # db_column='Site ID'
-    parent_id = models.CharField(max_length=250, blank=True, null=True)         # db_column='Parent ID'
-    parent_dn = models.CharField(max_length=250, blank=True, null=True)         # db_column='Parent DN'
-    admin_state = models.CharField(max_length=250, blank=True, null=True)       # db_column='Admin State'
-    e1_assignment = models.CharField(max_length=250, blank=True, null=True)     # db_column='E1 Assignment'        #no output
-    homing_bts = models.CharField(max_length=250, blank=True, null=True)        # db_column='HOMING BTS'
+    ems_id = models.CharField(max_length=250, blank=True, null=True)                # db_column='EMS ID'
+    ems_trx_id = models.CharField(max_length=250, blank=True, null=True)            # db_column='EMS TRX ID'
+    trx_name = models.CharField(max_length=250, blank=True, null=True)              # db_column='TRX Name'
+    dn = models.CharField(max_length=250, blank=True, null=True)                    # db_column='DN'
+    site_id = models.CharField(max_length=250, blank=True, null=True)               # db_column='Site ID'
+    parent_id = models.CharField(max_length=250, blank=True, null=True)             # db_column='Parent ID'
+    parent_dn = models.CharField(max_length=250, blank=True, null=True)             # db_column='Parent DN'
+    admin_state = models.CharField(max_length=250, blank=True, null=True)           # db_column='Admin State'
+    e1_assignment = models.CharField(max_length=250, blank=True, null=True)         # db_column='E1 Assignment'        #no output
+    homing_bts = models.CharField(max_length=250, blank=True, null=True)            # db_column='HOMING BTS'
     homing_id = models.CharField(max_length=250, blank=True, null=True)
     trxfreq = models.CharField(max_length=250, blank=True, null=True)
 
@@ -358,6 +370,10 @@ class Trx(models.Model):
     cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -369,12 +385,16 @@ class Trx(models.Model):
 ###################################################################################################################
 
 class SmartParked(models.Model):
-    site_id = models.CharField(max_length=250)        # 
-    band = models.CharField(max_length=250)           # 
-    tech = models.CharField(max_length=250)           # 
+    site_id = models.CharField(max_length=250)                                      # 
+    band = models.CharField(max_length=250)                                         # 
+    tech = models.CharField(max_length=250)                                         # 
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -383,12 +403,16 @@ class SmartParked(models.Model):
 ###################################################################################################################
 
 class Bandwidth(models.Model):
-    device_id = models.CharField(max_length=250)      # 
-    bandwidth = models.CharField(max_length=250)      # 
-    tech = models.CharField(max_length=250)           # 
+    device_id = models.CharField(max_length=250)                                    # 
+    bandwidth = models.CharField(max_length=250)                                    # 
+    tech = models.CharField(max_length=250)                                         # 
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -397,16 +421,20 @@ class Bandwidth(models.Model):
 ###################################################################################################################
 
 class BSC(models.Model):
-    area = models.CharField(max_length=250)                                     # src file col = 'Area'
-    bsc_no = models.CharField(max_length=250)                                   # src file col = 'BSC No'
-    bsc_loc = models.CharField(max_length=250)                                  # src file col = 'BSC\RNC LOCATION'
-    ao_ip_bh_cap = models.CharField(max_length=250, blank=True, null=True)      # src file col = 'Ao IP BH Capacity'
-    sig_bh_cap = models.CharField(max_length=250, blank=True, null=True)        # src file col = 'SIGTRAN BH Capacity'
-    gbo_ip_bh_cap = models.CharField(max_length=250, blank=True, null=True)     # src file col = 'Gbo IP BH Capacity'
-    combined_ip_bh = models.CharField(max_length=250, blank=True, null=True)    # src file col = 'COMBINED IP BH Capacity'
+    area = models.CharField(max_length=250)                                         # src file col = 'Area'
+    bsc_no = models.CharField(max_length=250)                                       # src file col = 'BSC No'
+    bsc_loc = models.CharField(max_length=250)                                      # src file col = 'BSC\RNC LOCATION'
+    ao_ip_bh_cap = models.CharField(max_length=250, blank=True, null=True)          # src file col = 'Ao IP BH Capacity'
+    sig_bh_cap = models.CharField(max_length=250, blank=True, null=True)            # src file col = 'SIGTRAN BH Capacity'
+    gbo_ip_bh_cap = models.CharField(max_length=250, blank=True, null=True)         # src file col = 'Gbo IP BH Capacity'
+    combined_ip_bh = models.CharField(max_length=250, blank=True, null=True)        # src file col = 'COMBINED IP BH Capacity'
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -415,15 +443,19 @@ class BSC(models.Model):
 ###################################################################################################################
 
 class RNC(models.Model):
-    area = models.CharField(max_length=250)                                     # src file col = 'Area'
-    rnc_no = models.CharField(max_length=250)                                   # src file col = 'RNC No'
-    rnc_location = models.CharField(max_length=250)                             # src file col = 'RNC LOCATION'
-    bandwidth_cap_lups = models.CharField(max_length=250, blank=True, null=True) # src file col = 'Bandwidth Capacity luPS Provisioned'
-    bandwidth_cap_lucs = models.CharField(max_length=250, blank=True, null=True) # src file col = 'Bandwidth Capacity luCS Provisioned'
-    combined_ipbh_cap = models.CharField(max_length=250, blank=True, null=True) # src file col = 'Combined IP BH Capacity'
+    area = models.CharField(max_length=250)                                         # src file col = 'Area'
+    rnc_no = models.CharField(max_length=250)                                       # src file col = 'RNC No'
+    rnc_location = models.CharField(max_length=250)                                 # src file col = 'RNC LOCATION'
+    bandwidth_cap_lups = models.CharField(max_length=250, blank=True, null=True)    # src file col = 'Bandwidth Capacity luPS Provisioned'
+    bandwidth_cap_lucs = models.CharField(max_length=250, blank=True, null=True)    # src file col = 'Bandwidth Capacity luCS Provisioned'
+    combined_ipbh_cap = models.CharField(max_length=250, blank=True, null=True)     # src file col = 'Combined IP BH Capacity'
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -432,22 +464,26 @@ class RNC(models.Model):
 ###################################################################################################################
 
 class BSC_RNC(models.Model):
-    ne_name = models.CharField(max_length=250)                                  # src file col = 'NE NAME'
-    msc_poolname = models.CharField(max_length=250, blank=True, null=True)      # src file col = 'MSC POOL NAME'
-    msc_name = models.CharField(max_length=250)                                 # src file col = 'MSC NAME'
-    spc_name = models.CharField(max_length=250, blank=True, null=True)          # src file col = 'SPC NAME'
-    int_net_code = models.CharField(max_length=250, blank=True, null=True)      # src file col = 'INT NET CODE'
-    int_spnet_code = models.CharField(max_length=250, blank=True, null=True)    # src file col = 'INT SP NET CODE'
-    nat_code = models.CharField(max_length=250, blank=True, null=True)          # src file col = 'NAT CODE'
-    nat_sp_code = models.CharField(max_length=250, blank=True, null=True)       # src file col = 'NAT SP CODE'
-    sgsn_name = models.CharField(max_length=250, blank=True, null=True)         # src file col = 'SGSN NAME'
-    sgsn_pool_name = models.CharField(max_length=250, blank=True, null=True)    # src file col = 'SGSN POOL NAME'
-    ne_index = models.CharField(max_length=250)                                 # src file col = 'NE INDEX'
-    type = models.CharField(max_length=250)                                     # src file col = 'TYPE'
-    netid = models.CharField(max_length=250, blank=True, null=True)             # src file col = 'NET ID'
+    ne_name = models.CharField(max_length=250)                                      # src file col = 'NE NAME'
+    msc_poolname = models.CharField(max_length=250, blank=True, null=True)          # src file col = 'MSC POOL NAME'
+    msc_name = models.CharField(max_length=250)                                     # src file col = 'MSC NAME'
+    spc_name = models.CharField(max_length=250, blank=True, null=True)              # src file col = 'SPC NAME'
+    int_net_code = models.CharField(max_length=250, blank=True, null=True)          # src file col = 'INT NET CODE'
+    int_spnet_code = models.CharField(max_length=250, blank=True, null=True)        # src file col = 'INT SP NET CODE'
+    nat_code = models.CharField(max_length=250, blank=True, null=True)              # src file col = 'NAT CODE'
+    nat_sp_code = models.CharField(max_length=250, blank=True, null=True)           # src file col = 'NAT SP CODE'
+    sgsn_name = models.CharField(max_length=250, blank=True, null=True)             # src file col = 'SGSN NAME'
+    sgsn_pool_name = models.CharField(max_length=250, blank=True, null=True)        # src file col = 'SGSN POOL NAME'
+    ne_index = models.CharField(max_length=250)                                     # src file col = 'NE INDEX'
+    type = models.CharField(max_length=250)                                         # src file col = 'TYPE'
+    netid = models.CharField(max_length=250, blank=True, null=True)                 # src file col = 'NET ID'
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -456,17 +492,21 @@ class BSC_RNC(models.Model):
 ###################################################################################################################
 
 class ENodeB(models.Model):
-    ne_id = models.CharField(max_length=250, blank=True, null=True)             # src file col = ' NE ID'
-    ne_name = models.CharField(max_length=250)                                  # src file col = 'NE NAME'
-    cpia = models.CharField(max_length=250, blank=True, null=True)              # src file col = 'CPIA'
-    upia = models.CharField(max_length=250, blank=True, null=True)              # src file col = 'UPIA'
-    mme_name = models.CharField(max_length=250, blank=True, null=True)          # src file col = 'MME NAME'
-    mcc = models.CharField(max_length=250, blank=True, null=True)               # src file col = 'MCC'
-    mnc = models.CharField(max_length=250, blank=True, null=True)               # src file col = 'MNC'
-    mme_pname = models.CharField(max_length=250, blank=True, null=True)         # src file col = 'MME POOL NAME'
+    ne_id = models.CharField(max_length=250, blank=True, null=True)                 # src file col = ' NE ID'
+    ne_name = models.CharField(max_length=250)                                      # src file col = 'NE NAME'
+    cpia = models.CharField(max_length=250, blank=True, null=True)                  # src file col = 'CPIA'
+    upia = models.CharField(max_length=250, blank=True, null=True)                  # src file col = 'UPIA'
+    mme_name = models.CharField(max_length=250, blank=True, null=True)              # src file col = 'MME NAME'
+    mcc = models.CharField(max_length=250, blank=True, null=True)                   # src file col = 'MCC'
+    mnc = models.CharField(max_length=250, blank=True, null=True)                   # src file col = 'MNC'
+    mme_pname = models.CharField(max_length=250, blank=True, null=True)             # src file col = 'MME POOL NAME'
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -527,6 +567,10 @@ class PSCoreDevice(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -577,6 +621,10 @@ class PSCoreCapacity(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -619,6 +667,10 @@ class Link(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -655,6 +707,10 @@ class LinkTunnel(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -668,6 +724,10 @@ class MIAndBBGrouping(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -684,6 +744,10 @@ class GTMRankGroup(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -701,6 +765,10 @@ class BCAPolygonMapping(models.Model):
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -708,13 +776,17 @@ class BCAPolygonMapping(models.Model):
 
 ###################################################################################################################
 
-class POINetworkTagging(models.Model):
+class POINetworkTagging(models.Model):                                          #    New data model in ESA
     trunk_group = models.CharField(max_length=250)
     network = models.CharField(max_length=250, blank=True, null=True)
     vendor = models.CharField(max_length=250, blank=True, null=True)
 
     record_status = models.IntegerField(default=1)
 
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
     objects = DataFrameManager()
 
     def __str__(self):
@@ -723,34 +795,302 @@ class POINetworkTagging(models.Model):
 ###################################################################################################################
 
 class AccessConstraint(models.Model):
-    area = models.CharField(max_length=250)                     # src file col='DN',
-    site_id = models.CharField(max_length=250)                  # src file col='Site ID',
-    exact_date = models.CharField(max_length=250)               # src file col='Exact Date',
-    day_of_month = models.CharField(max_length=250)             # src file col='Day of Month',
-    day_of_week = models.CharField(max_length=250)              # src file col='Day of Week',
-    start_time = models.CharField(max_length=250)               # src file col='Start Time',
-    end_time = models.CharField(max_length=250)                 # src file col='End Time',
-    restricted_time = models.CharField(max_length=250)          # src file col='Restricted Time',
-    site_name = models.CharField(max_length=250)                # src file col='Site Name',
+    area = models.CharField(max_length=250)                                         # src file col='DN',
+    site_id = models.CharField(max_length=250)                                      # src file col='Site ID',
+    exact_date = models.CharField(max_length=250)                                   # src file col='Exact Date',
+    day_of_month = models.CharField(max_length=250)                                 # src file col='Day of Month',
+    day_of_week = models.CharField(max_length=250)                                  # src file col='Day of Week',
+    start_time = models.CharField(max_length=250)                                   # src file col='Start Time',
+    end_time = models.CharField(max_length=250)                                     # src file col='End Time',
+    restricted_time = models.CharField(max_length=250)                              # src file col='Restricted Time',
+    site_name = models.CharField(max_length=250)                                    # src file col='Site Name',
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.site_id, self.area)
 
 ###################################################################################################################
 
+class NBINT(models.Model):
+    domain = models.CharField(max_length=250)                                       # src file col='Domain'
+    ems_id = models.CharField(max_length=250, blank=True, null=True)                # src file col='EMS ID'
+    parent_id = models.CharField(max_length=250, blank=True, null=True)             # src file col='Parent ID'
+    lip_1 = models.CharField(max_length=250, blank=True, null=True)                 # src file col='LIP 1'
+    lip_2 = models.CharField(max_length=250, blank=True, null=True)                 # src file col='LIP 2'
+    own_spc = models.CharField(max_length=250, blank=True, null=True)               # src file col='Own SPC'
+    assoc_set_id = models.CharField(max_length=250, blank=True, null=True)          # src file col='Assoc Set ID'
+    assoc_set_name = models.CharField(max_length=250, blank=True, null=True)        # src file col='Assoc Set Name'
+    assoc_index = models.CharField(max_length=250, blank=True, null=True)           # src file col='Assoc Index'
+    rip_1 = models.CharField(max_length=250, blank=True, null=True)                 # src file col='RIP 1'
+    rip_2 = models.CharField(max_length=250, blank=True, null=True)                 # src file col='RIP 2'
+    use = models.CharField(max_length=250, blank=True, null=True)                   # src file col='USE'
+    class_nbint = models.CharField(max_length=250, blank=True, null=True)           # src file col='Class'
+    assoc_name = models.CharField(max_length=250, blank=True, null=True)            # src file col='ASSOC NAME'
+    local_port = models.CharField(max_length=250, blank=True, null=True)            # src file col='LOCAL PORT'
+    peer_port = models.CharField(max_length=250, blank=True, null=True)             # src file col='PEER PORT'
+    deno = models.CharField(max_length=250, blank=True, null=True)                  # src file col='DENO'
+    deno_name = models.CharField(max_length=250, blank=True, null=True)             # src file col='DENO NAME'
+    leno = models.CharField(max_length=250, blank=True, null=True)                  # src file col='LENO'
+    leno_name = models.CharField(max_length=250, blank=True, null=True)             # src file col='LENO NAME'
+    peer_device_id = models.CharField(max_length=250, blank=True, null=True)        # src file col='PEER DEVICE ID'
+    peer_spc = models.CharField(max_length=250, blank=True, null=True)              # src file col='PEER SPC'
+    peer_nsei = models.CharField(max_length=250, blank=True, null=True)             # src file col='PEER A SET ID NSEI'
+    peer_assoc_set = models.CharField(max_length=250, blank=True, null=True)        # src file col='PEER ASSOC SET NAME'
+    name = models.CharField(max_length=250, blank=True, null=True)                  # src file col='Name'
+    peer_assoc_index = models.CharField(max_length=250, blank=True, null=True)      # src file col='PEER ASSOC INDEX'
+    peer_assoc_name = models.CharField(max_length=250, blank=True, null=True)       # src file col='PEER ASSOC NAME'
 
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.domain, self.ems_id)
 
 ###################################################################################################################
 
+class IPPoolInventory(models.Model):
+    device_id = models.CharField(max_length=250)                                    # src file col='DEVICE ID'
+    apn = models.CharField(max_length=250, blank=True, null=True)                   # src file col='APN'
+    ip_pool_name = models.CharField(max_length=250, blank=True, null=True)          # src file col='IP POOL NAME'
+    cidr = models.CharField(max_length=250, blank=True, null=True)                  # src file col='CIDR'
+    iprange = models.CharField(max_length=250, blank=True, null=True)               # src file col='IPRANGE'
+    totalips = models.CharField(max_length=250, blank=True, null=True)              # src file col='TOTALIPS'
+    usableips = models.CharField(max_length=250, blank=True, null=True)             # src file col='USABLEIPS'
+    remarks = models.CharField(max_length=250, blank=True, null=True)               # src file col='REMARKS'
 
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.device_id, self.ip_pool_name)
 
 ###################################################################################################################
 
+class Path(models.Model):                                                           # New data model in ESA
+    pathid = models.CharField(max_length=250, blank=True, null=True)
+    path_type = models.CharField(max_length=250, blank=True, null=True)
+    path_hop = models.CharField(max_length=250, blank=True, null=True)
+    ne_name = models.CharField(max_length=250, blank=True, null=True)
+    ne_type = models.CharField(max_length=250, blank=True, null=True)
+    ingress_interface_name = models.CharField(max_length=250, blank=True, null=True)
+    egress_interface_name = models.CharField(max_length=250, blank=True, null=True)
 
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.pathid, self.path_type)
 
 ###################################################################################################################
 
+class IMAGroup3G(models.Model):
+    ems_id = models.CharField(max_length=250)                                       # src file col='EMS_ID'
+    ima_grp_id = models.CharField(max_length=250, blank=True, null=True)            # src file col='ID
+    dn = models.CharField(max_length=250, blank=True, null=True)                    # src file col='DN'
+    parent_id = models.CharField(max_length=250, blank=True, null=True)             # src file col='Parent ID'
+    parent_dn = models.CharField(max_length=250, blank=True, null=True)             # src file col='Parent DN'
 
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.ima_grp_id
 
 ###################################################################################################################
 
+class IMALink3G(models.Model):
+    ems_id = models.CharField(max_length=250)                                       # src file col='EMS_ID'
+    ima_link_id = models.CharField(max_length=250, blank=True, null=True)           # src file col='ID
+    dn = models.CharField(max_length=250, blank=True, null=True)                    # src file col='DN'
+    parent_id = models.CharField(max_length=250, blank=True, null=True)             # src file col='Parent ID'
+    parent_dn = models.CharField(max_length=250, blank=True, null=True)             # src file col='Parent DN'
 
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.ima_link_id
 
 ###################################################################################################################
+
+class CEMDEVCS(models.Model):
+    dn = models.CharField(max_length=250)                                           # src file col='DN'
+    ne_type = models.CharField(max_length=250)                                      # src file col='NE TYPE'
+    home_msc_pool = models.CharField(max_length=250, blank=True, null=True)         # src file col='Home MSC Pool'
+    gt_address = models.CharField(max_length=250, blank=True, null=True)            # src file col='Gt Address'
+    msc_server_type = models.CharField(max_length=250, blank=True, null=True)       # src file col='MSC Server Type'
+    carrier = models.CharField(max_length=250, blank=True, null=True)               # src file col ='Carrier'
+    country = models.CharField(max_length=250, blank=True, null=True)               # src file col='Country'
+    spc_name = models.CharField(max_length=250, blank=True, null=True)              # src file col='SPC Name'
+    int_net_code = models.CharField(max_length=250, blank=True, null=True)          # src file col='International Network Code'
+    int_spnet = models.CharField(max_length=250, blank=True, null=True)             # src file col='International Spare Network'
+    nat_net_code = models.CharField(max_length=250, blank=True, null=True)          # src file col='National Network Code'
+    nat_spnet_code = models.CharField(max_length=250, blank=True, null=True)        # src file col='National Spare Network Code'
+    bcu = models.IntegerField()                                                     # src file col='BCU'
+    homing_msc = models.CharField(max_length=250, blank=True, null=True)            # src file col='Homing Msc'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.dn, self.ne_type)
+
+###################################################################################################################
+
+class CEMIPCS(models.Model):
+    dn = models.CharField(max_length=250)                                           # src file col='DN'
+    ne_type = models.CharField(max_length=250)                                      # src file col='NE Type'
+    ip_add = models.CharField(max_length=15, blank=True, null=True)                 # src file col='IP Address'
+    type = models.CharField(max_length=5, blank=True, null=True)                    # src file col='Type'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.dn, self.ne_type)
+
+###################################################################################################################
+
+class CEMNRICS(models.Model):
+    dn = models.CharField(max_length=250)                                           # src file col='DN'
+    nri = models.IntegerField()                                                     # src file col='NRI'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.dn
+
+###################################################################################################################
+
+class CSPGCTRL(models.Model):
+    pg_pol = models.CharField(max_length=250)                                       # src file col='PG POL'
+    msc_spc = models.CharField(max_length=250)                                      # src file col='MSC SPC'
+    lai = models.CharField(max_length=250, blank=True, null=True)                   # src file col='LAI'
+    pg_type = models.CharField(max_length=250, blank=True, null=True)               # src file col='PG TYPE'
+    pg_times = models.IntegerField()                                                # src file col='PG TIMES'
+    pg1_durh = models.IntegerField()                                                # src file col='PG1 DURH'
+    pg1_idt = models.CharField(max_length=250, blank=True, null=True)               # src file col='PG1 IDT'
+    pg2_durh = models.IntegerField()                                                # src file col='PG2 DURH'
+    pg2_idt = models.CharField(max_length=250, blank=True, null=True)               # src file col='PG2 IDT'
+    pg3_durh = models.IntegerField()                                                # src file col='PG3 DURH'
+    lpg3_idtai = models.CharField(max_length=250, blank=True, null=True)            # src file col='LPG3 IDTAI'
+    pg4_durh = models.IntegerField()                                                # src file col='PG4 DURH'
+    pg4_idt = models.CharField(max_length=250, blank=True, null=True)               # src file col='PG4 IDT'
+    pg5_durh = models.IntegerField()                                                # src file col='PG5 DURH'
+    pg5_idt = models.CharField(max_length=250, blank=True, null=True)               # src file col='PG5 IDT'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.pg_pol, self.msc_spc)
+
+###################################################################################################################
+
+class ERDIP(models.Model):
+    bsc_id = models.CharField(max_length=250)                                       # src file col='BSC.ID'
+    rbl_id = models.IntegerField()                                                  # src file col='RBL.ID'
+    tg_id = models.CharField(max_length=250)                                        # src file col='TG.ID
+    device_id = models.CharField(max_length=250)                                    # src file col='DEVICE.ID'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return self.bsc_id
+
+###################################################################################################################
+
+class RSAGAlarm(models.Model):
+    host = models.CharField(max_length=250)                                         # src file col='HOST'
+    alarm_name = models.CharField(max_length=250)                                   # src file col='ALARM NAME'
+    network_element = models.CharField(max_length=250)                              # src file col='NETWORK ELEMENT (NE)'
+    alarm_category = models.CharField(max_length=250)                               # src file col='ALARM CATEGORY'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.host, self.alarm_name)
+
+###################################################################################################################
+
+class TDTopology(models.Model):
+    aend = models.CharField(max_length=250, blank=True, null=True)                  # src file col='AEND'
+    zend = models.CharField(max_length=250, blank=True, null=True)                  # src file col='ZEND'
+    domain = models.CharField(max_length=250)                                       # src file col='DOMAIN'
+    function = models.CharField(max_length=250)                                     # src file col='FUNCTION'
+
+    record_status = models.IntegerField(default=1)
+
+    no_update = models.SmallIntegerField(default=0)                                 # increment count if current record_status == 0;
+    record_create_date = models.DateField(auto_now_add=True)                        # creates time stamp when record is created in table
+    record_update_date = models.DateField()                                         # manually update this field every time the record is updated
+    record_sync_date = models.DateField()                                           # manually update this field every time the record is synced
+    objects = DataFrameManager()
+
+    def __str__(self):
+        return '{} | {}'.format(self.domain, self.function)
